@@ -10,6 +10,7 @@ on:
       - Chapter*.md
       - config.yaml
       - crossref.yaml
+      - epub.css
       - listing.tex
       - metadata.yaml
       - .github/workflows/pandoc.yaml
