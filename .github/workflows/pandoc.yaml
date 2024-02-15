@@ -7,6 +7,7 @@ on:
       - feat/*
       - feature/*
     paths:
+      - image/*
       - Chapter*.md
       - config.yaml
       - crossref.yaml
