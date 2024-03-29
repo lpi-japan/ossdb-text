@@ -20,16 +20,20 @@ jobs:
   build-pdf:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/lpi-japan/ossdb-text:latest
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.github_token }}
+      # image: ghcr.io/lpi-japan/ossdb-text:latest
+      image: pandoc/core:3.1.1.0
+      # credentials:
+      #   username: ${{ github.actor }}
+      #   password: ${{ secrets.github_token }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - id: list-files
-        run: echo "chapter=$(ls -1 Chapter*.md | sort -V | tr '\n' ' ' | sed 's/ $//')" >> "$GITHUB_OUTPUT"
-        shell: bash
-      - run: pandoc -o guide.pdf -d config.yaml ${{ steps.list-files.outputs.chapter }}
+        # run: echo "chapter=$(ls -1 Chapter*.md | sort -V | tr '\n' ' ' | sed 's/ $//')" >> "$GITHUB_OUTPUT"
+        run: cat $(ls -1 Chapter*.md | sort -V | tr '\n' ' ' | sed 's/ $//') | sed 's/^####.*/#& {-}/' > guide.md
+        # shell: bash
+        shell: sh
+      # - run: pandoc -o guide.pdf -d config.yaml ${{ steps.list-files.outputs.chapter }}
+      - run: /usr/bin/awk 'BEGIN{go=0;}{ if (go==1){print;} else {if($$0 ~ /^#/) { go=1;print;}}}' guide.md | pandoc -t pdf -F pandoc-crossref -o guide.pdf -N -M "crossrefYaml=crossref.yaml" --metadata-file=metadata.yaml --epub-cover-image=image/Cover/cover.png --css=epub.css
       - uses: actions/upload-artifact@v3
         with:
           name: guide.pdf
@@ -39,7 +43,7 @@ jobs:
     container:
       image: pandoc/core:3.1.1.0
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - id: list-items
         run: cat $(ls -1 Chapter*.md | sort -V | tr '\n' ' ' | sed 's/ $//') | sed 's/^####.*/#& {-}/' > guide.md
         shell: sh
