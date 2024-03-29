@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       # image: ghcr.io/lpi-japan/ossdb-text:latest
-      image: pandoc/core:3.1.1.0
+      image: pandoc/extra:3.1.1.0
       # credentials:
       #   username: ${{ github.actor }}
       #   password: ${{ secrets.github_token }}
