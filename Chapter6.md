@@ -1,5 +1,4 @@
-﻿
-# SQLによるデータベースの操作応用編
+﻿# SQLによるデータベースの操作 応用編
 データベースの操作に使用するSQL文には、他にも様々な文法が存在しています。この章では、特に多用するSQL文の文法について解説します。
 
 * 以降の実行例は、prod表が以下の状態になっている前提で記載します。
@@ -29,7 +28,7 @@ ossdb=# SELECT * FROM prod;
 ## 演算子と関数
 
 ### 演算子
-* **AND/OR演算子**  
+* AND/OR演算子  
 SELECT文などに指定するWHERE句の条件で、複数の条件を設定したい場合にはAND演算子、OR演算子が使用できます。  
 AND演算子は指定した条件が両方満たされる場合、OR演算子は指定した条件のいずれかが満たされる場合にSQL文の結果が表示されます。  
 以下の例は、prod表のprice列の値が50よりも大きく、100よりも小さい行データのみを検索しています。
@@ -50,7 +49,7 @@ ossdb=# SELECT * FROM customer WHERE customer_id = 1 OR customer_id = 2;
 (2 rows)
 ```
 
-* **LIKE演算子**  
+* LIKE演算子  
 ある列の値が指定した条件に部分的に一致する行データを取り出します。  
 以下の例では、customer表のcustomer_name列が「鈴木」で始まる行データを検索しています。
 ``` {.haskell}
@@ -78,7 +77,7 @@ ossdb=# SELECT * FROM customer WHERE customer_name LIKE '%商%';
 |_      |1文字      |
 |%      |0文字以上の文字列|
 
-* **BETWEEN演算子**  
+* BETWEEN演算子  
 ある列の値が指定した2つの条件値の範囲内にあるデータを取り出します。2つの条件値はANDで指定します。条件値そのものも含まれるので「○以上、○以下」という条件であると考えればよいでしょう。  
 以下の例では、prod表のprice列が50から70の間の行データを検索しています。
 ``` {.haskell}
@@ -91,7 +90,7 @@ ossdb=# SELECT * FROM prod WHERE price BETWEEN 50 AND 70;
 ```
 
 ### 関数
-* **集約関数**  
+* 集約関数  
 集約関数を使用すると、データをSQL文で集計することができ、データを一括で処理して1つの結果を返します。
 
 #### 主な集約関数
@@ -105,7 +104,7 @@ ossdb=# SELECT * FROM prod WHERE price BETWEEN 50 AND 70;
 |min関数 | 対象データ（数値または文字）の最小値を返す|
 | |文字の場合、コード順で大小を評価|
 
-* **count関数**  
+* count関数  
 count関数はデータの行数を数える関数です。
 ``` {.haskell}
 ossdb=# SELECT count(order_id) FROM orders;
@@ -115,7 +114,7 @@ ossdb=# SELECT count(order_id) FROM orders;
 (1 row)
 ```
 
-* **sum関数**  
+* sum関数  
 sum関数は指定された列の合計を計算する関数です。
 ``` {.haskell}
 ossdb=# SELECT sum(qty) FROM orders;
@@ -125,7 +124,7 @@ ossdb=# SELECT sum(qty) FROM orders;
 (1 row)
 ```
 
-* **avg関数**  
+* avg関数  
 avg関数は指定された列の平均を計算する関数です。
 ``` {.haskell}
 ossdb=# SELECT avg(qty) FROM orders;
@@ -135,7 +134,7 @@ ossdb=# SELECT avg(qty) FROM orders;
 (1 row)
 ```
 
-* **max関数**  
+* max関数  
 max関数は指定された列の最大値を計算する関数です。
 ``` {.haskell}
 ossdb=# SELECT max(qty) FROM orders;
@@ -145,7 +144,7 @@ ossdb=# SELECT max(qty) FROM orders;
 (1 row)
 ```
 
-* **min関数**  
+* min関数  
 min関数は指定された列の最小値を計算する関数です。
 ``` {.haskell}
 ossdb=# SELECT min(qty) FROM orders;
@@ -155,7 +154,7 @@ ossdb=# SELECT min(qty) FROM orders;
 (1 row)
 ```
 
-**参考：** 文字データの最大/最小  
+参考： 文字データの最大/最小  
 文字データの大小関係は、文字コードの並び順により評価されます。  
 以下の例では、「あ」～「お」を表すUTF-8の文字コードを表示し、その順序通りに並べ替えが行われていることを確認しています。max関数やmin関数の結果も並び順に従っていることがわかります。
 ``` {.haskell}
@@ -352,7 +351,7 @@ ossdb=# select '01-12-05'::date;
 
 ### 現在時刻を取得する
 
-* **now()関数**  
+* now()関数  
 `now()`関数は、現在の日付と時刻を取得する関数です。  
 以下の例では、SELECT文で使用していますが、INSERT文やUPDATE文でも使用できます。
 ``` {.haskell}
@@ -363,7 +362,7 @@ ossdb=# SELECT now();
  (1 row)
 ```
 
-* **CURRENT_DATE/CURRENT_TIME/CURRENT_TIMESTAMP関数**  
+* CURRENT_DATE/CURRENT_TIME/CURRENT_TIMESTAMP関数  
 `CURRENT_xxx`関数は、それぞれ現在の日付、時刻、日付と時刻を取得する関数です。
 ``` {.haskell}
 ossdb=# SELECT CURRENT_DATE;

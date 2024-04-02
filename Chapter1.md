@@ -36,7 +36,7 @@ PostgreSQLの最新版はPostgreSQL開発コミュニティ内のPostgreSQL RPM 
 PostgreSQL RPM Building Project
 * https://yum.postgresql.org/repopackages.php
 
-**注意：** 開発中の最新版（α版、β版やRC版）が同ページで配布されていることがありますが、不具合修正の後、数か月後に正式リリースされるものですので、新機能検証などの目的以外では利用しないことを推奨します。
+注意： 開発中の最新版（α版、β版やRC版）が同ページで配布されていることがありますが、不具合修正の後、数か月後に正式リリースされるものですので、新機能検証などの目的以外では利用しないことを推奨します。
 
 ![PostgreSQL RPM Building Project](./Pict/download-01.png)
 

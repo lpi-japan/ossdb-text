@@ -16,7 +16,7 @@
 
 ### 解答例
 
-* **演習1-1：** すべての商品の価格を10%アップします  
+* 演習1-1： すべての商品の価格を10%アップします  
  * 商品表の価格列を指定してUPDATE  
 ``` {.haskell}
 ossdb=# \d prod
@@ -47,7 +47,7 @@ ossdb=# SELECT * FROM prod;
 (4 rows)
 ```
 
-* **演習1-2：** 価格が100以上の商品の価格を元に戻します  
+* 演習1-2： 価格が100以上の商品の価格を元に戻します  
  * 価格が100以上の商品を指定してUPDATE  
 ``` {.haskell}
 ossdb=# UPDATE prod SET price = price/1.1 WHERE price >= 100;
@@ -62,7 +62,7 @@ ossdb=# SELECT * FROM prod;
 (4 rows)
 ```
 
-* **演習1-3：** prod表のデータをファイルにコピーします  
+* 演習1-3： prod表のデータをファイルにコピーします  
  * COPYコマンドでデータをファイルにセーブ  
 ``` {.haskell}
 ossdb=# COPY prod TO '/home/postgres/prod.csv' (FORMAT csv);
@@ -71,14 +71,14 @@ ossdb=# \! ls -l prod.csv
 -rw-r--r--. 1 postgres postgres 61  1月 29 02:01 prod.csv
 ```
 
-* **演習1-4：** prod表を削除します  
+* 演習1-4： prod表を削除します  
  * 表の削除にはDROP TABLEを使用  
 ``` {.haskell}
 ossdb=# DROP TABLE prod;
 DROP TABLE
 ```
 
-* **演習1-5：** 表を再度作成します  
+* 演習1-5： 表を再度作成します  
  * 表の作成時は列ごとに格納するデータに合わせた型を指定する  
  * IDのような整数にはinteger型、文字にはtext型、計算に用いる数値はnumeric型  
 ``` {.haskell}
@@ -88,7 +88,7 @@ ossdb=# CREATE TABLE prod ( prod_id     integer,
 CREATE TABLE
 ```
 
-* **演習1-6：** データをファイルからコピーします  
+* 演習1-6： データをファイルからコピーします  
  * セーブ時と同様、COPYコマンドを使用  
 ``` {.haskell}
 ossdb=# COPY prod FROM '/home/postgres/prod.csv' (FORMAT csv);
@@ -110,12 +110,12 @@ ossdb=# SELECT * FROM prod;
 ### 郵便番号データのダウンロード
 郵便番号データは以下のWebページからダウンロードできます。
 
-* **郵便番号データダウンロード Webページの利用**  
+* 郵便番号データダウンロード Webページの利用  
 データはZIP形式で配布されています。「住所の郵便番号（CSV形式）」-「読み仮名データの促音・拗音を小書きで表記するもの」をクリックしてZIP形式でダウンロードしてください。ここでは「全国一括」のデータを用います。
  * [http://www.post.japanpost.jp/zipcode/download.html](http://www.post.japanpost.jp/zipcode/download.html)
 
 
-* **郵便番号データのダウンロード**  
+* 郵便番号データのダウンロード  
 以下の例は、wgetコマンドを使って郵便番号CSVデータをダウンロードして、unzipコマンドで解凍しています。
 ``` {.haskell}
 [postgres@localhost ~]$ wget http://www.post.japanpost.jp/zipcode/dl/kogaki/zip/ken_all.zip
@@ -142,7 +142,7 @@ Archive:  ken_all.zip
 ### 郵便番号データベース表の作成
 郵便番号データを格納するための表をデータベースに作成します。
 
-* **郵便番号データ項目**  
+* 郵便番号データ項目  
 データの項目は以下の通りです。
 
 |内容                          |備考             |
@@ -163,7 +163,7 @@ Archive:  ken_all.zip
 |更新の表示                       |               |
 |変更理由                        | 　 |
 
-* **郵便番号データ用の表定義**  
+* 郵便番号データ用の表定義  
 以下の例は、文字列データをchar型およびtext型で定義した表作成のためのCREATE TABLE文です。
 ``` {.haskell}
 ossdb=# CREATE TABLE zip (
@@ -186,7 +186,7 @@ ossdb=# CREATE TABLE zip (
 CREATE TABLE
 ```
 
-* **郵便番号データサンプル**  
+* 郵便番号データサンプル  
 データは以下のような内容です。
 ``` {.haskell}
 [postgres@localhost ~]$ head -5 KEN_ALL_UTF8.CSV
@@ -202,7 +202,7 @@ CREATE TABLE
 
 シフトJISのデータをUTF-8に変換するには、psqlで`\encoding`メタコマンドを使用する方法と、Linuxのコマンドで文字コード変換をする方法があります。
 
-* **psqlメタコマンドを使用する方法**  
+* psqlメタコマンドを使用する方法  
 `\encoding`メタコマンドを使用すると、psqlが扱うデータの文字コードを変更できます。  
 以下の例は、`\encoding`メタコマンドでpsqlが扱うデータの文字コードをシフトJISに変更しています。データベースはUTF-8で格納するので、シフトJISからUTF-8への文字コード変換が行われます。
 ``` {.haskell}
@@ -212,7 +212,7 @@ COPY 124165
 ossdb=# \encoding UTF-8
 ```
 
-* **Linuxのコマンドを使用する方法**  
+* Linuxのコマンドを使用する方法  
 Linuxであれば`nkf`コマンドで文字コード変換が行えます。他に`iconv`コマンドも使用できますが、改行コードを別途`dos2unix`コマンドで変換する必要があります。Linux環境によってはnkfコマンドがインストールされていない場合がありますので、その場合にはyumコマンドでインストールしてください。
  * nkfコマンドで郵便番号データをUTF-8に変換
 ``` {.haskell}
