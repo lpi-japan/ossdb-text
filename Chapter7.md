@@ -178,7 +178,7 @@ DETAIL:  Key (prod_id)=(6) is not present in table "prod".
 ![外部キー制約違反](./Pict/foreign-01.png)
 
 次のINSERTでは、先ほど失敗したprod_id = 6 をやめ、prod_id = 5を挿入します。今度は制約違反は発生せず、正常にINSERTが完了しました。
-```  {.haskell}
+```
 ossdb=# INSERT INTO orders(order_id,order_date,customer_id,prod_id,qty)
 VALUES (6,now(),3,5,6);
 INSERT 0 1

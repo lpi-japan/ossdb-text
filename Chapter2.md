@@ -33,10 +33,7 @@ psqlを実行するには、シェルで作業しているユーザーをユー�
 ユーザーpostgresは、LinuxにPostgreSQLをパッケージでインストールした時に自動的に作成されているユーザーです。管理者ユーザーrootでログインした後、suコマンドでユーザーpostgresに切り替えます。
 
 suコマンドでユーザーを切り替えるには、以下のようにsuコマンドに-（ハイフン）をつけて実行するようにしてください。
-<!--
-``` {#mycode .haskell .numberLines startFrom="100"}
--->
-``` {.haskell style="font:osaka;"}
+```
 [root@localhost ~]# su - postgres
 [postgres@localhost ~]$
 ```
