@@ -166,11 +166,11 @@ ossdb=# SELECT string,convert_to(string,'utf8') FROM char_test
 ORDER BY string DESC;
  string | convert_to
 --------+------------
- お     | \xe3818a
- え     | \xe38188
- う     | \xe38186
- い     | \xe38184
- あ     | \xe38182
+ お     | \\xe3818a
+ え     | \\xe38188
+ う     | \\xe38186
+ い     | \\xe38184
+ あ     | \\xe38182
 (5 rows)
 ossdb=# SELECT max(string),min(string) FROM char_test ;
  max  | min

@@ -83,11 +83,11 @@ psqlのヘルプを表示します。helpと入力します。
 ```
 ossdb=# help
 You are using psql, the command-line interface to PostgreSQL.
-Type:  \copyright for distribution terms
-       \h for help with SQL commands
-       \? for help with psql commands
-       \g or terminate with semicolon to execute query
-       \q to quit
+Type:  \\copyright for distribution terms
+       \\h for help with SQL commands
+       \\? for help with psql commands
+       \\g or terminate with semicolon to execute query
+       \\q to quit
 ```
 
 ### メタコマンド
@@ -97,7 +97,7 @@ psqlはSQLを受け付けて、PostgreSQLに対してSQLを実行する他に、
 #### psqlメタコマンド \\h
 利用できるSQLのヘルプが確認できます。
 ```
-ossdb=# \h
+ossdb=# \\h
 Available help:
   ABORT
   ALTER AGGREGATE
@@ -111,7 +111,7 @@ Available help:
 psqlメタコマンド\\hの引数にSQLコマンドを指定すると、そのSQLコマンドのヘルプが確認できます。SQLコマンドの指定は大文字でも小文字でも構いません。
 
 ```
-ossdb=# \h DELETE
+ossdb=# \\h DELETE
 Command:     DELETE
 Description: delete rows of a table
 Syntax:
@@ -125,26 +125,26 @@ DELETE FROM [ ONLY ] table_name [ * ] [ [ AS ] alias ]
 #### psqlメタコマンド \\?
 psqlメタコマンド \\?で、利用できるpsqlメタコマンドのヘルプが確認できます。
 ```
-ossdb=# \?
+ossdb=# \\?
 General
-  \copyright             show PostgreSQL usage and distribution terms
-  \crosstabview [COLUMNS] execute query and display results in crosstab
-  \errverbose            show most recent error message at maximum verbosity
-  \g [FILE] or ;         execute query (and send results to file or |pipe)
+  \\copyright             show PostgreSQL usage and distribution terms
+  \\crosstabview [COLUMNS] execute query and display results in crosstab
+  \\errverbose            show most recent error message at maximum verbosity
+  \\g [FILE] or ;         execute query (and send results to file or |pipe)
 （以下略）
 ```
 
 ### psqlを終了する
 psqlを終了するには、psqlメタコマンドの\\qを入力します。
 ```
-ossdb=# \q
+ossdb=# \\q
 [postgres@localhost ~]$
 ```
 
 ### 表の確認
 作成されている表を確認するにはpsqlメタコマンド\\dを利用します。
 ```
-ossdb=# \d
+ossdb=# \\d
           List of relations
  Schema |   Name   | Type  |  Owner
 --------+----------+-------+----------
@@ -157,14 +157,14 @@ ossdb=# \d
 ### 表定義の確認
 表がどのような項目を持っているのかを確認するにはpsqlメタコマンド\\dに確認したい表名を付けて実行します。
 ```
-ossdb=# \d customer
+ossdb=# \\d customer
                  Table "public.customer"
     Column     |  Type   | Collation | Nullable | Default
 ---------------+---------+-----------+----------+---------
  customer_id   | integer |           |          |
  customer_name | text    |           |          |
 
-ossdb=# \d orders
+ossdb=# \\d orders
                            Table "public.orders"
    Column    |            Type             | Collation | Nullable | Default
 -------------+-----------------------------+-----------+----------+---------
@@ -174,7 +174,7 @@ ossdb=# \d orders
  prod_id     | integer                     |           |          |
  qty         | integer                     |           |          |
 
-ossdb=# \d prod
+ossdb=# \\d prod
                  Table "public.prod"
   Column   |  Type   | Collation | Nullable | Default
 -----------+---------+-----------+----------+---------
@@ -233,7 +233,7 @@ ossdb-# 3rd line;
 ERROR:  syntax error at or near "1"
 行 1: 1st line
       ^
-ossdb=# \unset PROMPT2
+ossdb=# \\unset PROMPT2
 ossdb=# 1st line
 2nd line
 3rd line;
@@ -255,7 +255,7 @@ $ psql -f ファイル名 [データベース名] [ユーザー名]
 以下の例では、メタコマンド\\dを記述したファイルtest.sqlをpsqlに読み込ませて実行しています。
 ```
 [postgres@localhost ~]$ cat test.sql
-\d
+\\d
 [postgres@localhost ~]$ psql -f test.sql ossdb
           List of relations
  Schema |   Name   | Type  |  Owner
@@ -349,9 +349,9 @@ WHERE 列名 条件式 条件値
 ------- | --------
 =	      | 等しい
 <>      |	等しくない
-\>	      | よりも大きい
+\\>	      | よりも大きい
 <	      | よりも小さい（未満）
-\>=      | 以上
+\\>=      | 以上
 <=      | 以下
 BETWEEN | 範囲指定
 LIKE    |	部分一致

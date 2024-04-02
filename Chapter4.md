@@ -34,7 +34,7 @@ ossdb=# CREATE TABLE staff
                      birthday date);
 CREATE TABLE
 
-ossdb=# \d
+ossdb=# \\d
             List of relations
  Schema |     Name     | Type  |  Owner
 --------+--------------+-------+----------
@@ -48,7 +48,7 @@ ossdb=# \d
  public | varchar_test | table | postgres
 (8 rows)
 
-ossdb=# \d staff
+ossdb=# \\d staff
                 Table "public.staff"
   Column  |  Type   | Collation | Nullable | Default
 ----------+---------+-----------+----------+---------
@@ -77,7 +77,7 @@ ALTER TABLE文では表そのものの定義や動作の修正に加え、表内
 
 メタコマンド\\hで構文のヘルプを確認してみましょう。ここでは詳細を覚える必要はありませんが、変更対象の表を指定し、さらに「新しい列を追加する（=ADD COLUMN）」のようなactionを指定することをヘルプから読み取ってみてください。
 ```
-ossdb=# \h ALTER TABLE
+ossdb=# \\h ALTER TABLE
 Command:     ALTER TABLE
 Description: change the definition of a table
 Syntax:
@@ -99,7 +99,7 @@ where action is one of:
 ```
 ossdb=# ALTER TABLE staff ADD COLUMN dept_cd integer;
 ALTER TABLE
-ossdb=# \d staff
+ossdb=# \\d staff
                 Table "public.staff"
   Column  |  Type   | Collation | Nullable | Default
 ----------+---------+-----------+----------+---------
@@ -152,7 +152,7 @@ ALTER TABLE文で修正できる内容は様々ですが、すでにデータが
 表を削除するには、DROP TABLE文を使用します。
 表を削除すると、表に格納されているデータも一緒に削除されて元に戻すことができません。
 ```
-ossdb=# \d
+ossdb=# \\d
             List of relations
  Schema |     Name     | Type  |  Owner
 --------+--------------+-------+----------
@@ -168,7 +168,7 @@ ossdb=# \d
 
 ossdb=# DROP TABLE staff;
 DROP TABLE
-ossdb=# \d
+ossdb=# \\d
             List of relations
  Schema |     Name     | Type  |  Owner
 --------+--------------+-------+----------
@@ -231,9 +231,9 @@ COPY 表名 TO ファイル (FORMAT 形式)
 ```
 ossdb=# COPY customer TO '/home/postgres/customer.csv' (FORMAT csv);
 COPY 3
-ossdb=# \! ls /home/postgres
+ossdb=# \\! ls /home/postgres
 customer.csv
-ossdb=# \! cat /home/postgres/customer.csv
+ossdb=# \\! cat /home/postgres/customer.csv
 1,佐藤商事
 2,鈴木物産
 3,高橋商店

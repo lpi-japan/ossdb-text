@@ -19,7 +19,7 @@
 * 演習1-1： すべての商品の価格を10%アップします  
  * 商品表の価格列を指定してUPDATE  
 ```
-ossdb=# \d prod
+ossdb=# \\d prod
                  Table "public.prod"
   Column   |  Type   | Collation | Nullable | Default
 -----------+---------+-----------+----------+---------
@@ -67,7 +67,7 @@ ossdb=# SELECT * FROM prod;
 ```
 ossdb=# COPY prod TO '/home/postgres/prod.csv' (FORMAT csv);
 COPY 4
-ossdb=# \! ls -l prod.csv
+ossdb=# \\! ls -l prod.csv
 -rw-r--r--. 1 postgres postgres 61  1月 29 02:01 prod.csv
 ```
 
@@ -206,10 +206,10 @@ CREATE TABLE
 \\encodingメタコマンドを使用すると、psqlが扱うデータの文字コードを変更できます。  
 以下の例は、\\encodingメタコマンドでpsqlが扱うデータの文字コードをシフトJISに変更しています。データベースはUTF-8で格納するので、シフトJISからUTF-8への文字コード変換が行われます。
 ```
-ossdb=# \encoding SJIS
-ossdb=# \copy zip from KEN_ALL.CSV with csv
+ossdb=# \\encoding SJIS
+ossdb=# \\copy zip from KEN_ALL.CSV with csv
 COPY 124165
-ossdb=# \encoding UTF-8
+ossdb=# \\encoding UTF-8
 ```
 
 * Linuxのコマンドを使用する方法  
@@ -224,7 +224,7 @@ Linuxであればnkfコマンドで文字コード変換が行えます。他に
 ```
  * 変換後、psqlから\\copyメタコマンドでロードします。
 ```
-ossdb=# \copy zip from KEN_ALL_UTF8.CSV with csv
+ossdb=# \\copy zip from KEN_ALL_UTF8.CSV with csv
 ```
 
 ### 郵便番号データの確認

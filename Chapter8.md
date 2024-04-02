@@ -11,7 +11,7 @@ PostgreSQLのユーザーを作成するには、CREATE USER文を使用しま�
 [postgres@localhost ~]$ psql ossdb
 ossdb=# CREATE USER sato PASSWORD 'sato';
 CREATE ROLE
-ossdb=# \du
+ossdb=# \\du
                                    List of roles
  Role name |                         Attributes                         | Member of
 -----------+------------------------------------------------------------+-----------
@@ -25,7 +25,7 @@ ossdb=# \du
 新しいロールのためのパスワード:
 もう一度入力してください：
 [postgres@localhost ~]$ psql ossdb
-ossdb=# \du
+ossdb=# \\du
                                    List of roles
  Role name |                         Attributes                         | Member of
 -----------+------------------------------------------------------------+-----------
@@ -117,7 +117,7 @@ uid=1001(postgres) gid=1001(postgres) groups=1001(postgres) context=unconfined_u
 psql (10.1)
 Type "help" for help.
 
-ossdb=# \set
+ossdb=# \\set
 AUTOCOMMIT = 'on'
 COMP_KEYWORD_CASE = 'preserve-upper'
 DBNAME = 'ossdb'
@@ -155,7 +155,7 @@ VERSION_NUM = '100001'
 psql (10.1)
 Type "help" for help.
 
-ossdb=> \set
+ossdb=> \\set
 （該当箇所のみ抜粋）
 DBNAME = 'ossdb'
 USER = 'sato'
@@ -236,13 +236,13 @@ Password:
 psql (10.1)
 Type "help" for help.
 
-ossdb=# \q
+ossdb=# \\q
 [postgres@localhost ~]$ psql ossdb sato
 Password for user sato:
 psql (10.1)
 Type "help" for help.
 
-ossdb=> \q
+ossdb=> \\q
 ```
 
 ## ネットワーク経由接続
@@ -338,7 +338,7 @@ Password for user postgres:
 psql (10.1)
 Type "help" for help.
 
-ossdb=# \dt prod
+ossdb=# \\dt prod
         List of relations
  Schema | Name | Type  |  Owner
 --------+------+-------+----------
@@ -351,7 +351,7 @@ GRANT
 ### アクセス権限の確認
 アクセス権限を確認するには、\\dpメタコマンドを使用します。
 ```
-ossdb=# \dp prod
+ossdb=# \\dp prod
                                 Access privileges
  Schema | Name | Type  |     Access privileges     | Column privileges | Policies
 --------+------+-------+---------------------------+-------------------+----------
@@ -399,7 +399,7 @@ Type "help" for help.
 
 ossdb=# REVOKE all ON prod FROM sato;
 REVOKE
-ossdb=# \dp prod
+ossdb=# \\dp prod
                                 Access privileges
  Schema | Name | Type  |     Access privileges     | Column privileges | Policies
 --------+------+-------+---------------------------+-------------------+----------

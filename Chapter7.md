@@ -35,7 +35,7 @@ ALTER TABLE 表名 ADD PRIMARY KEY　(列名[,...])
 ```
 ossdb=# ALTER TABLE prod ADD PRIMARY KEY(prod_id);
 ALTER TABLE
-ossdb=# \d prod
+ossdb=# \\d prod
                  Table "public.prod"
   Column   |  Type   | Collation | Nullable | Default
 -----------+---------+-----------+----------+---------
@@ -103,7 +103,7 @@ ossdb=# CREATE TABLE student (class TEXT,no INTEGER,name TEXT);
 CREATE TABLE
 ossdb=# ALTER TABLE student ADD PRIMARY KEY (class,no);
 ALTER TABLE
-ossdb=# \d student
+ossdb=# \\d student
               Table "public.student"
  Column |  Type   | Collation | Nullable | Default
 --------+---------+-----------+----------+---------
@@ -135,7 +135,7 @@ ossdb=# ALTER TABLE orders ADD FOREIGN KEY (customer_id) REFERENCES customer(cus
 ALTER TABLE
 ossdb=# ALTER TABLE orders ADD FOREIGN KEY (prod_id) REFERENCES prod(prod_id);
 ALTER TABLE
-ossdb=# \d orders
+ossdb=# \\d orders
                            Table "public.orders"
    Column    |            Type             | Collation | Nullable | Default
 -------------+-----------------------------+-----------+----------+---------
@@ -150,7 +150,7 @@ Foreign-key constraints:
     "orders_customer_id_fkey" FOREIGN KEY (customer_id) REFERENCES customer(customer_id)
     "orders_prod_id_fkey" FOREIGN KEY (prod_id) REFERENCES prod(prod_id)
 
-ossdb=# \d customer
+ossdb=# \\d customer
                  Table "public.customer"
     Column     |  Type   | Collation | Nullable | Default
 ---------------+---------+-----------+----------+---------
@@ -248,7 +248,7 @@ NULL（ヌル）は「未知」または「未定」と定義されるもので�
 
 以下の例では、customer表のcustomer_id列が主キーとして設定されているため、NOT NULL制約が設定されています。
 ```
-ossdb=# \d customer
+ossdb=# \\d customer
                  Table "public.customer"
     Column     |  Type   | Collation | Nullable | Default
 ---------------+---------+-----------+----------+---------

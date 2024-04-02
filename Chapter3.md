@@ -45,7 +45,7 @@ numeric(精度,位取り)
 ossdb=# CREATE TABLE numeric_test(
 id numeric(6,2));
 CREATE TABLE
-ossdb=# \d numeric_test
+ossdb=# \\d numeric_test
               Table "public.numeric_test"
  Column |     Type     | Collation | Nullable | Default
 --------+--------------+-----------+----------+---------
@@ -166,7 +166,7 @@ ossdb=# CREATE TABLE date_test ( d_test  date,
                                  t_test  time,
                                  ts_test timestamp);
 CREATE TABLE
-ossdb=# \d date_test
+ossdb=# \\d date_test
                         Table "public.date_test"
  Column  |            Type             | Collation | Nullable | Default
 ---------+-----------------------------+-----------+----------+---------

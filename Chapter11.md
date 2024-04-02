@@ -210,34 +210,34 @@ selectProd.php
 <html>
 <body>
 <?php
-$dbcon = pg_connect("dbname=ossdb user=postgres password=password");
-if (!$dbcon) {
+\$dbcon = pg_connect("dbname=ossdb user=postgres password=password");
+if (\!$dbcon) {
         die("<hr>pg_connect 失敗<hr>");
 }
-$sql =  "SELECT * FROM prod";
-echo  "SQL=$sql<br>\\n";
-$result = pg_query ($dbcon, $sql);
-if (!$result) {
-        pg_last_error($dbcon);
+\$sql =  "SELECT * FROM prod";
+echo  "SQL=\$sql<br>\\n";
+\$result = pg_query (\$dbcon, \$sql);
+if (\!$result) {
+        pg_last_error(\$dbcon);
         die( "pg_exec 失敗<hr>");
 }
-$numrows = pg_num_rows($result);
-$fnum = pg_num_fields($result);
+\$numrows = pg_num_rows(\$result);
+\$fnum = pg_num_fields(\$result);
 echo "<table border>";
 echo "<tr>";
-for ($x = 0; $x < $fnum; $x++) {
+for (\$x = 0; \$x < $fnum; \$x++) {
         echo "<td><b>";
-        echo htmlspecialchars(strtoupper(pg_field_name($result, $x)));
+        echo htmlspecialchars(strtoupper(pg_field_name(\$result, \$x)));
         echo "</b></td>";
 }
 echo "</tr>";
-for ($i = 0; $i < $numrows; $i++) {
-        $row = pg_fetch_object($result, $i);
+for (\$i = 0; \$i < \$numrows; \$i++) {
+        \$row = pg_fetch_object(\$result, \$i);
         echo "<tr align='center'>";
-        for ($x = 0; $x < $fnum; $x++) {
-                $fieldname = pg_field_name($result, $x);
+        for (\$x = 0; \$x < \$fnum; \$x++) {
+                \$fieldname = pg_field_name(\$result, \$x);
                 echo "<td>";
-                echo htmlspecialchars($row->$fieldname);
+                echo htmlspecialchars(\$row->\$fieldname);
                 echo "</td>";
         }
         echo"</tr>";
@@ -310,41 +310,41 @@ selectForm.php
 <html>
 <body>
 <?php
-$dbcon = pg_connect("dbname=ossdb user=postgres password=password");
-if (!$dbcon) {
+\$dbcon = pg_connect("dbname=ossdb user=postgres password=password");
+if (\!$dbcon) {
         die("<hr>pg_connect 失敗<hr>");
 }
-$table = $_POST['table'];
-$sql =  "SELECT * FROM $table";
-echo  "SQL=$sql<br>\\n";
-$result = pg_query ($dbcon, $sql);
-if (!$result) {
-        pg_last_error($dbcon);
+\$table = \$_POST['table'];
+\$sql =  "SELECT * FROM \$table";
+echo  "SQL=\$sql<br>\\n";
+\$result = pg_query (\$dbcon, \$sql);
+if (\!$result) {
+        pg_last_error(\$dbcon);
         die( "pg_exec 失敗<hr>");
 }
-$numrows = pg_num_rows($result);
-$fnum = pg_num_fields($result);
+\$numrows = pg_num_rows(\$result);
+\$fnum = pg_num_fields(\$result);
 echo "<table border>";
 echo "<tr>";
-for ($x = 0; $x < $fnum; $x++) {
+for (\$x = 0; \$x < \$fnum; \$x++) {
         echo "<td><b>";
-        echo htmlspecialchars(strtoupper(pg_field_name($result, $x)));
+        echo htmlspecialchars(strtoupper(pg_field_name(\$result, \$x)));
         echo "</b></td>";
 }
 echo "</tr>";
-for ($i = 0; $i < $numrows; $i++) {
-        $row = pg_fetch_object($result, $i);
+for (\$i = 0; \$i < \$numrows; \$i++) {
+        \$row = pg_fetch_object(\$result, $i);
         echo "<tr align='center'>";
-        for ($x = 0; $x < $fnum; $x++) {
-                $fieldname = pg_field_name($result, $x);
+        for (\$x = 0; \$x < \$fnum; \$x++) {
+                \$fieldname = pg_field_name(\$result, \$x);
                 echo "<td>";
-                echo htmlspecialchars($row->$fieldname);
+                echo htmlspecialchars(\$row->\$fieldname);
                 echo "</td>";
         }
         echo"</tr>";
 }
 echo "</table>";
-pg_close($dbcon);
+pg_close(\$dbcon);
 ?>
 </body>
 </html>
