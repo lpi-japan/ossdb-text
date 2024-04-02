@@ -124,11 +124,11 @@ www.post.japanpost.jp (www.post.japanpost.jp) をDNSに問いあわせていま�
 www.post.japanpost.jp (www.post.japanpost.jp)|43.253.37.203|:80 に接続しています... 接続しました。
 HTTP による接続要求を送信しました、応答を待っています... 200 OK
 長さ: 1686409 (1.6M) [application/zip]
-`ken_all.zip' に保存中
+ken_all.zip に保存中
 　
 100%[===============================================================================>] 1,686,409   10.4MB/s 時間 0.2s
 　
-2018-01-29 01:14:02 (10.4 MB/s) - `ken_all.zip' へ保存完了 [1686409/1686409]
+2018-01-29 01:14:02 (10.4 MB/s) - ken_all.zip へ保存完了 [1686409/1686409]
 　
 [postgres@localhost ~]$ ls
 customer.csv  ken_all.zip  test.sql
@@ -200,11 +200,11 @@ CREATE TABLE
 ### データのロードと文字コードについて
 ダウンロードできるCSVデータは、日本語部分がシフトJISで作成されています。一方、現在使用しているデータベースは日本語をUTF-8で格納するようにしているため、文字コードをUTF-8に揃える必要があります。
 
-シフトJISのデータをUTF-8に変換するには、psqlで`\encoding`メタコマンドを使用する方法と、Linuxのコマンドで文字コード変換をする方法があります。
+シフトJISのデータをUTF-8に変換するには、psqlで\encodingメタコマンドを使用する方法と、Linuxのコマンドで文字コード変換をする方法があります。
 
 * psqlメタコマンドを使用する方法  
-`\encoding`メタコマンドを使用すると、psqlが扱うデータの文字コードを変更できます。  
-以下の例は、`\encoding`メタコマンドでpsqlが扱うデータの文字コードをシフトJISに変更しています。データベースはUTF-8で格納するので、シフトJISからUTF-8への文字コード変換が行われます。
+\encodingメタコマンドを使用すると、psqlが扱うデータの文字コードを変更できます。  
+以下の例は、\encodingメタコマンドでpsqlが扱うデータの文字コードをシフトJISに変更しています。データベースはUTF-8で格納するので、シフトJISからUTF-8への文字コード変換が行われます。
 ``` {.haskell}
 ossdb=# \encoding SJIS
 ossdb=# \copy zip from KEN_ALL.CSV with csv
@@ -213,7 +213,7 @@ ossdb=# \encoding UTF-8
 ```
 
 * Linuxのコマンドを使用する方法  
-Linuxであれば`nkf`コマンドで文字コード変換が行えます。他に`iconv`コマンドも使用できますが、改行コードを別途`dos2unix`コマンドで変換する必要があります。Linux環境によってはnkfコマンドがインストールされていない場合がありますので、その場合にはyumコマンドでインストールしてください。
+Linuxであればnkfコマンドで文字コード変換が行えます。他にiconvコマンドも使用できますが、改行コードを別途dos2unixコマンドで変換する必要があります。Linux環境によってはnkfコマンドがインストールされていない場合がありますので、その場合にはyumコマンドでインストールしてください。
  * nkfコマンドで郵便番号データをUTF-8に変換
 ``` {.haskell}
 [postgres@localhost ~]$ nkf -w KEN_ALL.CSV > KEN_ALL_UTF8.CSV
@@ -222,7 +222,7 @@ Linuxであれば`nkf`コマンドで文字コード変換が行えます。他�
 ``` {.haskell}
 [postgres@localhost ~]$ iconv -f SHIFT-JIS -t UTF-8 KEN_ALL.CSV | dos2unix > KEN_ALL_UTF8.CSV
 ```
- * 変換後、psqlから`\copy`メタコマンドでロードします。
+ * 変換後、psqlから\copyメタコマンドでロードします。
 ``` {.haskell}
 ossdb=# \copy zip from KEN_ALL_UTF8.CSV with csv
 ```

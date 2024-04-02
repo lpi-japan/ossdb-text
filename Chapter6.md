@@ -352,7 +352,7 @@ ossdb=# select '01-12-05'::date;
 ### 現在時刻を取得する
 
 * now()関数  
-`now()`関数は、現在の日付と時刻を取得する関数です。  
+now()関数は、現在の日付と時刻を取得する関数です。  
 以下の例では、SELECT文で使用していますが、INSERT文やUPDATE文でも使用できます。
 ``` {.haskell}
 ossdb=# SELECT now();
@@ -363,7 +363,7 @@ ossdb=# SELECT now();
 ```
 
 * CURRENT_DATE/CURRENT_TIME/CURRENT_TIMESTAMP関数  
-`CURRENT_xxx`関数は、それぞれ現在の日付、時刻、日付と時刻を取得する関数です。
+CURRENT_xxx関数は、それぞれ現在の日付、時刻、日付と時刻を取得する関数です。
 ``` {.haskell}
 ossdb=# SELECT CURRENT_DATE;
  current_date
@@ -397,7 +397,7 @@ ossdb=# SELECT * FROM date_sample;
  2018-01-23 12:34:56.907503
 (1 row)
 ```
-次は「現在時刻」ではなく、「2018年1月23日」のように文字列として指定された数の並びを日付型の列に格納する方法を紹介します。`to_timestamp`関数を用います。
+次は「現在時刻」ではなく、「2018年1月23日」のように文字列として指定された数の並びを日付型の列に格納する方法を紹介します。to_timestamp関数を用います。
 
 #### to_timestamp関数の使い方
 ``` {.haskell}
@@ -524,7 +524,7 @@ LEFT OUTER JOIN prod   p ON o.prod_id = p.prod_id;
  藤原流通      |           |
 (6 rows)
 ```
-状況に応じて、`FULL OUTER JOIN`や`RIGHT OUTGER JOIN`も同じような考え方で使うことができます。
+状況に応じて、FULL OUTER JOINやRIGHT OUTGER JOINも同じような考え方で使うことができます。
 
 ### クロス結合
 全ての店舗と商品の組み合わせを取得するような問い合わせでは、結合条件を指定しないクロス結合を使用します。

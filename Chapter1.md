@@ -43,7 +43,7 @@ PostgreSQL RPM Building Project
 利用するOSディストリビューションに対応したリンクを右クリックし、リンクのURLをコピーしておきます。例えば、CentOS 7系、PostgreSQL 10では、以下のようなRPMパッケージが直接リンクされています。
 https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-centos10-10-2.noarch.rpm
 
-これをLinuxサーバー上の`yum install`コマンドで指定します。
+これをLinuxサーバー上のyum installコマンドで指定します。
 ``` {.haskell}
 [root@localhost ~]# yum install https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-centos10-10-2.noarch.rpm
 読み込んだプラグイン:fastestmirror, langpacks
@@ -244,7 +244,7 @@ postgresql10-contrib | 拡張機能（本書の範囲では必須ではありま
 各パッケージのリンク先にはさらに複数マイナーバージョンが配布されている場合があります。本書ではいずれも10.1を利用しています。
 
 #### RPMコマンドでインストール
-実際にダウンロードするファイルは`postgresql10-10.1-1PGDG.rhel7.x86_64.rpm`のようなRPM形式です。RPMコマンドでインストールします。postgresql10-libs、postgresql10-server、postgresql10-contribも同様にインストールします。
+実際にダウンロードするファイルはpostgresql10-10.1-1PGDG.rhel7.x86_64.rpmのようなRPM形式です。RPMコマンドでインストールします。postgresql10-libs、postgresql10-server、postgresql10-contribも同様にインストールします。
 ``` {.haskell}
 [root@localhost ~]# cd <ファイル配置先ディレクトリ>
 [root@localhost ~]# rpm -ivh postgresql10-10.1-1PGDG.rhel7.x86_64.rpm
@@ -256,14 +256,14 @@ postgresql10-contrib | 拡張機能（本書の範囲では必須ではありま
 
 ### データベースクラスタとinitdbコマンド
 PostgreSQLが管理するデータベースそのもの（実体はOS上のファイル）や各種設定ファイル、変更履歴ファイル、ログファイルなどをひとまとめにしたものをデータベースクラスタと呼びます。初期化とはデータベースクラスタを構成するすべてのファイルやディレクトリを新規作成することを指します。
-データベースの初期化は`initdb`コマンドを使用し、日本語環境で利用するうえで推奨されている`-E utf8`および`--no-locale`オプションを指定してデータベースを初期化します。
+データベースの初期化はinitdbコマンドを使用し、日本語環境で利用するうえで推奨されている-E utf8および--no-localeオプションを指定してデータベースを初期化します。
 
 ### データディレクトリ
 データベースクラスタを構成するすべてのファイルやディレクトリは1つのディレクトリ配下にまとめて配置されます。このディレクトリをデータディレクトリと呼び、環境変数PGDATAで指定されます。
 initdb時、環境変数PGDATAが参照され、ここで指定した位置にデータベースクラスタが作成されます。
 
 ### initdbコマンドの実行
-以下の例では、前述の手順の従ってデータディレクトリ位置が環境変数PGDATAに設定された状態でinitdbコマンドを実行しています。initdb完了後、`cd`コマンドでデータディレクトリに移動し、作成されたファイルを確認しています。
+以下の例では、前述の手順の従ってデータディレクトリ位置が環境変数PGDATAに設定された状態でinitdbコマンドを実行しています。initdb完了後、cdコマンドでデータディレクトリに移動し、作成されたファイルを確認しています。
 ``` {.haskell}
 [postgres@localhost ~]$ env | grep PGDATA
 PGDATA=/var/lib/pgsql/10/data
@@ -303,7 +303,7 @@ global      pg_hba.conf   pg_multixact   pg_serial    pg_stat_tmp   pg_twophase 
 ```
 
 ## データベースを起動
-PostgreSQLの起動・停止には`systemctl`コマンドを使用します。
+PostgreSQLの起動・停止にはsystemctlコマンドを使用します。
 ``` {.haskell}
 [root@localhost ~]# systemctl start postgresql-10.service
 ```
@@ -329,7 +329,7 @@ PostgreSQLが正しく起動されている場合、ステータスは以下の�
 （以下略）
 ```
 
-デフォルトでは手動起動になっているので、システムの起動毎に自動的に起動したい場合にはsystemctlで`enable`サブコマンドを指定します。自動起動を無効にする場合は`disable`を指定します。
+デフォルトでは手動起動になっているので、システムの起動毎に自動的に起動したい場合にはsystemctlでenableサブコマンドを指定します。自動起動を無効にする場合はdisableを指定します。
 ``` {.haskell}
 [root@localhost ~]# systemctl enable postgresql-10.service
 Created symlink from /etc/systemd/system/multi-user.target.wants/postgresql-10.service to /usr/lib/systemd/system/postgresql-10.service.

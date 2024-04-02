@@ -129,7 +129,7 @@ Running transaction
 ```
 
 Webサーバーを起動します。  
-以下の例では、`systemctl`のサブコマンド`list-unit-files`でhttpdの起動に用いるサービス名を確認し、`start`でサービスを起動、`status`や`ps`コマンドで正常に起動したことを確認しています。
+以下の例では、systemctlのサブコマンドlist-unit-filesでhttpdの起動に用いるサービス名を確認し、startでサービスを起動、statusやpsコマンドで正常に起動したことを確認しています。
 ``` {.haskell}
 [root@localhost ~]# systemctl list-unit-files | grep httpd
 httpd.service                                 disabled
@@ -171,7 +171,7 @@ http://localhost/
 
 同じマシンでWebブラウザを実行できない場合には、別のマシンからWebサーバーに接続してください。
 
-上記URLにアクセスすると、`index.php`に書いておいた`phpinfo()`関数が実行され、インストールされているPHPの詳細な情報がWebページで表示されます。
+上記URLにアクセスすると、index.phpに書いておいたphpinfo()関数が実行され、インストールされているPHPの詳細な情報がWebページで表示されます。
 
 ![phpinfo](./Pict/php-01.png)
 
@@ -203,7 +203,7 @@ strtoupper() | 引数の文字列をすべて大文字にします。
 ### データ検索ページの作成
 サンプルアプリケーションを作成します。ossdbデータベースにPostgreSQLユーザーpostgresで接続し、SQL文「SELECT * FROM prod」を実行します。実行した結果はHTMLのテーブルとして加工し、Webブラウザで表示します。
 
-以下のサンプルを適当なファイル名（例 selectProd.php）でディレクトリ/var/www/htmlに保存します。作業はユーザーrootで行うか、ディレクトリ/var/www/htmlのパーミッションを変更して適当なユーザーで行ってください。データベースへの接続情報を記述している`pg_connect`関数内のパスワードは、各自で設定済みのpostgresユーザーのパスワードに変更してください。
+以下のサンプルを適当なファイル名（例 selectProd.php）でディレクトリ/var/www/htmlに保存します。作業はユーザーrootで行うか、ディレクトリ/var/www/htmlのパーミッションを変更して適当なユーザーで行ってください。データベースへの接続情報を記述しているpg_connect関数内のパスワードは、各自で設定済みのpostgresユーザーのパスワードに変更してください。
 
 selectProd.php
 ``` {.haskell}
@@ -257,7 +257,7 @@ http://localhost/selectProd.php
 ![selectProd](./Pict/php-02.png)
 
 ### フォームからのデータの取得方法
-HTMLフォームに入力されたデータをPHPで取得するには、`$_POST`変数を使用します。HTMLフォームからACTIONとして呼び出されたPHPはPOSTメソッドで送信された値を連想配列として保持しています。`$_POST`変数はこの連想配列にアクセスするための変数です。
+HTMLフォームに入力されたデータをPHPで取得するには、$_POST変数を使用します。HTMLフォームからACTIONとして呼び出されたPHPはPOSTメソッドで送信された値を連想配列として保持しています。$_POST変数はこの連想配列にアクセスするための変数です。
 動作を確認するために、HTMLフォームのtest.htmlとPHPプログラムtest.phpを/var/www/htmlディレクトリに作成します。
 
 test.html
@@ -290,7 +290,7 @@ http://localhost/test.html
 
 
 ### フォームからの入力をSQL文に組み込む
-PHPでSQL文を実行するには、一度SQL文を文字列変数に代入し、その変数をpg_query関数に渡します。文字列変数に代入する際にフォームからの入力をSQL文に組み込めば、フォーム入力に応じて動作を変更することができます。selectForm.phpではデータベースにアクセスしますので、`pg_connect`関数内のパスワードは各自で設定したパスワードに変更します。
+PHPでSQL文を実行するには、一度SQL文を文字列変数に代入し、その変数をpg_query関数に渡します。文字列変数に代入する際にフォームからの入力をSQL文に組み込めば、フォーム入力に応じて動作を変更することができます。selectForm.phpではデータベースにアクセスしますので、pg_connect関数内のパスワードは各自で設定したパスワードに変更します。
 
 selectForm.html
 ``` {.haskell}

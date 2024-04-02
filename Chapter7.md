@@ -287,7 +287,7 @@ ossdb=# SELECT * FROM prod WHERE price IS NOT NULL;
 
 ### NULLの集約関数での取り扱い
 各種集約関数ではNULLは無視されることがあります。
-以下の例では、`count(*)`で表そのものの行数を数える場合と、`count(price)`でprice列の値の数を数える場合を比べています。
+以下の例では、count(*)で表そのものの行数を数える場合と、count(price)でprice列の値の数を数える場合を比べています。
 
 ``` {.haskell}
 ossdb=# SELECT count(*) FROM prod;
@@ -303,8 +303,8 @@ ossdb=# SELECT count(price) FROM prod;
 (1 row)
 ```
 
-price列の合計`sum(price)`や最大、最小`max(price)`などの集約関数で計算結果に影響しないことは明白ですが、平均`avg(price)`ではどうでしょうか。  
-``（みかんの金額「50円」＋ぶどうの金額「不明」）÷ 2行 = 25円``  
+price列の合計sum(price)や最大、最小max(price)などの集約関数で計算結果に影響しないことは明白ですが、平均avg(price)ではどうでしょうか。  
+（みかんの金額「50円」＋ぶどうの金額「不明」）÷ 2行 = 25円  
 と思いませんか？
 ``` {.haskell}
 ossdb=# SELECT sum(price),count(price),avg(price) FROM prod;
@@ -314,14 +314,14 @@ ossdb=# SELECT sum(price),count(price),avg(price) FROM prod;
 (1 row)
 ```
 
-実際には、先ほどの`count(price)`の結果からもわかる通り、NULLは平均値を算出するための行数には含められず、  
-``50円 ÷ 1行 = 50円``  
+実際には、先ほどのcount(price)の結果からもわかる通り、NULLは平均値を算出するための行数には含められず、  
+50円 ÷ 1行 = 50円  
 という結果になりました。
 
 ### 空文字
 NULLと似たものとして「空文字」があります。空文字は、INSERT文で文字列型の列データに「''」（シングルクォートを2つ連続）で指定できます。空文字はNULLではないので、NOT NULL制約に違反しません。
 
-以下の例では、prod表のprod_name列に空文字の行データを入力しています。price列はNULLとしました。prod_name列を`IS NULL`条件で検索しましたが、空文字は「空の値がある」状態ですので、IS NULL演算子では検索されません。一方、NULLを挿入したprice列は`IS NULL`で検索されます。
+以下の例では、prod表のprod_name列に空文字の行データを入力しています。price列はNULLとしました。prod_name列をIS NULL条件で検索しましたが、空文字は「空の値がある」状態ですので、IS NULL演算子では検索されません。一方、NULLを挿入したprice列はIS NULLで検索されます。
 ``` {.haskell}
 ossdb=# INSERT INTO prod (prod_id,prod_name) VALUES (7,'');
 INSERT 0 1
