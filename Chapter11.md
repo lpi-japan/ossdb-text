@@ -215,7 +215,7 @@ if (!$dbcon) {
         die("<hr>pg_connect 失敗<hr>");
 }
 $sql =  "SELECT * FROM prod";
-echo  "SQL=$sql<brx>\n";
+echo  "SQL=$sql<br>\\n";
 $result = pg_query ($dbcon, $sql);
 if (!$result) {
         pg_last_error($dbcon);
@@ -316,7 +316,7 @@ if (!$dbcon) {
 }
 $table = $_POST['table'];
 $sql =  "SELECT * FROM $table";
-echo  "SQL=$sql<brx>\n";
+echo  "SQL=$sql<br>\\n";
 $result = pg_query ($dbcon, $sql);
 if (!$result) {
         pg_last_error($dbcon);
