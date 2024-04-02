@@ -7,7 +7,7 @@
 主キーは一意キーである他に、必ず値が入っている必要があります。必ず値が入っていることを「NULLではない」(NOT NULL)と呼びます。NULLについての詳細は後述します。
 
 以下の例では、orders表のorder_id列を条件にすれば特定の一行だけを取り出すことができますが、customer_id列を条件にすると複数の行データが取り出されてしまいます。この場合、order_id列は一意の値を持つので主キーとして使用できますが、customer_id列は一意の値を持つことはできないと考えられますので、主キーにはなりません。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM orders WHERE order_id = 1;
  order_id |         order_date         | customer_id | prod_id | qty
 ----------+----------------------------+-------------+---------+-----
@@ -26,13 +26,13 @@ ossdb=# SELECT * FROM orders WHERE customer_id = 2;
 主キーを指定するには、CREATE TABLE文で表の作成時に指定するか、すでに作成されている表に対してALTER TABLE文で指定します。
 
 #### 主キーを指定するALTER TABLE文の構文
-``` {.haskell}
+```
 ALTER TABLE 表名 ADD PRIMARY KEY　(列名[,...])
 ```
 
 以下の例では、prod表のprod_id列を主キーに指定しています。主キーを指定すると、検索を高速化するためのインデックスが自動的に（暗黙的に）作成されます。
 主キーに指定された列には、NOT NULL制約が設定され、「列名_pkey」という名前の一意インデックスが作成されます。
-``` {.haskell}
+```
 ossdb=# ALTER TABLE prod ADD PRIMARY KEY(prod_id);
 ALTER TABLE
 ossdb=# \d prod
@@ -47,7 +47,7 @@ Indexes:
 ```
 
 orders表のorder_id列、customer表のcustomer_id列も主キーとして指定しておきます。
-``` {.haskell}
+```
 ossdb=# ALTER TABLE orders ADD PRIMARY KEY(order_id);
 ALTER TABLE
 ossdb=# ALTER TABLE customer ADD PRIMARY KEY(customer_id);
@@ -55,7 +55,7 @@ ALTER TABLE
 ```
 
 参考： 主キーを指定する際、以前のバージョンではインデックスを暗黙的に作成する旨のメッセージが記録されていましたが、PostgreSQL 10ではメッセージ出力はありません。管理者にとって重要なメッセージに注力されるよう、バージョンによってメッセージの影響度が見直されています。
-``` {.haskell}
+```
 ossdb=# SHOW client_min_messages ;
  client_min_messages
 ---------------------
@@ -74,7 +74,7 @@ ALTER TABLE
 主キーを指定すると、「一意」(UNIQUE)で「NULLではない」(NOT NULL)という制約が設定されます。つまり、そのような制約に違反する行データの入力などができなくなります。
 
 以下の例では、prod表の主キーであるprod_idの値を指定しない（NULLになる）INSERT文や、既に存在している値を指定しているINSERT文がエラーになっています。
-``` {.haskell}
+```
 ossdb=# INSERT INTO prod (prod_name,price) VALUES ('すいか',60);
 ERROR:  null value in column "prod_id" violates not-null constraint
 DETAIL:  Failing row contains (null, すいか, 60).
@@ -98,7 +98,7 @@ ossdb=# SELECT * FROM prod;
 「主キーは一意に行データを識別する1つ以上の列」と説明した通り、複数列からなる主キーを設定することも可能です。これを複合主キー、または複合キーと呼びます。
 
 たとえば「1年2組出席番号3番」のように、複数の要素から成り立つような場合が複合主キーの良い例です。
-``` {.haskell}
+```
 ossdb=# CREATE TABLE student (class TEXT,no INTEGER,name TEXT);
 CREATE TABLE
 ossdb=# ALTER TABLE student ADD PRIMARY KEY (class,no);
@@ -125,12 +125,12 @@ Indexes:
 外部キーを指定するには、CREATE TABLE文で表の作成時に指定するか、すでに作成されている表に対してALTER TABLE文で指定します。
 
 #### 外部キーを指定するALTER TABLE文の構文
-``` {.haskell}
+```
 ALTER TABLE 表名 ADD FOREIGN KEY (列名) REFERENCES 参照表 (参照キー名)
 ```
 
 以下の例では、orders表のcustomer_id列とprod_id列に外部キーを設定しています。
-``` {.haskell}
+```
 ossdb=# ALTER TABLE orders ADD FOREIGN KEY (customer_id) REFERENCES customer(customer_id);
 ALTER TABLE
 ossdb=# ALTER TABLE orders ADD FOREIGN KEY (prod_id) REFERENCES prod(prod_id);
@@ -164,7 +164,7 @@ Referenced by:
 
 以下の例では、まずcustomer表にcustomer_id列の値が4の行データがないため、外部キー制約に違反してエラーになっています。
 次に、prod表にprod_id列の値が6の行データがないため、外部キー制約に違反してエラーになっています。
-``` {.haskell}
+```
 ossdb=# INSERT INTO orders(order_id,order_date,customer_id,prod_id,qty)
 VALUES (6,now(),4,6,6);
 ERROR:  insert or update on table "orders" violates foreign key constraint "orders_customer_id_fkey"
@@ -204,7 +204,7 @@ WHERE order_id = 6;
 
 以下の例は、prod表、customer表、orders表に主キー、外部キーを設定するCREATE TABLE文です。外部キーを設定するには参照キーとなる他の表の主キーが必要となるため、先に参照先の表を作成します。
 
-``` {.haskell}
+```
 ossdb=# DROP TABLE orders;
 ossdb=# DROP TABLE prod;
 ossdb=# DROP TABLE customer;
@@ -247,7 +247,7 @@ NULL（ヌル）は「未知」または「未定」と定義されるもので�
 列にNULLを許さない場合、表定義でNOT NULL制約を設定します。NOT NULL制約が設定された列には必ず値が必要となります。主キーは必ず値を必要とするので、主キーを定義すると自動的にNOT NULL制約が設定されます。
 
 以下の例では、customer表のcustomer_id列が主キーとして設定されているため、NOT NULL制約が設定されています。
-``` {.haskell}
+```
 ossdb=# \d customer
                  Table "public.customer"
     Column     |  Type   | Collation | Nullable | Default
@@ -262,7 +262,7 @@ Referenced by:
 
 ### NULLの判定
 NULLは値を持たないため、通常の演算子を使った条件式では検索することができません。列の値がNULLかどうかを条件判定するには、IS NULL演算子、IS NOT NULL演算子を使用します。以下の例では、price列がNULLでない行として「みかん」を、price列がNULLである行「ぶどう」をINSERTし、それぞれ検索しています。（prod表にデータがない状態からINSERTしています。）
-``` {.haskell}
+```
 ossdb=# INSERT INTO prod VALUES (1,'みかん',50);
 ossdb=# INSERT INTO prod VALUES (6,'ぶどう',NULL);
 ossdb=# SELECT * FROM prod;
@@ -289,7 +289,7 @@ ossdb=# SELECT * FROM prod WHERE price IS NOT NULL;
 各種集約関数ではNULLは無視されることがあります。
 以下の例では、count(*)で表そのものの行数を数える場合と、count(price)でprice列の値の数を数える場合を比べています。
 
-``` {.haskell}
+```
 ossdb=# SELECT count(*) FROM prod;
  count
 -------
@@ -306,7 +306,7 @@ ossdb=# SELECT count(price) FROM prod;
 price列の合計sum(price)や最大、最小max(price)などの集約関数で計算結果に影響しないことは明白ですが、平均avg(price)ではどうでしょうか。  
 （みかんの金額「50円」＋ぶどうの金額「不明」）÷ 2行 = 25円  
 と思いませんか？
-``` {.haskell}
+```
 ossdb=# SELECT sum(price),count(price),avg(price) FROM prod;
  sum | count |         avg
 -----+-------+---------------------
@@ -322,7 +322,7 @@ ossdb=# SELECT sum(price),count(price),avg(price) FROM prod;
 NULLと似たものとして「空文字」があります。空文字は、INSERT文で文字列型の列データに「''」（シングルクォートを2つ連続）で指定できます。空文字はNULLではないので、NOT NULL制約に違反しません。
 
 以下の例では、prod表のprod_name列に空文字の行データを入力しています。price列はNULLとしました。prod_name列をIS NULL条件で検索しましたが、空文字は「空の値がある」状態ですので、IS NULL演算子では検索されません。一方、NULLを挿入したprice列はIS NULLで検索されます。
-``` {.haskell}
+```
 ossdb=# INSERT INTO prod (prod_id,prod_name) VALUES (7,'');
 INSERT 0 1
 ossdb=# SELECT * FROM prod;
@@ -353,7 +353,7 @@ ossdb=# SELECT * FROM prod WHERE price IS NULL;
 シーケンスを作成するには、CREATE SEQUENCE文を使用します。
 
 #### シーケンスの作成構文
-``` {.haskell}
+```
 CREATE SEQUENCE シーケンス名;
 ```
 
@@ -370,24 +370,24 @@ CREATE SEQUENCE シーケンス名;
 
 * 現在の値を返す  
 シーケンスの現在の値を返します。シーケンスの値は更新されません。セッション内で一度もシーケンスの値を取り出していない場合はエラーになります。
-``` {.haskell}
+```
 currval('シーケンス名')
 ```
 
 * 次の値を返し、値を更新する  
 現在値の次の値を返して、シーケンスの値を次の値に更新します。デフォルトではシーケンスの値は1ずつ増えていくので、現在値が1だった時には次の値は2となります。最大値に達すると、デフォルトではnextvalの呼び出しはエラーになります。
-``` {.haskell}
+```
 nextval('シーケンス名')
 ```
 
 * シーケンスの値を設定する  
 シーケンスの値を指定した値に設定します。
-``` {.haskell}
+```
 setval('シーケンス名',値)
 ```
 
 以下の例では、order_id_seqシーケンスから値を取り出しています。
-``` {.haskell}
+```
 ossdb=# CREATE SEQUENCE order_id_seq;
 CREATE SEQUENCE
 ossdb=# SELECT currval('order_id_seq');
@@ -412,7 +412,7 @@ ossdb=# SELECT nextval('order_id_seq');
 ```
 
 setval()関数を使うと、シーケンスの値を再設定できます。設定可能な値は1からの値です。
-``` {.haskell}
+```
 ossdb=# SELECT setval('order_id_seq',0);
 ERROR:  setval: value 0 is out of bounds for sequence "order_id_seq" (1..9223372036854775807)
 ossdb=# SELECT setval('order_id_seq',100);
@@ -438,7 +438,7 @@ ossdb=# SELECT nextval('order_id_seq');
 シーケンスは、たとえばINSERT文に組み込んで使用します。
 
 以下の例では、orders表へ行データを入力するINSERT文で、order_id列の値をorder_id_seqシーケンスから取得しています。
-``` {.haskell}
+```
 ossdb=# TRUNCATE orders;
 TRUNCATE TABLE
 ossdb=# SELECT setval('order_id_seq',100);
@@ -463,7 +463,7 @@ ossdb=# SELECT * FROM orders;
 
 以下の例では、INSERT文がエラーで失敗しても、シーケンスの値が進んでしまって次のINSERT文で飛び番が発生しています。
 
-``` {.haskell}
+```
 ossdb=# SELECT currval('order_id_seq');
  currval
 ---------

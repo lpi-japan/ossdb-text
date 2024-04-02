@@ -13,7 +13,7 @@ PostgreSQLでは、データをいくつかのデータ型に分類して保管�
 整数のデータ型です。-2147483648から+2147483647までの整数値を格納することができます。整数値のため、小数点以下の値は格納されません。小数点以下の値は四捨五入されます。
 
 以下の例では、値を30.4でINSERTすると小数点以下は四捨五入されて30で格納されています。値を30.5にUPDATEすると四捨五入されて31で格納されています。
-``` {.haskell}
+```
 ossdb=# INSERT INTO prod(prod_id,prod_name,price) VALUES (4,'バナナ',30.4);
 INSERT 0 1
 ossdb=# SELECT * FROM prod WHERE prod_id = 4;
@@ -33,7 +33,7 @@ ossdb=# SELECT * FROM prod WHERE prod_id = 4;
 
 ### numeric型
 任意の精度の数値データ型です。小数点以下の値を含む数値を格納することができます。小数点より上は131072桁まで、小数点より下は16383桁までの桁数を指定できます。桁数を指定する場合、整数と小数点以下を合わせた桁数を「精度」、小数点以下の桁数を「位取り」と呼び、以下のように指定します。
-``` {.haskell}
+```
 numeric(精度,位取り)
 ```
 
@@ -41,7 +41,7 @@ numeric(精度,位取り)
 
 以下の例では、numeric型のid列を持ったnumeric_test表を作成しています。整数部は4桁なので、5桁の値である19999を指定したINSERT文はエラーとなっています。
 
-``` {.haskell}
+```
 ossdb=# CREATE TABLE numeric_test(
 id numeric(6,2));
 CREATE TABLE
@@ -82,7 +82,7 @@ PostgreSQLはinteger型、numeric型以外の数値型も備えています。�
 文字数に上限のある可変長の文字列型です。可変長ですから、文字数制限内であれば何文字の文字データでも構いません。上限を超える文字列を格納しようとするとエラーになります。
 
 以下の例では、長さ3のvarchar型を持ったvarchar_test表を作成しています。文字数の長さは半角、全角にかかわらず長さ3（3文字）までを許容します。
-``` {.haskell}
+```
 ossdb=# CREATE TABLE varchar_test(
 varstring varchar(3));
 CREATE TABLE
@@ -106,7 +106,7 @@ ossdb=# SELECT * FROM varchar_test;
 文字数に上限のある固定長の文字列型です。固定長のため、足りない分の文字数は空白で埋められます。
 
 以下の例では、長さ3のchar型を持ったchar_test表を作成しています。一文字を格納すると末尾まで空白で埋められており、後方一致検索を使って空白を検索することで確認できます。
-``` {.haskell}
+```
 ossdb=# CREATE TABLE char_test(
 string char(3));
 CREATE TABLE
@@ -120,7 +120,7 @@ ossdb=# SELECT * FROM char_test WHERE string LIKE '% ';
 ```
 上限である3文字を超える文字列を格納しようとするとエラーになります。
 文字列数の長さは半角、全角にかかわらず長さ3（3文字）までです。
-``` {.haskell}
+```
 ossdb=# INSERT INTO char_test VALUES ('ABC');
 INSERT 0 1
 ossdb=# INSERT INTO char_test VALUES ('あいうえお');
@@ -161,7 +161,7 @@ time | 時刻のみ格納（日付データを持たず日付型への変換不�
 timestamp | 日付と時刻を格納
 
 以下の例では、date型、time型、timestamp型の3つの列を持ったdate_test表を作成しています。それぞれに現在時刻を挿入すると、各データ型で定められた「日付」「時刻」「日付と時刻」が格納されていることを確認します。（現在時刻を取得するnow()関数については後述します。）
-``` {.haskell}
+```
 ossdb=# CREATE TABLE date_test ( d_test  date,
                                  t_test  time,
                                  ts_test timestamp);

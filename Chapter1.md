@@ -6,7 +6,7 @@
 yumやRPMでPostgreSQLをインストールすると、OSユーザー postgres が内部的に作成され各プログラムの実行権限が付与されます。この postgres ユーザーをあらかじめ作成しておくことで、OSユーザーとしての設定（ホームディレクトリや環境変数など）の管理がしやすくなりますので本書ではそのように進めます。
 
 以下ではuseraddコマンドでOSユーザー postgres を作成、passwdコマンドでユーザーのパスワードを設定しています。その後、postgresユーザーにログインしてプロンプトの表示やホームディレクトリ位置を確認し、ログアウトしておきます。
-``` {.haskell}
+```
 [root@localhost ~]# useradd postgres
 [root@localhost ~]# passwd postgres
 ユーザー postgres のパスワードを変更。
@@ -22,7 +22,7 @@ passwd: すべての認証トークンが正しく更新できました。
 
 ### セキュリティの設定
 セキュリティの設定では、外部からの攻撃などを受けない環境であることを確認した上で、ファイアーウォールやSELinuxは無効にしていることを想定しています。
-``` {.haskell}
+```
 [root@localhost ~]# setenforce 0
 [root@localhost ~]# systemctl stop firewalld.service
 ```
@@ -44,7 +44,7 @@ PostgreSQL RPM Building Project
 https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-centos10-10-2.noarch.rpm
 
 これをLinuxサーバー上のyum installコマンドで指定します。
-``` {.haskell}
+```
 [root@localhost ~]# yum install https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-centos10-10-2.noarch.rpm
 読み込んだプラグイン:fastestmirror, langpacks
 pgdg-centos10-10-2.noarch.rpm                                                                     | 4.6 kB  00:00:00
@@ -69,7 +69,7 @@ Running transaction
 ### 手順2　PostgreSQLのインストール
 手順1でPostgreSQL 10のyumリポジトリが利用できるようになりましたので、必要なパッケージを指定してインストールします。
 
-``` {.haskell}
+```
 [root@localhost ~]# yum install postgresql10 postgresql10-server postgresql10-contrib postgresql10-devel
 読み込んだプラグイン:fastestmirror, langpacks
 pgdg10                                                                          | 4.1 kB  00:00:00
@@ -160,7 +160,7 @@ Running transaction
 ```
 
 インストールが完了すると、以下の通りディレクトリとバイナリが配置されています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ ls /usr/pgsql-10/
 bin  doc  include  lib  share
 [postgres@localhost ~]$ ls /usr/pgsql-10/bin
@@ -184,7 +184,7 @@ PGHOME | PostgreSQLのインストールディレクトリを指定します。
 PATH | PostgreSQLインストールディレクトリ配下のbinを指定します。
 
 以下では、postgresqlユーザーの環境変数設定ファイル .bash_profile を編集し、PGDATA、PGHOME、PATH環境変数を追加しています。
-``` {.haskell}
+```
 [root@localhost ~]# su - postgres
 [postgres@localhost ~]$ vi .bash_profile
 ---------
@@ -211,7 +211,7 @@ export PATH=$PGHOME/bin:.:$PATH
 
 #### 起動スクリプトの確認
 yumやRPMでPostgreSQLをインストールすると、起動停止スクリプトが自動作成されます。先の手順で設定した環境変数PGDATAが Location of database directory と一致していることを確認します。本書の範囲では変更する必要はありません。
-``` {.haskell}
+```
 [root@localhost ~]# vi /usr/lib/systemd/system/postgresql-10.service
 ------
 # Location of database directory
@@ -245,7 +245,7 @@ postgresql10-contrib | 拡張機能（本書の範囲では必須ではありま
 
 #### RPMコマンドでインストール
 実際にダウンロードするファイルはpostgresql10-10.1-1PGDG.rhel7.x86_64.rpmのようなRPM形式です。RPMコマンドでインストールします。postgresql10-libs、postgresql10-server、postgresql10-contribも同様にインストールします。
-``` {.haskell}
+```
 [root@localhost ~]# cd <ファイル配置先ディレクトリ>
 [root@localhost ~]# rpm -ivh postgresql10-10.1-1PGDG.rhel7.x86_64.rpm
 ```
@@ -264,7 +264,7 @@ initdb時、環境変数PGDATAが参照され、ここで指定した位置に�
 
 ### initdbコマンドの実行
 以下の例では、前述の手順の従ってデータディレクトリ位置が環境変数PGDATAに設定された状態でinitdbコマンドを実行しています。initdb完了後、cdコマンドでデータディレクトリに移動し、作成されたファイルを確認しています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ env | grep PGDATA
 PGDATA=/var/lib/pgsql/10/data
 [postgres@localhost ~]$ initdb -E utf8 --no-locale
@@ -304,12 +304,12 @@ global      pg_hba.conf   pg_multixact   pg_serial    pg_stat_tmp   pg_twophase 
 
 ## データベースを起動
 PostgreSQLの起動・停止にはsystemctlコマンドを使用します。
-``` {.haskell}
+```
 [root@localhost ~]# systemctl start postgresql-10.service
 ```
 
 PostgreSQLが正しく起動されている場合、ステータスは以下のようになります。
-``` {.haskell}
+```
 [root@localhost ~]# systemctl status postgresql-10.service
 ● postgresql-10.service - PostgreSQL 10 database server
    Loaded: loaded (/usr/lib/systemd/system/postgresql-10.service; disabled; vendor preset: disabled)
@@ -330,7 +330,7 @@ PostgreSQLが正しく起動されている場合、ステータスは以下の�
 ```
 
 デフォルトでは手動起動になっているので、システムの起動毎に自動的に起動したい場合にはsystemctlでenableサブコマンドを指定します。自動起動を無効にする場合はdisableを指定します。
-``` {.haskell}
+```
 [root@localhost ~]# systemctl enable postgresql-10.service
 Created symlink from /etc/systemd/system/multi-user.target.wants/postgresql-10.service to /usr/lib/systemd/system/postgresql-10.service.
 [root@localhost ~]# systemctl list-unit-files | grep postgres
@@ -339,12 +339,12 @@ postgresql-10.service                         enabled
 
 ## 動作の確認
 データベースの動作確認を行います。PostgreSQLサーバーに対するすべての操作はpostgresユーザーで実施します。
-``` {.haskell}
+```
 [root@localhost ~]# su - postgres
 ```
 
 psqlに-lオプションを付けて実行し、作成されているデータベースを確認します。
-``` {.haskell}
+```
 [postgres@localhost ~]$ psql -l
                              List of databases
    Name    |  Owner   | Encoding | Collate | Ctype |   Access privileges
@@ -364,7 +364,7 @@ psqlに-lオプションを付けて実行し、作成されているデータ�
 
 ## データベースの作成
 実習用のデータベースossdbを作成します。データベースの作成はOSユーザーpostgresで行います。作成後、接続できることを確認しておきます。
-``` {.haskell}
+```
 [root@localhost ~]# su - postgres
 [postgres@localhost ~]$ createdb ossdb
 [postgres@localhost ~]$ psql ossdb
@@ -378,7 +378,7 @@ ossdb=#
 表を作成します。prod表、customer表、orders表の3つを作成します。
 
 以下のSQL文をpsqlを実行している端末にコピー＆ペーストすれば、必要な表が作成されます。
-``` {.haskell}
+```
 CREATE TABLE prod
 (prod_id   integer,
  prod_name text,
@@ -398,7 +398,7 @@ CREATE TABLE orders
 
 
 以下は実行例です。
-``` {.haskell}
+```
 ossdb=# CREATE TABLE prod
  (prod_id   integer,
   prod_name text,
@@ -410,7 +410,7 @@ CREATE TABLE
 ## データの入力
 作成した表に初期データを入力します。以下のSQL文をpsqlを実行している端末にコピー＆ペーストすれば、初期データがそれぞれの表に入力されます。
 
-``` {.haskell}
+```
 -- 複数行を同時にINSERT
 INSERT INTO customer(customer_id,customer_name) VALUES
  (1,'佐藤商事'),
@@ -431,7 +431,7 @@ INSERT INTO orders(order_id,order_date,customer_id,prod_id,qty) VALUES (5,now(),
 ```
 
 以下は実行例です。
-``` {.haskell}
+```
 ossdb=# -- 複数行を同時にINSERT
 ossdb=# INSERT INTO customer(customer_id,customer_name) VALUES
  (1,'佐藤商事'),

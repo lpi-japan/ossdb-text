@@ -18,7 +18,7 @@
 
 * 演習1-1： すべての商品の価格を10%アップします  
  * 商品表の価格列を指定してUPDATE  
-``` {.haskell}
+```
 ossdb=# \d prod
                  Table "public.prod"
   Column   |  Type   | Collation | Nullable | Default
@@ -49,7 +49,7 @@ ossdb=# SELECT * FROM prod;
 
 * 演習1-2： 価格が100以上の商品の価格を元に戻します  
  * 価格が100以上の商品を指定してUPDATE  
-``` {.haskell}
+```
 ossdb=# UPDATE prod SET price = price/1.1 WHERE price >= 100;
 UPDATE 1
 ossdb=# SELECT * FROM prod;
@@ -64,7 +64,7 @@ ossdb=# SELECT * FROM prod;
 
 * 演習1-3： prod表のデータをファイルにコピーします  
  * COPYコマンドでデータをファイルにセーブ  
-``` {.haskell}
+```
 ossdb=# COPY prod TO '/home/postgres/prod.csv' (FORMAT csv);
 COPY 4
 ossdb=# \! ls -l prod.csv
@@ -73,7 +73,7 @@ ossdb=# \! ls -l prod.csv
 
 * 演習1-4： prod表を削除します  
  * 表の削除にはDROP TABLEを使用  
-``` {.haskell}
+```
 ossdb=# DROP TABLE prod;
 DROP TABLE
 ```
@@ -81,7 +81,7 @@ DROP TABLE
 * 演習1-5： 表を再度作成します  
  * 表の作成時は列ごとに格納するデータに合わせた型を指定する  
  * IDのような整数にはinteger型、文字にはtext型、計算に用いる数値はnumeric型  
-``` {.haskell}
+```
 ossdb=# CREATE TABLE prod ( prod_id     integer,
                             prod_name   text,
                             price       numeric  );
@@ -90,7 +90,7 @@ CREATE TABLE
 
 * 演習1-6： データをファイルからコピーします  
  * セーブ時と同様、COPYコマンドを使用  
-``` {.haskell}
+```
 ossdb=# COPY prod FROM '/home/postgres/prod.csv' (FORMAT csv);
 COPY 4
 ossdb=# SELECT * FROM prod;
@@ -117,7 +117,7 @@ ossdb=# SELECT * FROM prod;
 
 * 郵便番号データのダウンロード  
 以下の例は、wgetコマンドを使って郵便番号CSVデータをダウンロードして、unzipコマンドで解凍しています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ wget http://www.post.japanpost.jp/zipcode/dl/kogaki/zip/ken_all.zip
 --2018-01-29 01:14:02--  http://www.post.japanpost.jp/zipcode/dl/kogaki/zip/ken_all.zip
 www.post.japanpost.jp (www.post.japanpost.jp) をDNSに問いあわせています... 43.253.37.203
@@ -165,7 +165,7 @@ Archive:  ken_all.zip
 
 * 郵便番号データ用の表定義  
 以下の例は、文字列データをchar型およびtext型で定義した表作成のためのCREATE TABLE文です。
-``` {.haskell}
+```
 ossdb=# CREATE TABLE zip (
                           lgcode    char(5),
                           oldzip    char(5),
@@ -188,7 +188,7 @@ CREATE TABLE
 
 * 郵便番号データサンプル  
 データは以下のような内容です。
-``` {.haskell}
+```
 [postgres@localhost ~]$ head -5 KEN_ALL_UTF8.CSV
 01101,"060  ","0600000","ホツカイドウ","サツポロシチユウオウク","イカニケイサイガナイバアイ","北海道","札幌市中央区","以下に掲載がない場合",0,0,0,0,0,0
 01101,"064  ","0640941","ホツカイドウ","サツポロシチユウオウク","アサヒガオカ","北海道","札幌市中央区","旭ケ丘",0,0,1,0,0,0
@@ -205,7 +205,7 @@ CREATE TABLE
 * psqlメタコマンドを使用する方法  
 \encodingメタコマンドを使用すると、psqlが扱うデータの文字コードを変更できます。  
 以下の例は、\encodingメタコマンドでpsqlが扱うデータの文字コードをシフトJISに変更しています。データベースはUTF-8で格納するので、シフトJISからUTF-8への文字コード変換が行われます。
-``` {.haskell}
+```
 ossdb=# \encoding SJIS
 ossdb=# \copy zip from KEN_ALL.CSV with csv
 COPY 124165
@@ -215,15 +215,15 @@ ossdb=# \encoding UTF-8
 * Linuxのコマンドを使用する方法  
 Linuxであればnkfコマンドで文字コード変換が行えます。他にiconvコマンドも使用できますが、改行コードを別途dos2unixコマンドで変換する必要があります。Linux環境によってはnkfコマンドがインストールされていない場合がありますので、その場合にはyumコマンドでインストールしてください。
  * nkfコマンドで郵便番号データをUTF-8に変換
-``` {.haskell}
+```
 [postgres@localhost ~]$ nkf -w KEN_ALL.CSV > KEN_ALL_UTF8.CSV
 ```
  * iconvコマンドとdos2unixコマンドで郵便番号データをUTF-8に変換
-``` {.haskell}
+```
 [postgres@localhost ~]$ iconv -f SHIFT-JIS -t UTF-8 KEN_ALL.CSV | dos2unix > KEN_ALL_UTF8.CSV
 ```
  * 変換後、psqlから\copyメタコマンドでロードします。
-``` {.haskell}
+```
 ossdb=# \copy zip from KEN_ALL_UTF8.CSV with csv
 ```
 
@@ -232,7 +232,7 @@ ossdb=# \copy zip from KEN_ALL_UTF8.CSV with csv
 
 以下の例では、現在使用されている郵便番号のデータが格納されているnewzip列で絞り込み検索を行っています。
 
-``` {.haskell}
+```
 ossdb=# SELECT * FROM zip WHERE newzip = '1500002';
  lgcode | oldzip | newzip  | prefkana | citykana | areakana |  pref  |  city  | area | largearea | koaza | choume | smallarea | change | reason
 --------+--------+---------+----------+----------+----------+--------+--------+------+-----------+-------+--------+-----------+--------+--------

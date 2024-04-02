@@ -2,7 +2,7 @@
 データベースの操作に使用するSQL文には、他にも様々な文法が存在しています。この章では、特に多用するSQL文の文法について解説します。
 
 * 以降の実行例は、prod表が以下の状態になっている前提で記載します。
-``` {.haskell}
+```
 ossdb=# DROP TABLE prod;
 DROP TABLE
 ossdb=# CREATE TABLE prod ( prod_id     integer,
@@ -32,7 +32,7 @@ ossdb=# SELECT * FROM prod;
 SELECT文などに指定するWHERE句の条件で、複数の条件を設定したい場合にはAND演算子、OR演算子が使用できます。  
 AND演算子は指定した条件が両方満たされる場合、OR演算子は指定した条件のいずれかが満たされる場合にSQL文の結果が表示されます。  
 以下の例は、prod表のprice列の値が50よりも大きく、100よりも小さい行データのみを検索しています。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM prod WHERE price > 50 AND price < 100;
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -40,7 +40,7 @@ ossdb=# SELECT * FROM prod WHERE price > 50 AND price < 100;
 (1 row)
 ```
 以下の例は、customer表のcustomer_id列が1または2の行データを検索しています。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM customer WHERE customer_id = 1 OR customer_id = 2;
  customer_id | customer_name
 -------------+---------------
@@ -52,7 +52,7 @@ ossdb=# SELECT * FROM customer WHERE customer_id = 1 OR customer_id = 2;
 * LIKE演算子  
 ある列の値が指定した条件に部分的に一致する行データを取り出します。  
 以下の例では、customer表のcustomer_name列が「鈴木」で始まる行データを検索しています。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM customer WHERE customer_name LIKE '鈴木%';
  customer_id | customer_name
 -------------+---------------
@@ -60,7 +60,7 @@ ossdb=# SELECT * FROM customer WHERE customer_name LIKE '鈴木%';
 (1 row)
 ```
 以下の例では、customer表のcustomer_name列に「商」が含まれる行データを検索しています。前後に%がついているので、値のどこに「商」があっても検索条件に一致します。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM customer WHERE customer_name LIKE '%商%';
  customer_id | customer_name
 -------------+---------------
@@ -80,7 +80,7 @@ ossdb=# SELECT * FROM customer WHERE customer_name LIKE '%商%';
 * BETWEEN演算子  
 ある列の値が指定した2つの条件値の範囲内にあるデータを取り出します。2つの条件値はANDで指定します。条件値そのものも含まれるので「○以上、○以下」という条件であると考えればよいでしょう。  
 以下の例では、prod表のprice列が50から70の間の行データを検索しています。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM prod WHERE price BETWEEN 50 AND 70;
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -106,7 +106,7 @@ ossdb=# SELECT * FROM prod WHERE price BETWEEN 50 AND 70;
 
 * count関数  
 count関数はデータの行数を数える関数です。
-``` {.haskell}
+```
 ossdb=# SELECT count(order_id) FROM orders;
  count
  ------
@@ -116,7 +116,7 @@ ossdb=# SELECT count(order_id) FROM orders;
 
 * sum関数  
 sum関数は指定された列の合計を計算する関数です。
-``` {.haskell}
+```
 ossdb=# SELECT sum(qty) FROM orders;
  sum
  ----
@@ -126,7 +126,7 @@ ossdb=# SELECT sum(qty) FROM orders;
 
 * avg関数  
 avg関数は指定された列の平均を計算する関数です。
-``` {.haskell}
+```
 ossdb=# SELECT avg(qty) FROM orders;
         avg
  -------------------
@@ -136,7 +136,7 @@ ossdb=# SELECT avg(qty) FROM orders;
 
 * max関数  
 max関数は指定された列の最大値を計算する関数です。
-``` {.haskell}
+```
 ossdb=# SELECT max(qty) FROM orders;
  max
  -----
@@ -146,7 +146,7 @@ ossdb=# SELECT max(qty) FROM orders;
 
 * min関数  
 min関数は指定された列の最小値を計算する関数です。
-``` {.haskell}
+```
 ossdb=# SELECT min(qty) FROM orders;
  min
  -----
@@ -157,7 +157,7 @@ ossdb=# SELECT min(qty) FROM orders;
 参考： 文字データの最大/最小  
 文字データの大小関係は、文字コードの並び順により評価されます。  
 以下の例では、「あ」～「お」を表すUTF-8の文字コードを表示し、その順序通りに並べ替えが行われていることを確認しています。max関数やmin関数の結果も並び順に従っていることがわかります。
-``` {.haskell}
+```
 ossdb=# TRUNCATE char_test;
 TRUNCATE TABLE
 ossdb=# INSERT INTO char_test VALUES ('あ'),('い'),('う'),('え'),('お');
@@ -183,7 +183,7 @@ ossdb=# SELECT max(string),min(string) FROM char_test ;
 GROUP BY句を使うと、指定された列で行をグループ化し、それぞれのグループ毎に集約関数の計算を行うことができます。
 
 以下の例は、orders表の行データをprod_id列の値毎にグループ化し、各グループ毎に集約関数で計算を行っています。
-``` {.haskell}
+```
 ossdb=# SELECT prod_id,count(qty),sum(qty),avg(qty),min(qty),max(qty)
 FROM orders
 GROUP BY prod_id;
@@ -200,7 +200,7 @@ prod表では、prod_idの1番は「みかん」でした。みかんが2回販�
 HAVING句を使うと、グループ化した後のグループに対して条件による絞り込みを行うことができます。HAVING句はグループに対しての絞り込みを行うため、比較対象は集約関数である必要があります。
 
 以下の例では、orders表の行データをprod_id列の値毎にグループ化し、qty列の合計値が10未満の結果のみ取得しています。
-``` {.haskell}
+```
 ossdb=# SELECT prod_id,sum(qty) FROM orders
 GROUP BY prod_id;
  prod_id | sum
@@ -234,7 +234,7 @@ HAVING sum(qty) < 10;
 ③優秀な学生というプロモーションの趣旨をどう検索に落とし込むかは担当者の腕の見せ所かと思いますが、ここでは「進学校がある」のような地域性を考え「地域別にみたときのテストの平均点が80点を超える」とします。
 
 SQLを考えると以下のようになるでしょう。
-``` {.haskell}
+```
 SELECT 年齢,地域,count(*),avg(点数)
 FROM   生徒一覧
 WHERE  年齢 BETWEEN 16 AND 18 --------- ② 年齢の条件で分類に関係ないデータを除外
@@ -242,7 +242,7 @@ GROUP BY 年齢,地域--------------------- ① 年齢、地域別に分類
 HAVING avg(点数) >= 80;---------------- ③ 平均点が80点を超えるグループを抽出
 ```
 ここで注目して欲しいのは②の年齢の条件と、③の平均点の条件です。実は、両条件をHAVING句にまとめて書いても良いのです。得られる結果は全く同じです。
-``` {.haskell}
+```
 SELECT 年齢,地域,count(*),avg(点数)
 FROM   生徒一覧
 GROUP BY 年齢,地域
@@ -261,7 +261,7 @@ EXISTS演算子は、副問い合わせの結果が行を1行以上返した場�
 EXISTS演算子では、まず主問い合わせが実行され、返された行データの値が1行ずつ副問い合わせに渡されて実行されます。副問い合わせが行を1行以上返すと、主問い合わせが返した行データが最終的に結果として返されます。
 
 以下の例では、主問い合わせでprod表から1行ずつ行データを取り出し、副問い合わせでorders表に対してprod_id列に同じ値が存在するかを確認します。みかん、りんご、メロンはorders表に行データが存在していますが、prod_id列の値が4のバナナはorders表に行データが存在していないため、主問い合わせの結果として返されません。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM prod;
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -295,7 +295,7 @@ WHERE EXISTS (SELECT * FROM orders WHERE orders.prod_id = prod.prod_id);
 IN演算子は、副問い合わせの結果を主問い合わせのWHERE句の条件に対する値として実行できます。
 
 以下の例では、orders表のqty列の値が5よりも大きい行データのprod_id列の値から、prod表のprod_id列とprod_name列の値を取得しています。
-``` {.haskell}
+```
 ossdb=# SELECT prod_id FROM orders WHERE qty > 5;
  prod_id
 ---------
@@ -319,7 +319,7 @@ WHERE prod_id IN (SELECT prod_id FROM orders WHERE qty > 5);
 日付の形式は国や環境によって異なります。PostgreSQLがどのような日付形式に設定されているかを確認するには、SHOW DATESTYLEを実行します。
 
 以下の例では、ISO書式でMDY、つまり月日年のスタイルであることが分かります。西暦を2桁で表すとき「01-12-05」は何年の何月何日を表しますか？本例では、それを月-日-年で解釈するよう設定されていましたので「1月―12日―2005年」と扱われています。
-``` {.haskell}
+```
 ossdb=# SHOW DATESTYLE;
  DateStyle
 -----------
@@ -333,7 +333,7 @@ ossdb=# select '01-12-05'::date;
 (1 row)
 ```
 なお、DATESTYLEを変更することもできます。日本人にはこちらのほうが馴染みがあるであろう、年―月―日の解釈に変更します。同じ「01-12-05」という文字列は、今度は「2001年―12月―5日」と解釈されました。
-``` {.haskell}
+```
 ossdb=# set DATESTYLE to 'ISO, YMD';
 SET
 ossdb=# SHOW DATESTYLE;
@@ -354,7 +354,7 @@ ossdb=# select '01-12-05'::date;
 * now()関数  
 now()関数は、現在の日付と時刻を取得する関数です。  
 以下の例では、SELECT文で使用していますが、INSERT文やUPDATE文でも使用できます。
-``` {.haskell}
+```
 ossdb=# SELECT now();
               now
  -------------------------------
@@ -364,7 +364,7 @@ ossdb=# SELECT now();
 
 * CURRENT_DATE/CURRENT_TIME/CURRENT_TIMESTAMP関数  
 CURRENT_xxx関数は、それぞれ現在の日付、時刻、日付と時刻を取得する関数です。
-``` {.haskell}
+```
 ossdb=# SELECT CURRENT_DATE;
  current_date
  --------------
@@ -386,7 +386,7 @@ ossdb=# SELECT CURRENT_TIMESTAMP;
 
 ### 文字列の入力値を日付型の列に格納する
 上記は日付・時刻データを返す関数の結果として日付・時刻を取得しています。この結果をそのまま日付・時刻型の列に挿入することができます。
-``` {.haskell}
+```
 ossdb=# CREATE TABLE date_sample (ts_test timestamp);
 CREATE TABLE
 ossdb=# INSERT INTO date_sample VALUES (now());
@@ -400,7 +400,7 @@ ossdb=# SELECT * FROM date_sample;
 次は「現在時刻」ではなく、「2018年1月23日」のように文字列として指定された数の並びを日付型の列に格納する方法を紹介します。to_timestamp関数を用います。
 
 #### to_timestamp関数の使い方
-``` {.haskell}
+```
 to_timestamp(’文字列’,'フォーマット')
 ```
 ここで文字列は日付・時刻として解釈可能でなければならず（2018年1月23日、23-JAN-2018など）、その書式をフォーマット部分で指定します。フォーマットとは、文字列中の数字部分が日付・時刻に変換するときに、月・日・時・分・秒のどれを表すか指定するものです。
@@ -422,7 +422,7 @@ MS | ミリ秒
 US | マイクロ病
 
 使い方の例を見てみましょう。日本語の「2018年1月23日」はまさに文字列ですが、その文字列中には日付を表す「2018」「1」「23」が含まれています。この数値が日付のどの桁を表すかフォーマット指定します。
-``` {.haskell}
+```
 ossdb=# INSERT INTO date_sample VALUES (to_timestamp('2018年1月23日','YYYY年MM月DD日'));
 INSERT 0 1
 ossdb=# SELECT * FROM date_sample;
@@ -433,7 +433,7 @@ ossdb=# SELECT * FROM date_sample;
 (2 rows)
 ```
 次の例では、さらに時・分・秒まで格納しています。「12時」だけではAM/PMが明確ではありませんが、フォーマットでは「HH24」とすることで24時間表記の12時（正午をまわったところ）であることを明示できます。
-``` {.haskell}
+```
 ossdb=# INSERT INTO date_sample
 VALUES (to_timestamp('23-JAN-2018 12:34:56','DD-MON-YYYY HH24:MI:SS'));
 INSERT 0 1
@@ -446,7 +446,7 @@ ossdb=# SELECT * FROM date_sample;
 (3 rows)
 ```
 さらに2行のデータを追加します。今度はAM/PMを明記して12時間表記でフォーマットを指定しています。
-``` {.haskell}
+```
 ossdb=# INSERT INTO date_sample
  VALUES (to_timestamp('23-JAN-2018 AM12:34:00','DD-MON-YYYY AMHH:MI:SS')),
         (to_timestamp('23-JAN-2018 PM12:34:00','DD-MON-YYYY AMHH:MI:SS'));
@@ -468,7 +468,7 @@ JOIN句による通常の結合の他にも、外部結合や自己結合とい�
 ### 外部結合
 JOIN句による通常の結合（等価結合）では、結合する表の両方に、結合条件に合うような行データが存在しないと検索結果には含まれません。  
 以下の例では、customer表に新たな行データを追加し、通常の結合でどの店舗でどの商品がいくつ売れたかを取得しています。しかし、cusotmer表に追加したばかりの藤原流通は、orders表を見ても販売実績がありませんのでこの結果には藤原流通という行がまったく現れません。
-``` {.haskell}
+```
 ossdb=# INSERT INTO customer(customer_id,customer_name) VALUES (4,'藤原流通');
 INSERT 0 1
 ossdb=# SELECT * FROM customer;
@@ -493,7 +493,7 @@ JOIN orders   o ON c.customer_id = o.customer_id;
 ```
 外部結合は、片方の表にしか存在しないため結合で消えてしまった行データも検索結果に含むことができる結合方式です。LEFT OUTER JOIN句を使うと、結合の左側に来た表の行データがすべて検索結果に含まれるようになります。  
 customer表を左側にしたorders表との左外部結合を行っています。上の例と異なるのは、「JOIN」を「LEFT OUTER JOIN」に変更しただけですが、こうすることでorders表に該当する行が存在しない場合も、customer表に含むデータはもれなく結果に含むようになります。藤原流通という店舗があって検索結果には載っているものの、販売実績が無いことがわかるのです。
-``` {.haskell}
+```
 ossdb=# SELECT c.customer_name,o.prod_id,o.qty
 FROM customer c
 LEFT OUTER JOIN orders   o ON c.customer_id = o.customer_id;
@@ -509,7 +509,7 @@ LEFT OUTER JOIN orders   o ON c.customer_id = o.customer_id;
 ```
 複数表の外部結合も可能です。
 以下の例では、さらに別のprod表をLEFT OUTER JOIN句で結合しています。prod_idを商品名に置き換えています。
-``` {.haskell}
+```
 ossdb=# SELECT c.customer_name,p.prod_name,o.qty
 FROM customer c
 LEFT OUTER JOIN orders o ON c.customer_id = o.customer_id
@@ -529,7 +529,7 @@ LEFT OUTER JOIN prod   p ON o.prod_id = p.prod_id;
 ### クロス結合
 全ての店舗と商品の組み合わせを取得するような問い合わせでは、結合条件を指定しないクロス結合を使用します。
 以下の例では、curotmer表（4行）とprod表（4行）から取得されうる全組み合わせのパターン（4×4=16行）を取得しています。先の外部結合の結果から、「藤原流通で販売されたバナナ」という組み合わせは実際のデータには存在しないことがわかっていますが、クロス結合の場合はすべての可能性のある組み合わせを取得しているのです。
-``` {.haskell}
+```
 ossdb=# SELECT customer_name,prod_name
 FROM customer c
 CROSS JOIN prod p;
@@ -554,7 +554,7 @@ CROSS JOIN prod p;
 (16 rows)
 ```
 以下のように、結合にJOIN句を用いず、FROM句の後にカンマ区切りで複数の表を並べることでも同じ結果が得られます。（この場合、結合条件が必要な場合はON句のかわりにWHERE句を用います。）
-``` {.haskell}
+```
 ossdb=# SELECT customer_name,prod_name
 FROM customer c, prod p;
  customer_name | prod_name
@@ -569,7 +569,7 @@ FROM customer c, prod p;
 自己結合は1つの表を2つの表に見立てて結合する結合方式です。このとき、２つの表として区別するため、表に別名を使う必要があります。
 
 以下の例では、すべての商品の組み合わせのうち、価格の合計が100未満となる組み合わせのみを検索しています。prod表は1つしかありませんが、prod表を別名でp1表とp2表の2つの表に見立てて、p1とp2を単純結合（すべての組み合わせを取り出す結合）し、価格の合計に対してWHERE句の条件で絞り込みを行っています。
-``` {.haskell}
+```
 ossdb=# SELECT p1.prod_name,p2.prod_name,p1.price + p2.price AS pricesum
 FROM prod p1,prod p2
 WHERE p1.price + p2.price < 100;
@@ -581,7 +581,7 @@ WHERE p1.price + p2.price < 100;
 (3 rows)
 ```
 これだけでは少しわかりにくいかもしれませんが、途中経過を実行してみるとよくわかります。prod表には以下のデータが入っています。
-``` {.haskell}
+```
 ossdb=# SELECT prod_name,price FROM prod;
  prod_name | price
 -----------+-------
@@ -592,7 +592,7 @@ ossdb=# SELECT prod_name,price FROM prod;
 (4 rows)
 ```
 これを自己結合することで、2つの商品を選ぶ場合の組み合わせを生成します。組み合わせにはクロス結合を使います。
-``` {.haskell}
+```
 ossdb=# SELECT p1.prod_name,p1.price,
                p2.prod_name,p2.price
 FROM prod p1,prod p2;
@@ -606,7 +606,7 @@ FROM prod p1,prod p2;
    ：
 ```
 さらにこの結果の右に、行ごとの合計金額を表示してみましょう。
-``` {.haskell}
+```
 ossdb=# SELECT p1.prod_name,p1.price "価格1",
                p2.prod_name,p2.price "価格2",
                p1.price + p2.price   "合計"
@@ -621,7 +621,7 @@ FROM prod p1,prod p2;
    ：
 ```
 この結果に対して、「合計金額が100円未満」というWHERE条件を追加します。
-``` {.haskell}
+```
 ossdb=# SELECT p1.prod_name,p1.price "価格1",
                p2.prod_name,p2.price "価格2",
                p1.price + p2.price   "合計"
@@ -643,7 +643,7 @@ LIMIT句を使うと、検索で取り出す行データの数を制限するこ
 問い合わせの結果は順番が保証されていませんから、確実に指定した行を取り出すには、ORDER BY句を使って行データの並びを指定する必要があります。
 
 以下の例では、orders表から3行だけ行データを取り出しています。順序を確定させるために、order_id列で並べ替えを行っています。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM orders ORDER BY order_id;
  order_id |         order_date         | customer_id | prod_id | qty
 ----------+----------------------------+-------------+---------+-----
@@ -667,7 +667,7 @@ ossdb=# SELECT * FROM orders ORDER BY order_id LIMIT 3;
 OFFSET句を組み合わせることで、先頭から不要な行数を飛ばしてから行データを取り出すことができます。
 
 以下の例では、OFFSET句の値として1を与えているので、1行飛ばして2行目から3行の行データを取り出しています。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM orders ORDER BY order_id LIMIT 3 OFFSET 1;
  order_id |         order_date         | customer_id | prod_id | qty
 ----------+----------------------------+-------------+---------+-----

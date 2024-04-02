@@ -9,7 +9,7 @@
 インデックススキャンが意図したとおりに行なわれるよう設計し、インデックスを作成しなければなりません。正しく正規化された表でインデックスが最も有効に働くのは、主キーに対して作成したインデックスです。主キーは検索の条件検索や表の結合などで検索されることが多いので、インデックスを作成しておくとインデックススキャンで高速に必要な行データを見つけ出すことができます。
 
 以下の例のように、主キーを定義すると自動的にインデックスが作成されます。
-``` {.haskell}
+```
 ossdb=# \d prod
                  Table "public.prod"
   Column   |  Type   | Collation | Nullable | Default
@@ -28,7 +28,7 @@ Referenced by:
 インデックスを作成したい表の列を指定します。列は1列でも良いですし、複数列を指定することもできます。複数列を指定したインデックスを「複合インデックス」と呼びます。複合インデックスは指定された列の一部だけを検索条件にすると有効にならない場合もあるので、検索時のSQL文がどのような検索条件となるかを考慮して作成する必要があります。
 
 以下の例では、orders表のcustomer_id列にインデックスを作成しています。
-``` {.haskell}
+```
 ossdb=# CREATE INDEX orders_customer_id_idx
 ON orders(customer_id);
 CREATE INDEX
@@ -53,7 +53,7 @@ Foreign-key constraints:
 インデックスを削除するにはDROP INDEX文を使用します。
 
 以下の例では、orders_customer_id_idxインデックスを削除しています。
-``` {.haskell}
+```
 ossdb=# DROP INDEX orders_customer_id_idx;
 DROP INDEX
 ossdb=# \d orders
@@ -85,7 +85,7 @@ SQLが実際にどのようにデータベース内部で実行されている�
 インデックスが存在しない表に対する検索は、フルスキャンになることが分かります。
 
 以下の例では、郵便番号データベースの検索を行うSELECT文を分析しています。インデックスは存在しないのでシーケンシャルスキャン（Seq Scan）になっています。
-``` {.haskell}
+```
 ossdb=# EXPLAIN SELECT * FROM zip WHERE newzip = '1500002';
                        QUERY PLAN
 --------------------------------------------------------
@@ -97,7 +97,7 @@ ossdb=# EXPLAIN SELECT * FROM zip WHERE newzip = '1500002';
 ### インデックスが存在する場合のSQL実行プラン
 インデックスが存在していて、インデックスを利用した方が良いと判断される場合には、インデックススキャンが行われることが分かります。
 
-``` {.haskell}
+```
 ossdb=# CREATE INDEX zip_newzip_idx ON zip(newzip);
 CREATE INDEX
 ossdb=# EXPLAIN SELECT * FROM zip WHERE newzip = '1500002';
@@ -112,7 +112,7 @@ ossdb=# EXPLAIN SELECT * FROM zip WHERE newzip = '1500002';
 インデックスが存在していても、検索条件によってはインデックスを使う必要は無いと判断されます。
 
 以下の例では、zip表のlargearea列にインデックスを作成していますが、largearea列は0か1といずれかの値しか持たない列のため、必ずインデックスが使われるとは限らなくなっています。最後に0、1それぞれ何件格納されているかをcount関数を使って調べています。
-``` {.haskell}
+```
 ossdb=# CREATE INDEX zip_largearea ON zip(largearea);
 CREATE INDEX
 ossdb=# EXPLAIN SELECT * FROM zip WHERE largearea = 0;
@@ -157,7 +157,7 @@ VACUUM FULL文はさらに行データの物理的な配置を移動させてデ
 VACUUM文は、データの分布を調査してSQL実行プランの決定に役立てる統計情報を再作成するANALYZE文と同時実行できます。
 
 以下の例は、データベースに対してVACUUM ANALYZEを実行しています。
-``` {.haskell}
+```
 ossdb=# VACUUM ANALYZE;
 VACUUM
 ```
@@ -167,7 +167,7 @@ VACUUM
 自動バキュームデーモンはデフォルトで動作しており、バキューム処理、統計情報再作成処理が必要になるタイミングを監視しています。
 
 自動バキュームデーモンが動作しているかどうかを確認してみましょう。Linux上での動作しているautovacuumという名前のプロセスが自動バキュームデーモンです。
-``` {.haskell}
+```
 [postgres@localhost ~]$ ps ax | grep autovacuum
 11425 ?        Ss     0:56 postgres: autovacuum launcher process
  3925 pts/2    R+     0:00 grep --color=auto autovacuum
@@ -179,7 +179,7 @@ VACUUM
 クラスタ化を行うにはCLUSTER文を使用します。初めてクラスタ化を行う場合にはインデックスをUSING句で明示的に指定する必要がありますが、2回目以降はクラスタ化するために使用したインデックスが記録されているのでインデックスを指定しないでCLUSTER文を実行しても大丈夫です。
 
 以下の例では、orders表のorders_pkeyインデックスを使用してクラスタ化を行っています。クラスタ化に使用したインデックスは、情報の後ろにCLUSTERと表示されます。
-``` {.haskell}
+```
 ossdb=# CLUSTER orders;
 ERROR:  there is no previously clustered index for table "orders"
 ossdb=# CLUSTER orders USING orders_pkey;

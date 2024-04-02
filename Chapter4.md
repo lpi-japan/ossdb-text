@@ -7,7 +7,7 @@
 表の作成は、CREATE TABLE文を使用します。
 
 #### CREATE TABLE文の構文
-``` {.haskell}
+```
 CREATE TABLE 表名
 	(列名 データ型 [NULL|NOT NULL]
 		| [UNIQUE]
@@ -27,7 +27,7 @@ CREATE TABLE 表名
 |誕生日 |birthday|date型   |
 
 これをSQL文にすると、以下のようになります。作成ができたら、表の一覧に入っていることと、表の定義を確認しておきましょう。
-``` {.haskell}
+```
 ossdb=# CREATE TABLE staff
                     (id       integer,
                      name     text,
@@ -59,7 +59,7 @@ ossdb=# \d staff
 
 ### staff表にデータを格納する
 INSERT文を使ってstaff表にデータを格納してみましょう。
-``` {.haskell}
+```
 ossdb=# INSERT INTO staff (id,name,birthday) VALUES (1,'宮原徹','1972-01-09');
 INSERT 0 1
 ossdb=# SELECT * FROM staff;
@@ -76,7 +76,7 @@ ossdb=# SELECT * FROM staff;
 ALTER TABLE文では表そのものの定義や動作の修正に加え、表内の列定義の修正も可能で、その分指定の方法が複雑になっています。
 
 メタコマンド\hで構文のヘルプを確認してみましょう。ここでは詳細を覚える必要はありませんが、変更対象の表を指定し、さらに「新しい列を追加する（=ADD COLUMN）」のようなactionを指定することをヘルプから読み取ってみてください。
-``` {.haskell}
+```
 ossdb=# \h ALTER TABLE
 Command:     ALTER TABLE
 Description: change the definition of a table
@@ -96,7 +96,7 @@ where action is one of:
 ```
 
 ここでは新たに列を追加するALTER TABLE文を試してみましょう。staff表に所属部署コードを表すdept_cd列を追加し、その列にUPDATE文で値を格納しています。
-``` {.haskell}
+```
 ossdb=# ALTER TABLE staff ADD COLUMN dept_cd integer;
 ALTER TABLE
 ossdb=# \d staff
@@ -151,7 +151,7 @@ ALTER TABLE文で修正できる内容は様々ですが、すでにデータが
 ### DROP TABLE文による表の削除
 表を削除するには、DROP TABLE文を使用します。
 表を削除すると、表に格納されているデータも一緒に削除されて元に戻すことができません。
-``` {.haskell}
+```
 ossdb=# \d
             List of relations
  Schema |     Name     | Type  |  Owner
@@ -189,12 +189,12 @@ ossdb=# \d
 DROP TABLE文は表と表データだけでなく、関連する索引やビューなど、その他のものも併せて削除してしまうため、再作成する場合はこれらも再定義する必要に時間がかかるなどの問題が発生することがあります。行データだけを一括で削除する場合にはTRUNCATE文を使用します。
 
 #### TRUNCATE文の構文
-``` {.haskell}
+```
 TRAUNCATE 表名
 ```
 
 以下の例では、char_test表のすべての行データをすべてTRUNCATE文で削除しています。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM char_test;
  string
 --------
@@ -222,13 +222,13 @@ FORMAT句でcsvを指定することで、CSV形式のファイルをセーブ�
 COPY TO文で行データをファイルにセーブできます。
 
 #### COPY文によるデータのセーブ
-``` {.haskell}
+```
 COPY 表名 TO ファイル (FORMAT 形式)
 ```
 
 以下の例は、customer表のデータをCSV形式でファイルにセーブしています。
 \!メタコマンドはLinuxのシェルコマンドを実行しています。
-``` {.haskell}
+```
 ossdb=# COPY customer TO '/home/postgres/customer.csv' (FORMAT csv);
 COPY 3
 ossdb=# \! ls /home/postgres
@@ -243,12 +243,12 @@ ossdb=# \! cat /home/postgres/customer.csv
 COPY FROM文でファイルから行データをロードできます。
 
 #### COPY文によるデータのロード
-``` {.haskell}
+```
 COPY 表名 FROM ファイル (FORMAT 形式)
 ```
 
 以下の例は、customer表のデータをCSV形式のファイルからロードしています。
-``` {.haskell}
+```
 ossdb=# DELETE FROM customer;
 DELETE 3
 ossdb=# SELECT * FROM customer;

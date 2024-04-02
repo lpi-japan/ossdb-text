@@ -7,7 +7,7 @@ PostgreSQLのユーザーを作成するには、CREATE USER文を使用しま�
 ユーザーを確認するには\duメタコマンドを実行します。
 
 以下の例では、ユーザーsatoを作成しています。このユーザーでログインするときに必要なパスワードも指定しています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ psql ossdb
 ossdb=# CREATE USER sato PASSWORD 'sato';
 CREATE ROLE
@@ -20,7 +20,7 @@ ossdb=# \du
 ```
 
 以下の例では、Linuxのコマンドラインから、createuserコマンドを使用してユーザーsuzukiを作成しています。-Pオプションをつけると、このユーザーでログインするときに必要なパスワードを対話式で指定することができます。
-``` {.haskell}
+```
 [postgres@localhost ~]$ createuser -P suzuki
 新しいロールのためのパスワード:
 もう一度入力してください：
@@ -48,7 +48,7 @@ PostgreSQLでは、Linux上でデータベースの初期化（initdbコマン�
 
 ### 接続認証の設定を確認
 PostgreSQLでの接続認証の設定は、設定ファイルの一つであるpg_hba.confに記述します。デフォルトでは、以下のように設定が記述されています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ cat $PGDATA/pg_hba.conf
 ------
 （略）
@@ -110,7 +110,7 @@ psqlでデータベースに接続する際、本来はどのユーザーで接�
 接続ユーザーは\setメタコマンドを実行して変数USERの値で確認できます。
 
 以下の例では、idコマンドの結果でLinuxのユーザー名がpostgresであること、接続のユーザーもpostgresになっていることを確認しています。psqlにはデータベース名としてossdbのみ指定しているので、接続ユーザーは暗黙の内にpostgresが指定されているのが分かります。
-``` {.haskell}
+```
 [postgres@localhost ~]$ id
 uid=1001(postgres) gid=1001(postgres) groups=1001(postgres) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
 [postgres@localhost ~]$ psql ossdb
@@ -150,7 +150,7 @@ VERSION_NUM = '100001'
 
 次に、ユーザーsatoで接続した場合の例です。
 ログイン時にユーザー名を指定して、その通りになっていることがわかります。また、psqlのプロンプトが「=#」ではなく「=>」になっており、これはユーザーsatoが、スーパーユーザーでなく一般ユーザーであることを表します。
-``` {.haskell}
+```
 [postgres@localhost ~]$ psql ossdb sato
 psql (10.1)
 Type "help" for help.
@@ -163,7 +163,7 @@ USER = 'sato'
 
 ### パスワード認証の設定
 データベースへの接続時にパスワード認証を行うように設定してみます。パスワード認証を設定するにはpg_hba.confに以下のような設定を行います。設定の変更はOSユーザーをpostgresにして行います。
-``` {.haskell}
+```
 vi $PGDATA/pg_hba.conf
 -----
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
@@ -184,11 +184,11 @@ host    all             all             ::1/128                 md5
 * 既存ユーザーにパスワード設定  
 既存のユーザーに対してALTER USER文でパスワードを設定します。初期ユーザーであるpostgresユーザーにはパスワードが設定されていませんので、インストール直後に必ず本操作を実施しましょう。
 #### ALTER USER文でパスワードを設定する構文
-``` {.haskell}
+```
 ALTER USER ユーザー名 PASSWORD 'パスワード'
 ```
 以下の例では、ユーザーpostgresに対してパスワードをpostgresに設定しています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ psql ossdb
 ossdb=# ALTER USER postgres PASSWORD 'postgres';
 ALTER ROLE
@@ -196,7 +196,7 @@ ALTER ROLE
 
 * 強度の高いパスワード格納方式  
 pg_hba.confで指定する認証方式には、password、md5、scram-sha-256という3つのパスワード格納方式が指定できます。このうち、デフォルトの格納方式はmd5ですが、近年では暗号化強度が弱いとされ、PostgreSQL 10 からはscram-sha-256が利用可能になっています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ psql ossdb
 ossdb=# SET password_encryption = 'scram-sha-256';
 SET
@@ -204,7 +204,7 @@ ossdb=# ALTER USER postgres PASSWORD 'postgres';
 ALTER ROLE
 ```
 この場合、pg_hba.confの記述も上記のmd5の代わりにscram-sha-256とします。
-``` {.haskell}
+```
 vi $PGDATA/pg_hba.conf
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
 # "local" is for Unix domain socket connections only
@@ -219,7 +219,7 @@ host    all             all             ::1/128                 scram-sha-256
 PostgreSQLの各設定には、その設定が反映されるタイミングが定められています。ほぼすべてのパラメーターが起動時に読み込まれるほか、pg_hba.confの設定やその他の一部のパラメーターは設定の再読み込みで反映されるようになっています。
 
 以下の例は、ユーザーpostgresでpg_ctlコマンドでPostgreSQLの設定を再読み込みしています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ pg_ctl reload
 サーバにシグナルを送信しました
 ```
@@ -230,7 +230,7 @@ PostgreSQLの停止または再起動は、他のユーザーがデータベー�
 パスワード認証が有効になったかどうかを確認します。
 
 以下の例では、ユーザーpostgres、ユーザーsatoでの接続を確認しています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ psql ossdb
 Password:
 psql (10.1)
@@ -254,7 +254,7 @@ PostgreSQLは、TCP/IPを利用したネットワーク経由での接続も受�
 接続受付のポート番号はデフォルトで5432に設定されています。ポート番号を変更したい場合には、portの設定値を変更します。
 
 以下の例では、すべてのインターフェースからの接続を受け付けるように設定しています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ vi $PGDATA/postgresql.conf
 -----
 #listen_addresses = 'localhost'         # what IP address(es) to listen on;
@@ -268,7 +268,7 @@ listen_addresses = '*'                  # what IP address(es) to listen on;
 あわせて、接続認証の設定も行います。pg_hba.confのhostアクセス制御を設定します。
 
 以下の例では、ネットワーク経由接続で ossdb データベースに sato ユーザーがアクセスする際にパスワード認証するように設定しています。pg_hba.confの設定反映は再読み込みで良いですが、今回はlisten_addressesも変更していますので、PostgreSQLの再起動で両方の設定を反映させます。
-``` {.haskell}
+```
 [postgres@localhost ~]$ vi $PGDATA/pg_hba.conf
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
 # "local" is for Unix domain socket connections only
@@ -284,12 +284,12 @@ host    all             all             ::1/128                 scram-sha-256
 設定変更後に設定を反映させるためPostgreSQLを再起動します。ユーザーrootでsystemctl restart postgresql-10.serviceを実行するか、ユーザーpostgresでpg_ctl restartコマンドを実行します。
 
 以下の例は、ユーザーrootでPostgreSQLを再起動しています。
-``` {.haskell}
+```
 [root@localhost ~]# systemctl restart postgresql-10.service
 ```
 
 以下の例は、ユーザーpostgresでpg_ctlコマンドでPostgreSQLを再起動しています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ pg_ctl restart
 サーバ停止処理の完了を待っています....完了
 サーバは停止しました
@@ -300,12 +300,12 @@ host    all             all             ::1/128                 scram-sha-256
 psqlを使ってPostgreSQLにネットワーク経由接続するにはオプション-hでホスト名、-pでポート番号を指定します。ユーザー、データベース、クライアント端末の組み合わせがpg_hba.confで許可されている必要があります。
 
 #### psqlでネットワーク経由接続
-``` {.haskell}
+```
 psql -h ホスト名 -p ポート番号 -U ユーザー名 データベース名
 ```
 
 以下の例では、サーバーのIPアドレスに対してネットワーク経由接続を行っています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ psql -h 192.168.101.10 -p 5432 -U sato ossdb
 Password for user sato:
 psql (10.1)
@@ -314,7 +314,7 @@ Type "help" for help.
 ossdb=>
 ```
 pg_hba.confに定義した組み合わせ（satoユーザー、ossdbデータベース）以外では、認証エラーが出ています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ psql -h 192.168.101.10 -p 5432 -U sato postgres
 psql: FATAL:  no pg_hba.conf entry for host "192.168.101.10", user "sato", database "postgres", SSL off
 ```
@@ -326,13 +326,13 @@ psql: FATAL:  no pg_hba.conf entry for host "192.168.101.10", user "sato", datab
 アクセス権限を付与するには、GRANT文を使用します。
 
 #### GRANT文の構文
-``` {.haskell}
+```
 GRANT {ALL | SELECT | INSERT | DELETE | UPDATE}
 	ON object TO {user | PUBLIC}
 ```
 
 以下の例は、ユーザーsatoに対してprod表に対するすべての権限を付与しています。prod表の所有者（owner）であるpostgresユーザーで操作してユーザーsatoに対して権限を与えます。
-``` {.haskell}
+```
 [postgres@localhost ~]$ psql -U postgres ossdb
 Password for user postgres:
 psql (10.1)
@@ -350,7 +350,7 @@ GRANT
 
 ### アクセス権限の確認
 アクセス権限を確認するには、\dpメタコマンドを使用します。
-``` {.haskell}
+```
 ossdb=# \dp prod
                                 Access privileges
  Schema | Name | Type  |     Access privileges     | Column privileges | Policies
@@ -361,7 +361,7 @@ ossdb=# \dp prod
 ```
 
 #### アクセス権の表記
-``` {.haskell}
+```
 権限を付与されたユーザー=権限種別/権限を付与したユーザー
 ```
 権限を付与されたユーザーが空白のときはpublic（全ユーザー）に対して許可されていることを表します。
@@ -385,13 +385,13 @@ TRIGGER権限は、表に対する操作をトリガー（引き金）にして�
 与えたアクセス権限を取り消すには、REVOKE文を使用します。
 
 #### REVOKE文の構文
-``` {.haskell}
+```
 REVOKE {ALL | SELECT | INSERT | DELETE | UPDATE}
 	ON object FROM {user|PUBLIC}
 ```
 
 以下の例では、ユーザーsatoからprod表に対するすべての権限を取り消しています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ psql -U postgres ossdb
 Password for user postgres:
 psql (10.1)
@@ -413,7 +413,7 @@ ossdb=# \dp prod
 これまでPostgreSQLの操作に使用してきたSQL文は、自動コミット（AUTOCOMMIT）がデフォルトで有効になっていたため、すべての操作が成功すると自動的にCOMMITが発行されていました。自動コミットを無効にするには、psqlメタコマンドの\set AUTOCOMMIT=offを実行するか、BEGINを実行して明示的にトランザクションを開始する必要があります。
 
 以下の例では、customer表に1行INSERTしますが、それをBEGINで開始することでトランザクションとして実行しています。最後にROLLBACKしてINSERTが取り消されている例と、最後にCOMMITして挿入した結果が確定されている例です。
-``` {.haskell}
+```
 ossdb=# BEGIN;
 BEGIN
 ossdb=# INSERT INTO customer VALUES (5,'田中産業');
@@ -451,7 +451,7 @@ ossdb=# SELECT * FROM customer WHERE customer_id = 5;
 読み取り一貫性とは、あるトランザクション内で行われているデータ更新はコミットして確定されない限り、他の検索トランザクションに対して影響を及ぼさないことです。
 
 以下の例では、まず1つのデータベース接続でトランザクションを開始します。メロンの価格を120円にアップデートしました。まだCOMMITもROLLBACKもせず、トランザクションの途中で他のセッションからprod表を検索すると元の100円が得られます。更新トランザクションが確定されたあとは他のセッションでも更新後の120円を得ることができます。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM prod;
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -478,7 +478,7 @@ COMMIT
 ```
 
 別のターミナルを立ち上げて、別のpsqlを実行します。
-``` {.haskell}
+```
 [root@localhost ~]# su - postgres
 [postgres@localhost ~]$ psql ossdb
 Password:
@@ -516,7 +516,7 @@ ossdb=# SELECT * FROM prod;
 ロックされているデータ行を他のトランザクションが更新しようとすると更新の競合が発生し、コミットまたはロールバックでロックが解除されるまで処理が待たされます。
 
 以下の例では、まず一つのトランザクションがprod表の行データを更新します。
-``` {.haskell}
+```
 ossdb=# BEGIN;
 BEGIN
 ossdb=# UPDATE prod SET price = price * 1.1 WHERE prod_id = 1;
@@ -530,7 +530,7 @@ ossdb=# SELECT * FROM prod WHERE prod_id =1;
 
 別のターミナルを立ち上げて、別のpsqlを実行します。前のトランザクションが更新しているprod表の同じ行データを更新します。
 
-``` {.haskell}
+```
 [postgres@localhost ~]$ psql ossdb
 Password:
 psql (10.1)
@@ -545,7 +545,7 @@ ossdb=# UPDATE prod SET price = price * 1.2 WHERE prod_id = 1;
 2つめのUPDATE文が実行されたところで更新の競合が発生し、前のトランザクションが完了するまで待たされます。
 
 以下のように、前のトランザクションをコミットかロールバックするとロックが解除され、後から実行されたUPDATE文の更新が完了します。
-``` {.haskell}
+```
 ossdb=# BEGIN;
 BEGIN
 ossdb=# UPDATE prod SET price = price * 1.1 WHERE prod_id = 1;
@@ -563,7 +563,7 @@ ROLLBACK
 ```
 
 前のトランザクションがロールバックされると、後から実行されたUPDATE文の更新が完了することを確認します。
-``` {.haskell}
+```
 ossdb=# BEGIN;
 BEGIN
 ossdb=# UPDATE prod SET price = price * 1.2 WHERE prod_id = 1;
@@ -589,7 +589,7 @@ COMMIT
 PostgreSQLではデッドロックが発生すると、どちらかのトランザクション全体を失敗させて強制的にロールバックさせます。片方のトランザクションが行っていたロックは解除されるので、もう一方のトランザクションは正常に終了することができます。
 
 まず、一方のトランザクションがprice表のprod_id列の値が1の行データを更新します。
-``` {.haskell}
+```
 ossdb=# BEGIN;
 BEGIN
 ossdb=# UPDATE prod SET price = price * 1.1 WHERE prod_id = 1;
@@ -597,7 +597,7 @@ UPDATE 1
 ```
 
 次に、もう一方のトランザクションがprice表のprod_id列の値が2の行データを更新します。
-``` {.haskell}
+```
 ossdb=# BEGIN;
 BEGIN
 ossdb=# UPDATE prod SET price = price * 1.1 WHERE prod_id = 2;
@@ -605,13 +605,13 @@ UPDATE 1
 ```
 
 さらに、前のトランザクションがprice表のprod_id列の値が2の行データを更新します。この更新はもう一方のトランザクションが更新してロックしている行データなので、更新の競合が発生します。
-``` {.haskell}
+```
 ossdb=# UPDATE prod SET price = price * 1.2 WHERE prod_id = 2;
 /* 更新の競合が発生 */
 ```
 
 もう一方のトランザクションが、前のトランザクションが更新しているprice表のprod_id列の値が1の行データを更新しようとすると、デッドロックが発生し、トランザクションはロールバックされます。この結果、前のトランザクションのロック待ちが解除され、更新が実行されます。
-``` {.haskell}
+```
 ossdb=# UPDATE prod SET price = price * 1.2 WHERE prod_id = 1;
 ERROR:  deadlock detected
 DETAIL:  Process 3027 waits for ShareLock on transaction 728; blocked by process 2775.

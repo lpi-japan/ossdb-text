@@ -44,7 +44,7 @@ suコマンドでユーザーを切り替えるには、以下のようにsuコ�
 環境によっては、rootユーザーでログインすることができず、代わりにsudo権限を有する管理者ユーザーが提供されている場合があります。
 
 以下の例ではsudo権限を持つユーザーcentosでログインし、postgresユーザーに変更する例です。
-``` {.haskell}
+```
 [centos@localhost ~]$ sudo su - postgres
 [postgres@localhost ~]$
 ```
@@ -53,7 +53,7 @@ suコマンドでユーザーを切り替えるには、以下のようにsuコ�
 
 #### データベース一覧を表示する
 psqlに-lオプションをつけて実行します。psqlはPostgreSQLに接続し、現在作成されているデータベースの一覧を表示します。
-``` {.haskell}
+```
 [postgres@localhost ~]$ psql -l
                              List of databases
    Name    |  Owner   | Encoding | Collate | Ctype |   Access privileges
@@ -71,7 +71,7 @@ psqlに-lオプションをつけて実行します。psqlはPostgreSQLに接続
 psqlを利用してデータベースに接続します。PostgreSQLは同時に複数のデータベースを管理できますが、psqlではそのうちの1つを選んで接続して操作します。
 
 以下のように、psqlの引数として接続したいデータベースの名前を指定して実行します。
-``` {.haskell}
+```
 [postgres@localhost ~]$ psql ossdb
 psql (10.1)
 Type "help" for help.
@@ -83,7 +83,7 @@ ossdb=#
 
 ### psqlのヘルプを表示する
 psqlのヘルプを表示します。helpと入力します。
-``` {.haskell}
+```
 ossdb=# help
 You are using psql, the command-line interface to PostgreSQL.
 Type:  \copyright for distribution terms
@@ -99,7 +99,7 @@ psqlはSQLを受け付けて、PostgreSQLに対してSQLを実行する他に、
 
 #### psqlメタコマンド \h
 利用できるSQLのヘルプが確認できます。
-``` {.haskell}
+```
 ossdb=# \h
 Available help:
   ABORT
@@ -113,7 +113,7 @@ Available help:
 #### psqlメタコマンド \h SQLコマンド
 psqlメタコマンド\hの引数にSQLコマンドを指定すると、そのSQLコマンドのヘルプが確認できます。SQLコマンドの指定は大文字でも小文字でも構いません。
 
-``` {.haskell}
+```
 ossdb=# \h DELETE
 Command:     DELETE
 Description: delete rows of a table
@@ -127,7 +127,7 @@ DELETE FROM [ ONLY ] table_name [ * ] [ [ AS ] alias ]
 
 #### psqlメタコマンド \?
 psqlメタコマンド \?で、利用できるpsqlメタコマンドのヘルプが確認できます。
-``` {.haskell}
+```
 ossdb=# \?
 General
   \copyright             show PostgreSQL usage and distribution terms
@@ -139,14 +139,14 @@ General
 
 ### psqlを終了する
 psqlを終了するには、psqlメタコマンドの\qを入力します。
-``` {.haskell}
+```
 ossdb=# \q
 [postgres@localhost ~]$
 ```
 
 ### 表の確認
 作成されている表を確認するにはpsqlメタコマンド\dを利用します。
-``` {.haskell}
+```
 ossdb=# \d
           List of relations
  Schema |   Name   | Type  |  Owner
@@ -159,7 +159,7 @@ ossdb=# \d
 
 ### 表定義の確認
 表がどのような項目を持っているのかを確認するにはpsqlメタコマンド\dに確認したい表名を付けて実行します。
-``` {.haskell}
+```
 ossdb=# \d customer
                  Table "public.customer"
     Column     |  Type   | Collation | Nullable | Default
@@ -229,7 +229,7 @@ psqlで複数行入力をした時に表示されるプロンプトは、通常�
 
 
 プロンプトに何を表示するかは、psqlの内部変数PROMPT1、PROMPT2で定義されています。たとえば2行目以降のプロンプトに何も表示したくない場合、psqlメタコマンドの\unsetでPROMPT2の変数値を解除します。
-``` {.haskell}
+```
 ossdb=# 1st line
 ossdb-# 2nd line
 ossdb-# 3rd line;
@@ -251,12 +251,12 @@ ERROR:  syntax error at or near "1"
 psqlはテキストファイルから読み込んだ内容を実行する機能があります。同じ処理を何度も繰り返し実行したい場合には、あらかじめメタコマンドやSQLコマンドをファイルに記述して、psqlに読み込ませて実行できます。
 
 #### ファイルを読み込ませる場合のpsqlの構文
-``` {.haskell}
+```
 $ psql -f ファイル名 [データベース名] [ユーザー名]
 ```
 
 以下の例では、メタコマンド\dを記述したファイルtest.sqlをpsqlに読み込ませて実行しています。
-``` {.haskell}
+```
 [postgres@localhost ~]$ cat test.sql
 \d
 [postgres@localhost ~]$ psql -f test.sql ossdb
@@ -273,7 +273,7 @@ $ psql -f ファイル名 [データベース名] [ユーザー名]
 データの検索はデータベース利用の一番の基本です。データベースは様々な種類のデータを表形式で保管しているので、そのデータを必要な形で取り出すのがデータの検索です。データの検索にはSQLのSELECT文を使用します。
 
 #### SELECT文の基本構文
-``` {.haskell}
+```
 SELECT [DISTINCT] * | SELECT項目リスト
 	FROM 表名[,…]
 	[WHERE 検索条件式]
@@ -286,12 +286,12 @@ SELECT [DISTINCT] * | SELECT項目リスト
 データベースの表データを全件、全項目で取り出すのが全件全項目検索です。*(アスタリスク)を指定することで、対象となる検索表の全項目を検索します。
 
 #### 全件全項目検索のSELECT文
-``` {.haskell}
+```
 SELECT * FROM 表
 ```
 
 以下の例では、customer表、prod表、orders表の全件全項目検索を行っています。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM customer;
  customer_id | customer_name
 -------------+---------------
@@ -323,12 +323,12 @@ ossdb=# SELECT * FROM orders;
 SELECT文で検索したい列名をカンマ区切りで並べて指定します。
 
 #### SELECT項目リストを使ったSELECT文
-``` {.haskell}
+```
 SELECT 列名[,列名...] FROM 表
 ```
 
 以下の例では、prod表からprod_name列、price列のみ検索しています。
-``` {.haskell}
+```
 ossdb=# SELECT prod_name,price FROM prod;
  prod_name | price
 -----------+-------
@@ -342,7 +342,7 @@ ossdb=# SELECT prod_name,price FROM prod;
 検索で取り出すデータ行を条件で絞り込むには、WHERE句を使用します。
 
 #### WHERE句の構文
-``` {.haskell}
+```
 WHERE 列名 条件式 条件値
 ```
 
@@ -365,7 +365,7 @@ LIKE    |	部分一致
 * 等しい(=)、等しくない(<>)  
 ある列の値が指定した条件値と等しい、あるいは等しくないデータを取り出します。条件値を文字列として指定する場合には'(シングルクォート)で括ります。
 以下の例では、customer表からcustomer_id列の値が2の行データを検索します。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM customer WHERE customer_id = 2;
  customer_id | customer_name
 -------------+---------------
@@ -373,7 +373,7 @@ ossdb=# SELECT * FROM customer WHERE customer_id = 2;
 (1 row)
 ```
 以下の例では、customer表からcustomer_id列の値が2以外の行データを検索します。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM customer WHERE customer_id <> 2;
  customer_id | customer_name
 -------------+---------------
@@ -382,7 +382,7 @@ ossdb=# SELECT * FROM customer WHERE customer_id <> 2;
 (2 rows)
 ```
 以下の例では、customer表からcustomer_name列の値が「佐藤商事」の行データを検索します。文字列データを指定する場合、'（シングルクォート）で前後を括ります。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM customer WHERE customer_name = '佐藤商事';
  customer_id | customer_name
 -------------+---------------
@@ -393,7 +393,7 @@ ossdb=# SELECT * FROM customer WHERE customer_name = '佐藤商事';
 * よりも大きい(>)、よりも小さい（未満）(<)  
 ある列の値が指定した条件値よりも大きい、あるいは小さい（未満）データを取り出します。
 以下の例では、prod表からprice列の値が70よりも大きい行データを検索します。price列の値が70のりんごは含まれません。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM prod WHERE price > 70;
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -404,7 +404,7 @@ ossdb=# SELECT * FROM prod WHERE price > 70;
 * 以上(>=)、以下(<=)  
 ある列の値が指定した条件値以上、あるいは以下のデータを取り出します。
 以下の例では、prod表からprice列の値が70以上の行データを検索します。price列の値が70のりんごも含まれます。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM prod WHERE price >= 70;
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -416,7 +416,7 @@ ossdb=# SELECT * FROM prod WHERE price >= 70;
 #### 範囲検索
 * A 以上 B 以下  
 条件式に2つの値を指定し、その間の範囲に該当するデータを取り出します。以下の例では、prod表からprice列の値が10以上80以下の行データを検索します。price列が50のみかん、70のりんごが含まれ、範囲外であるメロンは含まれません。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM prod WHERE price BETWEEN 10 AND 80;
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -425,7 +425,7 @@ ossdb=# SELECT * FROM prod WHERE price BETWEEN 10 AND 80;
 (2 rows)
 ```
 この結果は、不等号を使った「以上、以下」を組み合わせた場合と同じです。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM prod WHERE price >= 10 AND price <= 80;
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -440,7 +440,7 @@ ossdb=# SELECT * FROM prod WHERE price >= 10 AND price <= 80;
 * 指定した値がデータのどこかに一致（中間一致検索）  
 文字列中に「ん」を含むものを検索します。検索したい文字を%で囲みました。文字列なので’(シングルクォート)で囲む点はこれまでの検索と同じです。
 以下の例では、文字列中に「ん」を含む「みかん」「りんご」が該当します。（「メロン」は「ン」を含みますが、コンピューターは「ん」と「ン」を通常は区別します。）
-``` {.haskell}
+```
 ossdb=# SELECT * FROM prod WHERE prod_name LIKE '%ん%';
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -452,7 +452,7 @@ ossdb=# SELECT * FROM prod WHERE prod_name LIKE '%ん%';
 * 前方一致検索、後方一致検索  
 文字列の最後に「ん」を含むものを検索します。先ほど同様%と組み合わせますが、文字列の最後であることを表すために、「ん」の後の%は指定しません。このような検索を後方一致検索と呼びます。
 以下の例では、文字列の最後に「ん」を含む「みかん」が該当します。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM prod WHERE prod_name LIKE '%ん';
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -464,7 +464,7 @@ ossdb=# SELECT * FROM prod WHERE prod_name LIKE '%ん';
 * 該当する文字位置を指定する場合  
 指定した値が文字列中の何文字目にあるか指定する検索です。先ほどの%は複数文字を表しましたが、その代わりに1文字につきひとつの_（アンダースコア）を使います。
 以下の例では、3文字目が「ん」であるものを検索するためにアンダースコアを2つ並べて「\__ん」を条件にしており、結果として「みかん」が検索されています。アンダースコア1文字分では結果は得られません。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM prod WHERE prod_name LIKE '__ん';
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -479,7 +479,7 @@ ossdb=# SELECT * FROM prod WHERE prod_name LIKE '_ん';
 * 指定した文字列を「含まない」検索  
 一致=に対して、不一致を表す<>があったように、LIKEに対してその文字列を含まないことを表すNOT LIKEが用意されています。
 以下の例では、NOT LIKEを使って「ん」を含まないものを検索します。「メロン」のみ該当します。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM prod WHERE prod_name NOT LIKE '%ん%';
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -487,7 +487,7 @@ ossdb=# SELECT * FROM prod WHERE prod_name NOT LIKE '%ん%';
 (1 row)
 ```
 同様に「前方（後方）不一致検索」も可能です。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM prod WHERE prod_name NOT LIKE '%ん';
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -500,11 +500,11 @@ ossdb=# SELECT * FROM prod WHERE prod_name NOT LIKE '%ん';
 検索結果を指定した順番に並べ替えるには、ORDER BY句を使用します。リレーショナルデータベースではデータを集合として扱うため、並び順を指定しない限り結果の表示順を保証しません。ORDER BY句で並べ替えを指定することで、期待した順番で行データを取り出すことができます。DESCを指定すると、降順で並べ替えが行われます。
 
 #### ORDER BY句の構文
-``` {.haskell}
+```
 ORDER BY 列名 [DESC]
 ```
 以下の例では、prod表からprice列の値で昇順、降順で並べ替えをしています。
-``` {.haskell}
+```
 ossdb=# SELECT * FROM prod ORDER BY price;
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -529,7 +529,7 @@ ossdb=# SELECT * FROM prod ORDER BY price DESC;
 結合を行うにはJOIN句で結合したい列を指定します。指定された列の値を比較し、同じ値のデータを結合します。
 
 #### JOIN 〜 ON 構文
-``` {.haskell}
+```
 FROM 表1
 	JOIN 表2 ON 表1.列 = 表2.列
 ```
@@ -539,7 +539,7 @@ FROM 表1
 
 * 単一の表を検索  
 以下の例では、結合を行う元となる表であるorders表のorder_id列、customer_id列、prod_id列、qty列をSELECT項目リストに指定したSELECT文です。
-``` {.haskell}
+```
 ossdb=# SELECT order_id,customer_id,prod_id,qty FROM orders;
  order_id | customer_id | prod_id | qty
 ----------+-------------+---------+-----
@@ -557,7 +557,7 @@ ossdb=# SELECT order_id,customer_id,prod_id,qty FROM orders;
 * orders表とcustomer表を結合  
 FROM句またはJOIN句で複数の表を指定した場合には、SELECT項目リストや結合条件では「表名.列名」と指定します。
 まずはorders表とcustomer表の2つの表をJOIN句で結合します。ここでは先の結果と比較するため、order_id列、customer_id列と並べて、新たにcustomer表から得られたcustomer_name列の値を表示します。
-``` {.haskell}
+```
 ossdb=# SELECT orders.order_id,orders.customer_id,customer.customer_name
 FROM orders
 JOIN customer ON orders.customer_id = customer.customer_id;
@@ -583,7 +583,7 @@ customer_id | customer_name
 
 * orders表とprod表を結合  
 同様に、orders表とprod表をJOIN句で結合します。
-``` {.haskell}
+```
 ossdb=# SELECT orders.order_id,prod.prod_name
 FROM orders
 JOIN prod ON orders.prod_id = prod.prod_id;
@@ -599,12 +599,12 @@ JOIN prod ON orders.prod_id = prod.prod_id;
 
 * 3つの表を結合  
 この2つのJOIN句を1つのSELECT文にまとめます。最初に実行したSELECT文は以下の通りでした。
-``` {.haskell}
+```
 SELECT order_id,customer_id,prod_id,qty
 FROM orders
 ```
 最初のSELECT文と比較して、SELECT項目リストの置き換わりと、JOIN句が2つ並べて追加されている点に注目してください。  
-``` {.haskell}
+```
 ossdb=# SELECT orders.order_id,customer.customer_name,prod.prod_name,orders.qty
 FROM orders
 JOIN customer ON orders.customer_id = customer.customer_id
@@ -627,12 +627,12 @@ customer_idをcustomer表から取得した店名、prod_idをprod表から取�
 SQL文の中で何度も使用する表名は、FROM句、またはJOIN句で別名を指定できます。短い別名を指定すれば、SQL文を短くして見やすくすることができます。
 
 #### 表別名の指定方法
-``` {.haskell}
+```
 FROM 表名 別名
 JOIN 表名 別名
 ```
 前のJOIN句による結合を行うSQL文に表別名を適用すると、以下のようになります。
-``` {.haskell}
+```
 ossdb=# SELECT o.order_id,c.customer_name,p.prod_name,o.qty
 FROM orders o
 JOIN customer c ON o.customer_id = c.customer_id
@@ -651,13 +651,13 @@ JOIN prod p     ON o.prod_id = p.prod_id;
 表に行データを入力するには、INSERT文を使用します。
 
 #### INSERT文の構文
-``` {.haskell}
+```
 INSERT INTO 表名(列名[,…])
 	VALUES (値[,...])
 ```
 
 値に文字列データを指定する場合には、'（シングルクォート）で括る必要があります。
-``` {.haskell}
+```
 ossdb=# INSERT INTO prod(prod_id,prod_name,price) VALUES (4,'バナナ',30);
 INSERT 0 1
 ossdb=# SELECT * FROM prod;
@@ -674,14 +674,14 @@ ossdb=# SELECT * FROM prod;
 行データを更新するには、UPDATE文を使用します。
 
 #### UPDATE文の構文
-``` {.haskell}
+```
 UPDATE 表名
 	SET 列名 = 値
 	WHERE 条件式
 ```
 
 以下の例では、prod表のprod_id列の値が4の行データを、price列の値を40に更新しています。
-``` {.haskell}
+```
 ossdb=# UPDATE prod SET price = 40 WHERE prod_id = 4;
 UPDATE 1
 ossdb=# SELECT * FROM prod;
@@ -695,7 +695,7 @@ ossdb=# SELECT * FROM prod;
 ```
 
 更新値は、既存の行データの値に対する演算で設定することもできます。以下の例では、prod表のprice列の値を一律10増加させています（その後、元に戻しています）。
-``` {.haskell}
+```
 ossdb=# UPDATE prod SET price = price + 10;
 UPDATE 4
 ossdb=# SELECT * FROM prod;
@@ -715,13 +715,13 @@ UPDATE 4
 行データを削除するには、DELETE文を使用します。DELETE文はWHERE句で指定した条件式に適合した行データをすべて削除します。WHERE句を指定しなかった場合には、指定された表の行データはすべて削除されます。
 
 #### DELETE文の構文
-``` {.haskell}
+```
 DELETE FROM 表名
 	WHERE 条件式
 ```
 
 以下の例では、prod表からprod_id列の値が4の行データを削除しています。
-``` {.haskell}
+```
 ossdb=# DELETE FROM prod WHERE prod_id = 4;
 DELETE 1
 ossdb=# SELECT * FROM prod;

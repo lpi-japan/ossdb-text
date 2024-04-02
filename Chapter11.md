@@ -14,7 +14,7 @@ ApacheとPHPを利用できるようにインストールと設定を行いま�
 ### ApacheとPHPをパッケージでインストール
 CentOSではApacheとPHPがRPMパッケージで提供されているので、yumコマンドを使ってインストールします。yumコマンドでインストールが行えない場合には、インストールメディアからrpmコマンドを使って必要なパッケージをインストールします。インストールするパッケージはphpとphp-pgsqlです。
 
-``` {.haskell}
+```
 [root@localhost ~]# yum install php php-pgsql
 読み込んだプラグイン:fastestmirror, langpacks
 base                                                      | 3.6 kB  00:00:00
@@ -122,7 +122,7 @@ Running transaction
 ### Apache+PHPの設定とテスト
 インストールが終わったら、動作テストを行います。  
 テスト用のPHPを埋め込んだファイルindex.phpを、ApacheがHTMLファイルを参照する/var/www/htmlディレクトリに作成します。
-``` {.haskell}
+```
 [root@localhost ~]# echo "<?php phpinfo(); ?>" > /var/www/html/index.php
 [root@localhost ~]# cat /var/www/html/index.php
 <?php phpinfo(); ?>
@@ -130,7 +130,7 @@ Running transaction
 
 Webサーバーを起動します。  
 以下の例では、systemctlのサブコマンドlist-unit-filesでhttpdの起動に用いるサービス名を確認し、startでサービスを起動、statusやpsコマンドで正常に起動したことを確認しています。
-``` {.haskell}
+```
 [root@localhost ~]# systemctl list-unit-files | grep httpd
 httpd.service                                 disabled
 [root@localhost ~]# systemctl start httpd.service
@@ -165,7 +165,7 @@ Hint: Some lines were ellipsized, use -l to show in full.
 ```
 
 ブラウザでWebサーバーに接続します。ApacheやPHP、PostgreSQLが動作しているマシン上でFirefoxなどのWebブラウザを起動し、以下のアドレスを入力してアクセスします。
-``` {.haskell}
+```
 http://localhost/
 ```
 
@@ -206,7 +206,7 @@ strtoupper() | 引数の文字列をすべて大文字にします。
 以下のサンプルを適当なファイル名（例 selectProd.php）でディレクトリ/var/www/htmlに保存します。作業はユーザーrootで行うか、ディレクトリ/var/www/htmlのパーミッションを変更して適当なユーザーで行ってください。データベースへの接続情報を記述しているpg_connect関数内のパスワードは、各自で設定済みのpostgresユーザーのパスワードに変更してください。
 
 selectProd.php
-``` {.haskell}
+```
 <html>
 <body>
 <?php
@@ -250,7 +250,7 @@ pg_close($dbcon);
 ```
 
 ファイルを作成したら、Webブラウザからアクセスして結果を確認します。
-``` {.haskell}
+```
 http://localhost/selectProd.php
 ```
 
@@ -261,7 +261,7 @@ HTMLフォームに入力されたデータをPHPで取得するには、$_POST�
 動作を確認するために、HTMLフォームのtest.htmlとPHPプログラムtest.phpを/var/www/htmlディレクトリに作成します。
 
 test.html
-``` {.haskell}
+```
 <html>
 <body>
 <form action="test.php" method="post">
@@ -273,14 +273,14 @@ test.html
 ```
 
 test.php
-``` {.haskell}
+```
 <?php
 echo htmlspecialchars($_POST['foo']);
 ?>
 ```
 
 Webブラウザからtest.htmlを呼び出し、フォームに値を入力して実行ボタンをクリックします。PHPのechoは変数の値を表示する命令ですので、フォームからの値をWebブラウザに表示します。
-``` {.haskell}
+```
 http://localhost/test.html
 ```
 
@@ -293,7 +293,7 @@ http://localhost/test.html
 PHPでSQL文を実行するには、一度SQL文を文字列変数に代入し、その変数をpg_query関数に渡します。文字列変数に代入する際にフォームからの入力をSQL文に組み込めば、フォーム入力に応じて動作を変更することができます。selectForm.phpではデータベースにアクセスしますので、pg_connect関数内のパスワードは各自で設定したパスワードに変更します。
 
 selectForm.html
-``` {.haskell}
+```
 <html>
 <body>
 検索したいテーブル名を入力して下さい。
@@ -306,7 +306,7 @@ selectForm.html
 ```
 
 selectForm.php
-``` {.haskell}
+```
 <html>
 <body>
 <?php
@@ -351,7 +351,7 @@ pg_close($dbcon);
 ```
 
 作成したフォームにアクセスし、検索したい表の名前を入力します。
-``` {.haskell}
+```
 http://localhost/selectForm.html
 ```
 
