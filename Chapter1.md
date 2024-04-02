@@ -442,10 +442,4 @@ INSERT 0 3
 ```
 
 
-\pagebreak
-
-\ 
-
-\vspace{7.5in}
-
 ![ ](./Pict/history.png)
