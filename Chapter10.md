@@ -103,7 +103,7 @@ Password:
 psql (10.1)
 Type "help" for help.
 
-ossdb=# \\d
+ossdb=# \d
               List of relations
  Schema |     Name     |   Type   |  Owner
 --------+--------------+----------+----------

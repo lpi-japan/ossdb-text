@@ -4,14 +4,14 @@ PostgreSQLはマルチユーザーのデータベースです。複数のユー�
 ## ユーザーの作成
 PostgreSQLのユーザーを作成するには、CREATE USER文を使用します。また、Linuxのコマンドラインからcreateuserコマンドを使用してもユーザーを作成できます。
 
-ユーザーを確認するには\\duメタコマンドを実行します。
+ユーザーを確認するには\duメタコマンドを実行します。
 
 以下の例では、ユーザーsatoを作成しています。このユーザーでログインするときに必要なパスワードも指定しています。
 ```
 [postgres@localhost ~]$ psql ossdb
 ossdb=# CREATE USER sato PASSWORD 'sato';
 CREATE ROLE
-ossdb=# \\du
+ossdb=# \du
                                    List of roles
  Role name |                         Attributes                         | Member of
 -----------+------------------------------------------------------------+-----------
@@ -25,7 +25,7 @@ ossdb=# \\du
 新しいロールのためのパスワード:
 もう一度入力してください：
 [postgres@localhost ~]$ psql ossdb
-ossdb=# \\du
+ossdb=# \du
                                    List of roles
  Role name |                         Attributes                         | Member of
 -----------+------------------------------------------------------------+-----------
@@ -338,7 +338,7 @@ Password for user postgres:
 psql (10.1)
 Type "help" for help.
 
-ossdb=# \\dt prod
+ossdb=# \dt prod
         List of relations
  Schema | Name | Type  |  Owner
 --------+------+-------+----------
@@ -349,9 +349,9 @@ GRANT
 ```
 
 ### アクセス権限の確認
-アクセス権限を確認するには、\\dpメタコマンドを使用します。
+アクセス権限を確認するには、\dpメタコマンドを使用します。
 ```
-ossdb=# \\dp prod
+ossdb=# \dp prod
                                 Access privileges
  Schema | Name | Type  |     Access privileges     | Column privileges | Policies
 --------+------+-------+---------------------------+-------------------+----------
@@ -399,7 +399,7 @@ Type "help" for help.
 
 ossdb=# REVOKE all ON prod FROM sato;
 REVOKE
-ossdb=# \\dp prod
+ossdb=# \dp prod
                                 Access privileges
  Schema | Name | Type  |     Access privileges     | Column privileges | Policies
 --------+------+-------+---------------------------+-------------------+----------

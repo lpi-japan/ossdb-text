@@ -10,7 +10,7 @@
 
 以下の例のように、主キーを定義すると自動的にインデックスが作成されます。
 ```
-ossdb=# \\d prod
+ossdb=# \d prod
                  Table "public.prod"
   Column   |  Type   | Collation | Nullable | Default
 -----------+---------+-----------+----------+---------
@@ -32,7 +32,7 @@ Referenced by:
 ossdb=# CREATE INDEX orders_customer_id_idx
 ON orders(customer_id);
 CREATE INDEX
-ossdb=# \\d orders
+ossdb=# \d orders
                            Table "public.orders"
    Column    |            Type             | Collation | Nullable | Default
 -------------+-----------------------------+-----------+----------+---------
@@ -56,7 +56,7 @@ Foreign-key constraints:
 ```
 ossdb=# DROP INDEX orders_customer_id_idx;
 DROP INDEX
-ossdb=# \\d orders
+ossdb=# \d orders
                            Table "public.orders"
    Column    |            Type             | Collation | Nullable | Default
 -------------+-----------------------------+-----------+----------+---------
@@ -184,7 +184,7 @@ ossdb=# CLUSTER orders;
 ERROR:  there is no previously clustered index for table "orders"
 ossdb=# CLUSTER orders USING orders_pkey;
 CLUSTER
-ossdb=# \\d orders
+ossdb=# \d orders
                            Table "public.orders"
    Column    |            Type             | Collation | Nullable | Default
 -------------+-----------------------------+-----------+----------+---------

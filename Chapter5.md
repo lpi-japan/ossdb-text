@@ -19,7 +19,7 @@
 * 演習1-1： すべての商品の価格を10%アップします  
  * 商品表の価格列を指定してUPDATE  
 ```
-ossdb=# \\d prod
+ossdb=# \d prod
                  Table "public.prod"
   Column   |  Type   | Collation | Nullable | Default
 -----------+---------+-----------+----------+---------

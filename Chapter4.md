@@ -34,7 +34,7 @@ ossdb=# CREATE TABLE staff
                      birthday date);
 CREATE TABLE
 
-ossdb=# \\d
+ossdb=# \d
             List of relations
  Schema |     Name     | Type  |  Owner
 --------+--------------+-------+----------
@@ -48,7 +48,7 @@ ossdb=# \\d
  public | varchar_test | table | postgres
 (8 rows)
 
-ossdb=# \\d staff
+ossdb=# \d staff
                 Table "public.staff"
   Column  |  Type   | Collation | Nullable | Default
 ----------+---------+-----------+----------+---------
@@ -99,7 +99,7 @@ where action is one of:
 ```
 ossdb=# ALTER TABLE staff ADD COLUMN dept_cd integer;
 ALTER TABLE
-ossdb=# \\d staff
+ossdb=# \d staff
                 Table "public.staff"
   Column  |  Type   | Collation | Nullable | Default
 ----------+---------+-----------+----------+---------
@@ -152,7 +152,7 @@ ALTER TABLE文で修正できる内容は様々ですが、すでにデータが
 表を削除するには、DROP TABLE文を使用します。
 表を削除すると、表に格納されているデータも一緒に削除されて元に戻すことができません。
 ```
-ossdb=# \\d
+ossdb=# \d
             List of relations
  Schema |     Name     | Type  |  Owner
 --------+--------------+-------+----------
@@ -168,7 +168,7 @@ ossdb=# \\d
 
 ossdb=# DROP TABLE staff;
 DROP TABLE
-ossdb=# \\d
+ossdb=# \d
             List of relations
  Schema |     Name     | Type  |  Owner
 --------+--------------+-------+----------

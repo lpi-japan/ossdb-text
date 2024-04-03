@@ -142,9 +142,9 @@ ossdb=# \\q
 ```
 
 ### 表の確認
-作成されている表を確認するにはpsqlメタコマンド\\dを利用します。
+作成されている表を確認するにはpsqlメタコマンド\dを利用します。
 ```
-ossdb=# \\d
+ossdb=# \d
           List of relations
  Schema |   Name   | Type  |  Owner
 --------+----------+-------+----------
@@ -155,16 +155,16 @@ ossdb=# \\d
 ```
 
 ### 表定義の確認
-表がどのような項目を持っているのかを確認するにはpsqlメタコマンド\\dに確認したい表名を付けて実行します。
+表がどのような項目を持っているのかを確認するにはpsqlメタコマンド\dに確認したい表名を付けて実行します。
 ```
-ossdb=# \\d customer
+ossdb=# \d customer
                  Table "public.customer"
     Column     |  Type   | Collation | Nullable | Default
 ---------------+---------+-----------+----------+---------
  customer_id   | integer |           |          |
  customer_name | text    |           |          |
 
-ossdb=# \\d orders
+ossdb=# \d orders
                            Table "public.orders"
    Column    |            Type             | Collation | Nullable | Default
 -------------+-----------------------------+-----------+----------+---------
@@ -174,7 +174,7 @@ ossdb=# \\d orders
  prod_id     | integer                     |           |          |
  qty         | integer                     |           |          |
 
-ossdb=# \\d prod
+ossdb=# \d prod
                  Table "public.prod"
   Column   |  Type   | Collation | Nullable | Default
 -----------+---------+-----------+----------+---------
@@ -252,10 +252,10 @@ psqlはテキストファイルから読み込んだ内容を実行する機能�
 $ psql -f ファイル名 [データベース名] [ユーザー名]
 ```
 
-以下の例では、メタコマンド\\dを記述したファイルtest.sqlをpsqlに読み込ませて実行しています。
+以下の例では、メタコマンド\dを記述したファイルtest.sqlをpsqlに読み込ませて実行しています。
 ```
 [postgres@localhost ~]$ cat test.sql
-\\d
+\d
 [postgres@localhost ~]$ psql -f test.sql ossdb
           List of relations
  Schema |   Name   | Type  |  Owner
