@@ -1,181 +1,123 @@
 ﻿# 実習環境の構築方法
-## OSのインストール
-本書ではLinuxディストリビューションはCentOS 7.4 64ビット版を使用しています。インストール手順には特別なところはありませんので、インストーラーのデフォルト設定でインストールします。
+第1章では実習環境を構築するために、PostgreSQLのインストールと、実習で使用するデータベースを作成します。
 
-### OSユーザーの作成
-yumやRPMでPostgreSQLをインストールすると、OSユーザー postgres が内部的に作成され各プログラムの実行権限が付与されます。この postgres ユーザーをあらかじめ作成しておくことで、OSユーザーとしての設定（ホームディレクトリや環境変数など）の管理がしやすくなりますので本書ではそのように進めます。
+## OSユーザーの作成
+RPMパッケージでPostgreSQLをインストールすると、OSでpostgresユーザーが作成され、関連するディレクトリの所有権やアクセス権が設定されます。このpostgresユーザーをあらかじめ作成しておくことで、OSユーザーとしての設定（ホームディレクトリや環境変数など）の管理がしやすくなりますので本書ではそのように進めます。
 
-以下ではuseraddコマンドでOSユーザー postgres を作成、passwdコマンドでユーザーのパスワードを設定しています。その後、postgresユーザーにログインしてプロンプトの表示やホームディレクトリ位置を確認し、ログアウトしておきます。
-```
-[root@localhost ~]# useradd postgres
-[root@localhost ~]# passwd postgres
+以下ではadminユーザーでログイン後、useraddコマンドでpostgresユーザーを作成し、passwdコマンドでユーザーのパスワードを設定しています。その後、suコマンドでpostgresユーザーに切り替えてプロンプトの表示やホームディレクトリ位置を確認し、adminユーザーに戻しています。
+
+[admin@host1 ~]$ sudo useradd postgres
+[sudo] admin のパスワード: ※adminユーザーのパスワードを入力
+[admin@host1 ~]$ sudo passwd postgres
 ユーザー postgres のパスワードを変更。
-新しいパスワード:
-新しいパスワードを再入力してください:
+ユーザー postgres のパスワードを変更。
+新しい パスワード:
+新しい パスワードを再入力してください:
 passwd: すべての認証トークンが正しく更新できました。
-[root@localhost ~]# su - postgres
-[postgres@localhost ~]$ pwd
+[admin@host1 ~]$ su - postgres
+パスワード: ※設定したpostgresユーザーのパスワードを入力
+最終ログイン: 2024/04/06 (土) 13:49:14 JST 日時 pts/1
+[postgres@host1 ~]$ pwd
 /home/postgres
-[postgres@localhost ~]$ exit
-[root@localhost ~]#
-```
-
-### セキュリティの設定
-セキュリティの設定では、外部からの攻撃などを受けない環境であることを確認した上で、ファイアーウォールやSELinuxは無効にしていることを想定しています。
-```
-[root@localhost ~]# setenforce 0
-[root@localhost ~]# systemctl stop firewalld.service
-```
+[postgres@host1 ~]$ exit
+[admin@host1 ~]$
 
 ## PostgreSQLのインストール
-CentOSではPostgreSQL のバージョン10が標準で提供されていないので、yumの外部リポジトリを利用して、PostgreSQL 10をインストールします。本書では2018年1月現在の最新版、PostgreSQL 10.1 をインストールします。
+AlmaLinux 9.3では、ディストリビューションの標準パッケージとしてPostgreSQL 13が提供されています。このパッケージをdnfコマンドを使ってインストールします。
 
-### 手順1　yumリポジトリの設定
-PostgreSQLの最新版はPostgreSQL開発コミュニティ内のPostgreSQL RPM Building Projectにより配布されています。webブラウザで以下のURLにアクセスすると現在サポートされているバージョンのyumリポジトリ設定用のRPMパッケージが配布されています。
+dnfコマンドの引数に必要なパッケージとしてpostgresql-serverを指定してインストールします。依存関係が解消されて、postgresqlパッケージとpostgresql-private-libsパッケージも一緒にインストールされます。
 
-PostgreSQL RPM Building Project
-* https://yum.postgresql.org/repopackages.php
+| パッケージ名 | 説明
+| --------------------- | -------------------------------------------------------
+| postgresql | PostgreSQLを利用する上で必須のクライアントプログラムやライブラリ
+| postgresql-private-libs | PostgreSQLを利用する上で必須の共有ライブラリ
+| postgresql10-server | サーバープログラムの本体
+| postgresql10-contrib | 拡張機能（インストールは必須ではありません）
 
-注意： 開発中の最新版（α版、β版やRC版）が同ページで配布されていることがありますが、不具合修正の後、数か月後に正式リリースされるものですので、新機能検証などの目的以外では利用しないことを推奨します。
-
-![PostgreSQL RPM Building Project](./Pict/download-01.png)
-
-利用するOSディストリビューションに対応したリンクを右クリックし、リンクのURLをコピーしておきます。例えば、CentOS 7系、PostgreSQL 10では、以下のようなRPMパッケージが直接リンクされています。
-https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-centos10-10-2.noarch.rpm
-
-これをLinuxサーバー上のyum installコマンドで指定します。
-```
-[root@localhost ~]# yum install https://download.postgresql.org/pub/repos/yum/10/redhat/rhel-7-x86_64/pgdg-centos10-10-2.noarch.rpm
-読み込んだプラグイン:fastestmirror, langpacks
-pgdg-centos10-10-2.noarch.rpm                                                                     | 4.6 kB  00:00:00
-
-（中略）
-
-Is this ok [y/d/N]: y
-Downloading packages:
-Running transaction check
-Running transaction test
-Transaction test succeeded
-Running transaction
-  インストール中          : pgdg-centos10-10-2.noarch                                                                1/1
-  検証中                  : pgdg-centos10-10-2.noarch                                                                1/1
-
+[admin@host1 ~]$ sudo dnf install postgresql-server
+メタデータの期限切れの最終確認: 3:20:56 前の 2024年04月06日 11時06分42秒 に実施しました。
+依存関係が解決しました。
+================================================================================
+ パッケージ                  Arch        バージョン         リポジトリー  サイズ
+================================================================================
 インストール:
-  pgdg-centos10.noarch 0:10-2
+ postgresql-server           aarch64     13.14-1.el9_3      appstream     5.6 M
+依存関係のインストール:
+ postgresql                  aarch64     13.14-1.el9_3      appstream     1.5 M
+ postgresql-private-libs     aarch64     13.14-1.el9_3      appstream     130 k
+
+トランザクションの概要
+================================================================================
+インストール  3 パッケージ
+
+ダウンロードサイズの合計: 7.2 M
+インストール後のサイズ: 30 M
+これでよろしいですか? [y/N]: y
+パッケージのダウンロード:
+(1/3): postgresql-private-libs-13.14-1.el9_3.aa 251 kB/s | 130 kB     00:00
+(2/3): postgresql-13.14-1.el9_3.aarch64.rpm     664 kB/s | 1.5 MB     00:02
+(3/3): postgresql-server-13.14-1.el9_3.aarch64. 2.1 MB/s | 5.6 MB     00:02
+--------------------------------------------------------------------------------
+合計                                            1.9 MB/s | 7.2 MB     00:03
+トランザクションの確認を実行中
+トランザクションの確認に成功しました。
+トランザクションのテストを実行中
+トランザクションのテストに成功しました。
+トランザクションを実行中
+  準備             :                                                        1/1
+  インストール中   : postgresql-private-libs-13.14-1.el9_3.aarch64          1/3
+  インストール中   : postgresql-13.14-1.el9_3.aarch64                       2/3
+  scriptletの実行中: postgresql-server-13.14-1.el9_3.aarch64                3/3
+  インストール中   : postgresql-server-13.14-1.el9_3.aarch64                3/3
+  scriptletの実行中: postgresql-server-13.14-1.el9_3.aarch64                3/3
+  検証             : postgresql-13.14-1.el9_3.aarch64                       1/3
+  検証             : postgresql-private-libs-13.14-1.el9_3.aarch64          2/3
+  検証             : postgresql-server-13.14-1.el9_3.aarch64                3/3
+
+インストール済み:
+  postgresql-13.14-1.el9_3.aarch64
+  postgresql-private-libs-13.14-1.el9_3.aarch64
+  postgresql-server-13.14-1.el9_3.aarch64
 
 完了しました!
-```
 
-### 手順2　PostgreSQLのインストール
-手順1でPostgreSQL 10のyumリポジトリが利用できるようになりましたので、必要なパッケージを指定してインストールします。
-
-```
-[root@localhost ~]# yum install postgresql10 postgresql10-server postgresql10-contrib postgresql10-devel
-読み込んだプラグイン:fastestmirror, langpacks
-pgdg10                                                                          | 4.1 kB  00:00:00
-(1/2): pgdg10/7/x86_64/group_gz                                                 |  245 B  00:00:01
-(2/2): pgdg10/7/x86_64/primary_db                                               | 145 kB  00:00:01
-Loading mirror speeds from cached hostfile
- * base: ftp.iij.ad.jp
- * extras: ftp.iij.ad.jp
- * updates: ftp.iij.ad.jp
-依存性の解決をしています
---> トランザクションの確認を実行しています。
----> パッケージ postgresql10.x86_64 0:10.1-1PGDG.rhel7 を インストール
---> 依存性の処理をしています: postgresql10-libs(x86-64) = 10.1-1PGDG.rhel7 のパッケージ: postgresql10-10.1-1PGDG.rhel7.x86_64
---> 依存性の処理をしています: libpq.so.5()(64bit) のパッケージ: postgresql10-10.1-1PGDG.rhel7.x86_64
----> パッケージ postgresql10-contrib.x86_64 0:10.1-1PGDG.rhel7 を インストール
----> パッケージ postgresql10-devel.x86_64 0:10.1-1PGDG.rhel7 を インストール
---> 依存性の処理をしています: libicu-devel のパッケージ: postgresql10-devel-10.1-1PGDG.rhel7.x86_64
----> パッケージ postgresql10-server.x86_64 0:10.1-1PGDG.rhel7 を インストール
---> トランザクションの確認を実行しています。
----> パッケージ libicu-devel.x86_64 0:50.1.2-15.el7 を インストール
----> パッケージ postgresql10-libs.x86_64 0:10.1-1PGDG.rhel7 を インストール
---> 依存性解決を終了しました。
-
-依存性を解決しました
-
-================================================================================================
- Package                             アーキテクチャー    バージョン         リポジトリー   容量
-================================================================================================
-インストール中:
- postgresql10                        x86_64              10.1-1PGDG.rhel7    pgdg10        1.5 M
- postgresql10-contrib                x86_64              10.1-1PGDG.rhel7    pgdg10        587 k
- postgresql10-devel                  x86_64              10.1-1PGDG.rhel7    pgdg10        2.0 M
- postgresql10-server                 x86_64              10.1-1PGDG.rhel7    pgdg10        4.3 M
-依存性関連でのインストールをします:
- libicu-devel                        x86_64              50.1.2-15.el7       base          702 k
- postgresql10-libs                   x86_64              10.1-1PGDG.rhel7    pgdg10        347 k
-
-トランザクションの要約
-================================================================================================
-インストール  4 パッケージ (+2 個の依存関係のパッケージ)
-
-総ダウンロード容量: 9.3 M
-インストール容量: 40 M
-Is this ok [y/d/N]: y
-Downloading packages:
-警告: /var/cache/yum/x86_64/7/base/packages/libicu-devel-50.1.2-15.el7.x86_64.rpm: ヘッダー V3 RSA/SHA256 Signature、鍵 ID f4a80eb5: NOKEY
-libicu-devel-50.1.2-15.el7.x86_64.rpm の公開鍵がインストールされていません
-(1/6): libicu-devel-50.1.2-15.el7.x86_64.rpm                                  | 702 kB  00:00:00
-(2/6): postgresql10-contrib-10.1-1PGDG.rhel7.x86_64.rpm                       | 587 kB  00:00:02
-(3/6): postgresql10-10.1-1PGDG.rhel7.x86_64.rpm                               | 1.5 MB  00:00:03
-(4/6): postgresql10-libs-10.1-1PGDG.rhel7.x86_64.rpm                          | 347 kB  00:00:00
-(5/6): postgresql10-devel-10.1-1PGDG.rhel7.x86_64.rpm                         | 2.0 MB  00:00:01
-(6/6): postgresql10-server-10.1-1PGDG.rhel7.x86_64.rpm                        | 4.3 MB  00:00:03
------------------------------------------------------------------------------------------------------
-合計                                                                 1.4 MB/s | 9.3 MB  00:00:06
-file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7 から鍵を取得中です。
-Importing GPG key 0xF4A80EB5:
- Userid     : "CentOS-7 Key (CentOS 7 Official Signing Key) <security@centos.org>"
- Fingerprint: 6341 ab27 53d7 8a78 a7c2 7bb1 24c6 a8a7 f4a8 0eb5
- Package    : centos-release-7-4.1708.el7.centos.x86_64 (@anaconda)
- From       : /etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
-上記の処理を行います。よろしいでしょうか？ [y/N]y
-Running transaction check
-Running transaction test
-Transaction test succeeded
-Running transaction
-  インストール中          : postgresql10-libs-10.1-1PGDG.rhel7.x86_64                        1/6
-  インストール中          : postgresql10-10.1-1PGDG.rhel7.x86_64                             2/6
-  インストール中          : libicu-devel-50.1.2-15.el7.x86_64                                3/6
-  インストール中          : postgresql10-devel-10.1-1PGDG.rhel7.x86_64                       4/6
-  インストール中          : postgresql10-server-10.1-1PGDG.rhel7.x86_64                      5/6
-  インストール中          : postgresql10-contrib-10.1-1PGDG.rhel7.x86_64                     6/6
-  検証中                  : postgresql10-server-10.1-1PGDG.rhel7.x86_64                      1/6
-  検証中                  : postgresql10-libs-10.1-1PGDG.rhel7.x86_64                        2/6
-  検証中                  : postgresql10-devel-10.1-1PGDG.rhel7.x86_64                       3/6
-  検証中                  : postgresql10-contrib-10.1-1PGDG.rhel7.x86_64                     4/6
-  検証中                  : libicu-devel-50.1.2-15.el7.x86_64                                5/6
-  検証中                  : postgresql10-10.1-1PGDG.rhel7.x86_64                             6/6
-
-インストール:
-  postgresql10.x86_64 0:10.1-1PGDG.rhel7             postgresql10-contrib.x86_64 0:10.1-1PGDG.rhel7
-  postgresql10-devel.x86_64 0:10.1-1PGDG.rhel7       postgresql10-server.x86_64 0:10.1-1PGDG.rhel7
-
-依存性関連をインストールしました:
-  libicu-devel.x86_64 0:50.1.2-15.el7                postgresql10-libs.x86_64 0:10.1-1PGDG.rhel7
-
-完了しました!
-```
-
-インストールが完了すると、以下の通りディレクトリとバイナリが配置されています。
-```
-[postgres@localhost ~]$ ls /usr/pgsql-10/
-bin  doc  include  lib  share
-[postgres@localhost ~]$ ls /usr/pgsql-10/bin
-clusterdb   ecpg               pg_config       pg_isready      pg_rewind       pg_waldump                  postmaster
-createdb    initdb             pg_controldata  pg_receivewal   pg_standby      pgbench                     psql
-createuser  oid2name           pg_ctl          pg_recvlogical  pg_test_fsync   postgres                    reindexdb
-dropdb      pg_archivecleanup  pg_dump         pg_resetwal     pg_test_timing  postgresql-10-check-db-dir  vacuumdb
-dropuser    pg_basebackup      pg_dumpall      pg_restore      pg_upgrade      postgresql-10-setup         vacuumlo
-```
-
-### 手順3　PostgreSQL利用環境の初期設定
+## PostgreSQL利用環境の初期設定
 インストール直後はデータベースが作成されておらず、次のステップ以降で利用者が作成します。インストールしたPostgreSQLは、OSユーザー postgres が初期化ユーザーとして管理権限を持っているので、suコマンドでユーザーpostgresに変更して操作を行います。PostgreSQLに対する各種操作がしやすいようにOS側の設定を行います。
 なお、データディレクトリの位置はデータベース作成時に指定できますが、その際に本項の設定（環境変数と起動スクリプト）が正しく設定されている必要があります。本書ではデフォルトの位置（/var/lib/pgsql/10/data）に作成することとします。
 
-#### 環境変数の設定
+[admin@host1 ~]$ su - postgres
+[postgres@host1 ~]$ postgresql-setup --initdb
+ * Initializing database in '/var/lib/pgsql/data'
+ * Initialized, logs are in /var/lib/pgsql/initdb_postgresql.log
+
+[postgres@host1 ~]$ systemctl start postgresql
+==== AUTHENTICATING FOR org.freedesktop.systemd1.manage-units ====
+'postgresql.service'を開始するには認証が必要です。
+Authenticating as: ADMIN (admin)
+Password:
+==== AUTHENTICATION COMPLETE ====
+[postgres@host1 ~]$ systemctl status postgresql
+● postgresql.service - PostgreSQL database server
+     Loaded: loaded (/usr/lib/systemd/system/postgresql.service; disabled; pres>
+     Active: active (running) since Sat 2024-04-06 14:43:06 JST; 9s ago
+    Process: 5145 ExecStartPre=/usr/libexec/postgresql-check-db-dir postgresql >
+   Main PID: 5147 (postmaster)
+      Tasks: 8 (limit: 10552)
+     Memory: 16.7M
+        CPU: 41ms
+     CGroup: /system.slice/postgresql.service
+             ├─5147 /usr/bin/postmaster -D /var/lib/pgsql/data
+             ├─5148 "postgres: logger "
+             ├─5150 "postgres: checkpointer "
+             ├─5151 "postgres: background writer "
+             ├─5152 "postgres: walwriter "
+             ├─5153 "postgres: autovacuum launcher "
+             ├─5154 "postgres: stats collector "
+             └─5155 "postgres: logical replication launcher "
+lines 1-17/17 (END)
+
+
+## 環境変数の設定
 
 環境変数 | 説明
 ---------- | ------------------------------------------------------
@@ -184,8 +126,8 @@ PGHOME | PostgreSQLのインストールディレクトリを指定します。
 PATH | PostgreSQLインストールディレクトリ配下のbinを指定します。
 
 以下では、postgresqlユーザーの環境変数設定ファイル .bash_profile を編集し、PGDATA、PGHOME、PATH環境変数を追加しています。
-```
-[root@localhost ~]# su - postgres
+
+[admin@host1 ~]$ su - postgres
 [postgres@localhost ~]$ vi .bash_profile
 ---------
 # .bash_profile
@@ -207,55 +149,16 @@ export PGHOME=/usr/pgsql-10
 export PATH=$PGHOME/bin:.:$PATH
 -------
 [postgres@localhost ~]$ source .bash_profile
-```
-
-#### 起動スクリプトの確認
-yumやRPMでPostgreSQLをインストールすると、起動停止スクリプトが自動作成されます。先の手順で設定した環境変数PGDATAが Location of database directory と一致していることを確認します。本書の範囲では変更する必要はありません。
-```
-[root@localhost ~]# vi /usr/lib/systemd/system/postgresql-10.service
-------
-# Location of database directory
-Environment=PGDATA=/var/lib/pgsql/10/data/
-------
-```
-
-### 参考　yumを使わないインストール
-インターネットへの接続が行えないなどの制限がある場合には、Webサイトから以下のパッケージをダウンロードしてサーバーに配置し、RPMコマンドでインストールしてください。
-
-##### ダウンロード Webページ
-http://yum.pgrpms.org/packages.php
-
-![ ](./Pict/packages.png)
-
-##### CentOS 7 64ビット版用ダウンロード Webページ
-https://yum.postgresql.org/10/redhat/rhel-7-x86_64/repoview/postgresqldbserver10.group.html
-
-![ ](./Pict/group.png)
-
-以下のパッケージをダウンロードしサーバーに配置します。
-
-パッケージ名 | 説明
---------------------- | -------------------------------------------------------
-postgresql10 | PostgreSQLを利用する上で必須のクライアントプログラムやライブラリ
-postgresql10-libs | PostgreSQLを利用する上で必須の共有ライブラリ
-postgresql10-server | サーバープログラムの本体
-postgresql10-contrib | 拡張機能（本書の範囲では必須ではありません）
-
-各パッケージのリンク先にはさらに複数マイナーバージョンが配布されている場合があります。本書ではいずれも10.1を利用しています。
-
-#### RPMコマンドでインストール
-実際にダウンロードするファイルはpostgresql10-10.1-1PGDG.rhel7.x86_64.rpmのようなRPM形式です。RPMコマンドでインストールします。postgresql10-libs、postgresql10-server、postgresql10-contribも同様にインストールします。
-```
-[root@localhost ~]# cd <ファイル配置先ディレクトリ>
-[root@localhost ~]# rpm -ivh postgresql10-10.1-1PGDG.rhel7.x86_64.rpm
-```
 
 
 ## データベースの初期化
 データベースクラスタを作成します。この作業をデータベースの初期化と呼び、インストール後に1回だけ行います。
 
 ### データベースクラスタとinitdbコマンド
-PostgreSQLが管理するデータベースそのもの（実体はOS上のファイル）や各種設定ファイル、変更履歴ファイル、ログファイルなどをひとまとめにしたものをデータベースクラスタと呼びます。初期化とはデータベースクラスタを構成するすべてのファイルやディレクトリを新規作成することを指します。
+PostgreSQLが管理するデータベースそのもの（実体はOS上のファイル）や各種設定ファイル、変更履歴ファイル、ログファイルなどをひとまとめにしたものをデータベースクラスタと呼びます。
+
+データベース初期化とは、データベースクラスタを構成するすべてのファイルやディレクトリを新規作成することを指します。
+
 データベースの初期化はinitdbコマンドを使用し、日本語環境で利用するうえで推奨されている-E utf8および--no-localeオプションを指定してデータベースを初期化します。
 
 ### データディレクトリ
@@ -305,12 +208,12 @@ global      pg_hba.conf   pg_multixact   pg_serial    pg_stat_tmp   pg_twophase 
 ## データベースを起動
 PostgreSQLの起動・停止にはsystemctlコマンドを使用します。
 ```
-[root@localhost ~]# systemctl start postgresql-10.service
+[admin@host1 ~]$ systemctl start postgresql-10.service
 ```
 
 PostgreSQLが正しく起動されている場合、ステータスは以下のようになります。
 ```
-[root@localhost ~]# systemctl status postgresql-10.service
+[admin@host1 ~]$ systemctl status postgresql-10.service
 ● postgresql-10.service - PostgreSQL 10 database server
    Loaded: loaded (/usr/lib/systemd/system/postgresql-10.service; disabled; vendor preset: disabled)
    Active: active (running) since 月 2018-01-22 01:59:14 JST; 6s ago
@@ -331,45 +234,40 @@ PostgreSQLが正しく起動されている場合、ステータスは以下の�
 
 デフォルトでは手動起動になっているので、システムの起動毎に自動的に起動したい場合にはsystemctlでenableサブコマンドを指定します。自動起動を無効にする場合はdisableを指定します。
 ```
-[root@localhost ~]# systemctl enable postgresql-10.service
+[admin@host1 ~]$ systemctl enable postgresql
 Created symlink from /etc/systemd/system/multi-user.target.wants/postgresql-10.service to /usr/lib/systemd/system/postgresql-10.service.
-[root@localhost ~]# systemctl list-unit-files | grep postgres
+[admin@host1 ~]$ systemctl list-unit-files | grep postgres
 postgresql-10.service                         enabled
 ```
 
 ## 動作の確認
 データベースの動作確認を行います。PostgreSQLサーバーに対するすべての操作はpostgresユーザーで実施します。
-```
-[root@localhost ~]# su - postgres
-```
+
+[admin@host1 ~]$ su - postgres
 
 psqlに-lオプションを付けて実行し、作成されているデータベースを確認します。
-```
-[postgres@localhost ~]$ psql -l
-                             List of databases
-   Name    |  Owner   | Encoding | Collate | Ctype |   Access privileges
------------+----------+----------+---------+-------+-----------------------
- postgres  | postgres | UTF8     | C       | C     |
- template0 | postgres | UTF8     | C       | C     | =c/postgres          +
-           |          |          |         |       | postgres=CTc/postgres
- template1 | postgres | UTF8     | C       | C     | =c/postgres          +
-           |          |          |         |       | postgres=CTc/postgres
-(3 rows)
-```
 
-\pagebreak
+[postgres@host1 ~]$ psql -l
+                                         データベース一覧
+   名前    |  所有者  | エンコーディング |  照合順序   | Ctype(変換演算子) |     アクセス権限
+-----------+----------+------------------+-------------+-------------------+-----------------------
+ postgres  | postgres | UTF8             | ja_JP.UTF-8 | ja_JP.UTF-8       |
+ template0 | postgres | UTF8             | ja_JP.UTF-8 | ja_JP.UTF-8       | =c/postgres          +
+           |          |                  |             |                   | postgres=CTc/postgres
+ template1 | postgres | UTF8             | ja_JP.UTF-8 | ja_JP.UTF-8       | =c/postgres          +
+           |          |                  |             |                   | postgres=CTc/postgres
+(3 行)
 
-# 付録　実習の準備方法
+# 実習の準備方法
 実習で使用するデータベースを作成し、データベースに接続します。そして、表を作成し、初期データを入力します。
 
 ## データベースの作成
 実習用のデータベースossdbを作成します。データベースの作成はOSユーザーpostgresで行います。作成後、接続できることを確認しておきます。
 ```
-[root@localhost ~]# su - postgres
-[postgres@localhost ~]$ createdb ossdb
-[postgres@localhost ~]$ psql ossdb
-psql (10.1)
-Type "help" for help.
+[postgres@host1 ~]$ createdb ossdb
+[postgres@host1 ~]$ psql ossdb
+psql (13.14)
+"help"でヘルプを表示します。
 
 ossdb=#
 ```
@@ -386,14 +284,14 @@ CREATE TABLE prod
 
 CREATE TABLE customer
  (customer_id   integer,
-  customer_name text);
+ customer_name text);
 
 CREATE TABLE orders
  (order_id    integer,
-  order_date  timestamp,
-  customer_id integer,
-  prod_id     integer,
-  qty         integer);
+ order_date  timestamp,
+ customer_id integer,
+ prod_id     integer,
+ qty         integer);
 ```
 
 
@@ -442,4 +340,34 @@ INSERT 0 3
 ```
 
 
-![ ](./Pict/history.png)
+### 参考　yumを使わないインストール
+インターネットへの接続が行えないなどの制限がある場合には、Webサイトから以下のパッケージをダウンロードしてサーバーに配置し、RPMコマンドでインストールしてください。
+
+##### ダウンロード Webページ
+http://yum.pgrpms.org/packages.php
+
+![ ](./Pict/packages.png)
+
+##### CentOS 7 64ビット版用ダウンロード Webページ
+https://yum.postgresql.org/10/redhat/rhel-7-x86_64/repoview/postgresqldbserver10.group.html
+
+![ ](./Pict/group.png)
+
+以下のパッケージをダウンロードしサーバーに配置します。
+
+パッケージ名 | 説明
+--------------------- | -------------------------------------------------------
+postgresql10 | PostgreSQLを利用する上で必須のクライアントプログラムやライブラリ
+postgresql10-libs | PostgreSQLを利用する上で必須の共有ライブラリ
+postgresql10-server | サーバープログラムの本体
+postgresql10-contrib | 拡張機能（本書の範囲では必須ではありません）
+
+各パッケージのリンク先にはさらに複数マイナーバージョンが配布されている場合があります。本書ではいずれも10.1を利用しています。
+
+#### RPMコマンドでインストール
+実際にダウンロードするファイルはpostgresql10-10.1-1PGDG.rhel7.x86_64.rpmのようなRPM形式です。RPMコマンドでインストールします。postgresql10-libs、postgresql10-server、postgresql10-contribも同様にインストールします。
+```
+[admin@host1 ~]$ cd <ファイル配置先ディレクトリ>
+[admin@host1 ~]$ rpm -ivh postgresql10-10.1-1PGDG.rhel7.x86_64.rpm
+```
+
