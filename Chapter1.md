@@ -6,6 +6,7 @@ RPMパッケージでPostgreSQLをインストールすると、OSでpostgresユ
 
 以下ではadminユーザーでログイン後、useraddコマンドでpostgresユーザーを作成し、passwdコマンドでユーザーのパスワードを設定しています。その後、suコマンドでpostgresユーザーに切り替えてプロンプトの表示やホームディレクトリ位置を確認し、adminユーザーに戻しています。
 
+```
 [admin@host1 ~]$ sudo useradd postgres
 [sudo] admin のパスワード: ※adminユーザーのパスワードを入力
 [admin@host1 ~]$ sudo passwd postgres
@@ -21,6 +22,7 @@ passwd: すべての認証トークンが正しく更新できました。
 /home/postgres
 [postgres@host1 ~]$ exit
 [admin@host1 ~]$
+```
 
 ## PostgreSQLのインストール
 AlmaLinux 9.3では、ディストリビューションの標準パッケージとしてPostgreSQL 13が提供されています。このパッケージをdnfコマンドを使ってインストールします。
@@ -34,6 +36,7 @@ dnfコマンドの引数に必要なパッケージとしてpostgresql-serverを
 | postgresql10-server | サーバープログラムの本体
 | postgresql10-contrib | 拡張機能（インストールは必須ではありません）
 
+```
 [admin@host1 ~]$ sudo dnf install postgresql-server
 メタデータの期限切れの最終確認: 3:20:56 前の 2024年04月06日 11時06分42秒 に実施しました。
 依存関係が解決しました。
@@ -80,16 +83,21 @@ dnfコマンドの引数に必要なパッケージとしてpostgresql-serverを
   postgresql-server-13.14-1.el9_3.aarch64
 
 完了しました!
+```
 
-## PostgreSQL利用環境の初期設定
-インストール直後はデータベースが作成されておらず、次のステップ以降で利用者が作成します。インストールしたPostgreSQLは、OSユーザー postgres が初期化ユーザーとして管理権限を持っているので、suコマンドでユーザーpostgresに変更して操作を行います。PostgreSQLに対する各種操作がしやすいようにOS側の設定を行います。
-なお、データディレクトリの位置はデータベース作成時に指定できますが、その際に本項の設定（環境変数と起動スクリプト）が正しく設定されている必要があります。本書ではデフォルトの位置（/var/lib/pgsql/10/data）に作成することとします。
 
+## データベースの初期化
+
+```
 [admin@host1 ~]$ su - postgres
 [postgres@host1 ~]$ postgresql-setup --initdb
  * Initializing database in '/var/lib/pgsql/data'
  * Initialized, logs are in /var/lib/pgsql/initdb_postgresql.log
+```
 
+## サービスの起動
+
+```
 [postgres@host1 ~]$ systemctl start postgresql
 ==== AUTHENTICATING FOR org.freedesktop.systemd1.manage-units ====
 'postgresql.service'を開始するには認証が必要です。
@@ -115,18 +123,29 @@ Password:
              ├─5154 "postgres: stats collector "
              └─5155 "postgres: logical replication launcher "
 lines 1-17/17 (END)
+```
+
+
+以下、かなり変わっているので削除するかも？
+
+
+## PostgreSQL利用環境の初期設定
+インストール直後はデータベースが作成されておらず、次のステップ以降で利用者が作成します。インストールしたPostgreSQLは、OSユーザー postgres が初期化ユーザーとして管理権限を持っているので、suコマンドでユーザーpostgresに変更して操作を行います。PostgreSQLに対する各種操作がしやすいようにOS側の設定を行います。
+なお、データディレクトリの位置はデータベース作成時に指定できますが、その際に本項の設定（環境変数と起動スクリプト）が正しく設定されている必要があります。本書ではデフォルトの位置（/var/lib/pgsql/10/data）に作成することとします。
+
 
 
 ## 環境変数の設定
 
-環境変数 | 説明
----------- | ------------------------------------------------------
-PGDATA | データディレクトリ位置を指定します。
-PGHOME | PostgreSQLのインストールディレクトリを指定します。
-PATH | PostgreSQLインストールディレクトリ配下のbinを指定します。
+| 環境変数 | 説明
+| ---------- | ------------------------------------------------------
+| PGDATA | データディレクトリ位置を指定します。
+| PGHOME | PostgreSQLのインストールディレクトリを指定します。
+| PATH | PostgreSQLインストールディレクトリ配下のbinを指定します。
 
 以下では、postgresqlユーザーの環境変数設定ファイル .bash_profile を編集し、PGDATA、PGHOME、PATH環境変数を追加しています。
 
+```
 [admin@host1 ~]$ su - postgres
 [postgres@localhost ~]$ vi .bash_profile
 ---------
@@ -149,7 +168,7 @@ export PGHOME=/usr/pgsql-10
 export PATH=$PGHOME/bin:.:$PATH
 -------
 [postgres@localhost ~]$ source .bash_profile
-
+```
 
 ## データベースの初期化
 データベースクラスタを作成します。この作業をデータベースの初期化と呼び、インストール後に1回だけ行います。
