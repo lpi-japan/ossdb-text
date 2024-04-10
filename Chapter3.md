@@ -181,7 +181,7 @@ ossdb=# \d customer
 | time | 時刻のみ格納（日付データを持たず日付型への変換不可）
 | timestamp | 日付と時刻を格納
 
-以下の例では、date型、time型、timestamp型の3つの列を持ったdate_test表を作成しています。それぞれに現在時刻を挿入すると、各データ型で定められた「日付」「時刻」「日付と時刻」が格納されていることを確認します。CURRENT_TIMESTAMP関数はtimestamp型の日付と時刻による現在時刻を返します。
+以下の例では、date型、time型、timestamp型の3つの列を持ったdate_test表を作成しています。それぞれに現在の日付と時刻を挿入すると、各データ型で定められた「日付」「時刻」「日付と時刻」が格納されていることを確認します。CURRENT_TIMESTAMP関数はtimestamp型の現在の日付と時刻を返します。
 ```
 ossdb=# CREATE TABLE date_test ( d_test  date,
                                  t_test  time,
