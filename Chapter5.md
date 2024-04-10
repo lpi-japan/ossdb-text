@@ -3,30 +3,29 @@
 
 ## 演習1：データ操作
 
-### データ操作演習
+以下の操作をSQLで行ってみましょう。
 
-1. すべての商品の価格を10%アップします
-2. 価格が100以上の商品の価格を元に戻します
-3. prod表のデータをファイルにコピーします
+1. prod表のすべての商品の価格を10%アップします
+2. prod表の価格が100以上の商品の価格を元に戻します
+3. prod表のデータをファイルにセーブします
 4. prod表を削除します
 5. prod表を再度作成します
-6. データをファイルからコピーします
+6. prod表にデータをファイルからロードします
 
-表の定義はあらかじめ確認しておきましょう。また、巻末の付録にも表を作成するためのCREATE TABLE 文の例がありますので、参考にしてください。
+表の定義はあらかじめ確認しておきましょう。また、第1章の表を作成するためのCREATE TABLE文の例も参考にしてください。
 
-### 解答例
+##演習1-1： prod表のすべての商品の価格を10%アップします
+prod表のprice列を指定してUPDATEを実行する。
 
-* 演習1-1： すべての商品の価格を10%アップします  
- * 商品表の価格列を指定してUPDATE  
 ```
 ossdb=# \d prod
-                 Table "public.prod"
-  Column   |  Type   | Collation | Nullable | Default
------------+---------+-----------+----------+---------
- prod_id   | integer |           |          |
- prod_name | text    |           |          |
- price     | integer |           |          |
-　
+                    テーブル"public.prod"
+    列     | タイプ  | 照合順序 | Null 値を許容 | デフォルト
+-----------+---------+----------+---------------+------------
+ prod_id   | integer |          |               |
+ prod_name | text    |          |               |
+ price     | integer |          |               |
+
 ossdb=# SELECT * FROM prod;
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -34,9 +33,11 @@ ossdb=# SELECT * FROM prod;
        2 | りんご    |    70
        3 | メロン    |   100
        4 | バナナ    |    31
-(4 rows)
+(4 行)
+
 ossdb=# UPDATE prod SET price = price * 1.1;
 UPDATE 4
+ossdb=# SELECT * FROM prod;
 ossdb=# SELECT * FROM prod;
  prod_id | prod_name | price
 ---------+-----------+-------
@@ -44,11 +45,12 @@ ossdb=# SELECT * FROM prod;
        2 | りんご    |    77
        3 | メロン    |   110
        4 | バナナ    |    34
-(4 rows)
+(4 行)
 ```
 
-* 演習1-2： 価格が100以上の商品の価格を元に戻します  
- * 価格が100以上の商品を指定してUPDATE  
+## 演習1-2： prod表の価格が100以上の商品の価格を元に戻します
+price表のpriceの値が100以上の商品を指定してUPDATEを実行する。
+
 ```
 ossdb=# UPDATE prod SET price = price/1.1 WHERE price >= 100;
 UPDATE 1
@@ -59,39 +61,52 @@ ossdb=# SELECT * FROM prod;
        2 | りんご    |    77
        4 | バナナ    |    34
        3 | メロン    |   100
-(4 rows)
+(4 行)
 ```
 
-* 演習1-3： prod表のデータをファイルにコピーします  
- * COPYコマンドでデータをファイルにセーブ  
+### 演習1-3： prod表のデータをファイルにセーブします
+COPY TO文でデータをファイルにセーブします。
+
 ```
-ossdb=# COPY prod TO '/home/postgres/prod.csv' (FORMAT csv);
+ossdb=# COPY prod TO '/tmp/prod.csv' (FORMAT csv);
 COPY 4
-ossdb=# \\! ls -l prod.csv
--rw-r--r--. 1 postgres postgres 61  1月 29 02:01 prod.csv
+ossdb=# \\! cat /tmp/prod.csv
+1,みかん,55
+2,りんご,77
+4,バナナ,34
+3,メロン,100
 ```
 
-* 演習1-4： prod表を削除します  
- * 表の削除にはDROP TABLEを使用  
+### 演習1-4： prod表を削除します  
+DROP TABLE文でprod表を削除します。
+
 ```
 ossdb=# DROP TABLE prod;
 DROP TABLE
+ossdb=# SELECT * FROM prod;
+ERROR:  リレーション"prod"は存在しません
+行 1: SELECT * FROM prod;
+                    ^
 ```
 
-* 演習1-5： 表を再度作成します  
- * 表の作成時は列ごとに格納するデータに合わせた型を指定する  
- * IDのような整数にはinteger型、文字にはtext型、計算に用いる数値はnumeric型  
+### 演習1-5： prod表を再度作成します
+表の作成時は列ごとに格納するデータに合わせた型を指定します。IDのような整数にはinteger型、文字にはtext型、計算に用いる数値はnumeric型を指定します。
+
 ```
 ossdb=# CREATE TABLE prod ( prod_id     integer,
                             prod_name   text,
-                            price       numeric  );
+                            price       numeric );
 CREATE TABLE
+ossdb=# SELECT * FROM prod;
+ prod_id | prod_name | price
+---------+-----------+-------
+(0 行)
 ```
 
-* 演習1-6： データをファイルからコピーします  
- * セーブ時と同様、COPYコマンドを使用  
+### 演習1-6： prod表にデータをファイルからロードします
+COPY FROM文を使用してデータをファイルからロードします。
 ```
-ossdb=# COPY prod FROM '/home/postgres/prod.csv' (FORMAT csv);
+ossdb=# COPY prod FROM '/tmp/prod.csv' (FORMAT csv);
 COPY 4
 ossdb=# SELECT * FROM prod;
  prod_id | prod_name | price
@@ -100,7 +115,7 @@ ossdb=# SELECT * FROM prod;
        2 | りんご    |    77
        4 | バナナ    |    34
        3 | メロン    |   100
-(4 rows)
+(4 行)
 ```
 
 ## 演習2：郵便番号データベース
@@ -112,31 +127,33 @@ ossdb=# SELECT * FROM prod;
 
 * 郵便番号データダウンロード Webページの利用  
 データはZIP形式で配布されています。「住所の郵便番号（CSV形式）」-「読み仮名データの促音・拗音を小書きで表記するもの」をクリックしてZIP形式でダウンロードしてください。ここでは「全国一括」のデータを用います。
- * [http://www.post.japanpost.jp/zipcode/download.html](http://www.post.japanpost.jp/zipcode/download.html)
 
+```
+https://www.post.japanpost.jp/zipcode/download.html
+```
 
 * 郵便番号データのダウンロード  
 以下の例は、wgetコマンドを使って郵便番号CSVデータをダウンロードして、unzipコマンドで解凍しています。
 ```
-[postgres@localhost ~]$ wget http://www.post.japanpost.jp/zipcode/dl/kogaki/zip/ken_all.zip
---2018-01-29 01:14:02--  http://www.post.japanpost.jp/zipcode/dl/kogaki/zip/ken_all.zip
-www.post.japanpost.jp (www.post.japanpost.jp) をDNSに問いあわせています... 43.253.37.203
-www.post.japanpost.jp (www.post.japanpost.jp)|43.253.37.203|:80 に接続しています... 接続しました。
+[postgres@localhost ~]$ wget https://www.post.japanpost.jp/zipcode/dl/utf/zip/utf_ken_all.zip
+--2024-04-10 15:23:02--  https://www.post.japanpost.jp/zipcode/dl/utf/zip/utf_ken_all.zip
+www.post.japanpost.jp (www.post.japanpost.jp) をDNSに問いあわせています... 43.253.212.144
+www.post.japanpost.jp (www.post.japanpost.jp)|43.253.212.144|:443 に接続しています... 接続しました。
 HTTP による接続要求を送信しました、応答を待っています... 200 OK
-長さ: 1686409 (1.6M) [application/zip]
-ken_all.zip に保存中
-　
-100%[===============================================================================>] 1,686,409   10.4MB/s 時間 0.2s
-　
-2018-01-29 01:14:02 (10.4 MB/s) - ken_all.zip へ保存完了 [1686409/1686409]
-　
-[postgres@localhost ~]$ ls
-customer.csv  ken_all.zip  test.sql
-[postgres@localhost ~]$ unzip ken_all.zip
-Archive:  ken_all.zip
-  inflating: KEN_ALL.CSV
-[postgres@localhost ~]$ ls -l KEN_ALL.CSV
--rw-rw-r--. 1 postgres postgres 12288638 12月 22 14:22 KEN_ALL.CSV
+長さ: 2183402 (2.1M) [application/zip]
+`utf_ken_all.zip' に保存中
+
+utf_ken_all.zip     100%[===================>]   2.08M  9.69MB/s 時間 0.2s
+
+2024-04-10 15:23:02 (9.69 MB/s) - `utf_ken_all.zip' へ保存完了 [2183402/2183402]
+
+[postgres@host1 ~]$ ls
+utf_ken_all.zip
+[postgres@host1 ~]$ unzip utf_ken_all.zip
+Archive:  utf_ken_all.zip
+  inflating: utf_ken_all.csv
+[postgres@host1 ~]$ ls -l utf_ken_all.csv
+-rw-r--r--. 1 postgres postgres 18335216  3月 22 10:40 utf_ken_all.csv
 ```
 
 ### 郵便番号データベース表の作成
@@ -145,26 +162,27 @@ Archive:  ken_all.zip
 * 郵便番号データ項目  
 データの項目は以下の通りです。
 
-|内容                          |備考             |
-|----------------------------|---------------|
-|全国地方公共団体コード(JIS X0401、X0402)|半角数字           |
-|(旧)郵便番号(5桁)                 |半角数字           |
-|郵便番号(7桁)                    |半角数字           |
-|都道府県名                       |半角カタカナ(コード順に掲載)|
-|市区町村名                       |半角カタカナ(コード順に掲載)|
-|町域名                         |半角カタカナ(五十音順に掲載)|
-|都道府県名                       |漢字(コード順に掲載)    |
-|市区町村名                       |漢字(コード順に掲載)    |
-|町域名                         |漢字(五十音順に掲載)    |
-|一町域が二以上の郵便番号で表される場合の表示      |               |
-|小字毎に番地が起番されている町域の表示         |               |
-|丁目を有する町域の場合の表示              |               |
-|一つの郵便番号で二以上の町域を表す場合の表示      |               |
-|更新の表示                       |               |
-|変更理由                        | 　 |
+| 内容 |備考 |
+|---|---|
+| 全国地方公共団体コード(JIS X0401、X0402)| 半角数字 |
+| (旧)郵便番号(5桁) | 半角数字 |
+| 郵便番号(7桁) | 半角数字 |
+| 都道府県名 | 半角カタカナ(コード順に掲載) |
+| 市区町村名 | 半角カタカナ(コード順に掲載) |
+| 町域名 | 半角カタカナ(五十音順に掲載) |
+| 都道府県名 | 漢字(コード順に掲載) |
+| 市区町村名 | 漢字(コード順に掲載) |
+| 町域名 | 漢字(五十音順に掲載) |
+| 一町域が二以上の郵便番号で表される場合の表示 | |
+| 小字毎に番地が起番されている町域の表示 | |
+| 丁目を有する町域の場合の表示 | |
+| 一つの郵便番号で二以上の町域を表す場合の表示 | |
+| 更新の表示 | |
+| 変更理由 | |
 
 * 郵便番号データ用の表定義  
 以下の例は、文字列データをchar型およびtext型で定義した表作成のためのCREATE TABLE文です。
+
 ```
 ossdb=# CREATE TABLE zip (
                           lgcode    char(5),
@@ -181,20 +199,19 @@ ossdb=# CREATE TABLE zip (
                           choume    integer,
                           smallarea integer,
                           change    integer,
-                          reason    integer
-                          );
+                          reason    integer );
 CREATE TABLE
 ```
 
 * 郵便番号データサンプル  
 データは以下のような内容です。
 ```
-[postgres@localhost ~]$ head -5 KEN_ALL_UTF8.CSV
-01101,"060  ","0600000","ホツカイドウ","サツポロシチユウオウク","イカニケイサイガナイバアイ","北海道","札幌市中央区","以下に掲載がない場合",0,0,0,0,0,0
-01101,"064  ","0640941","ホツカイドウ","サツポロシチユウオウク","アサヒガオカ","北海道","札幌市中央区","旭ケ丘",0,0,1,0,0,0
-01101,"060  ","0600041","ホツカイドウ","サツポロシチユウオウク","オオドオリヒガシ","北海道","札幌市中央区","大通東",0,0,1,0,0,0
-01101,"060  ","0600042","ホツカイドウ","サツポロシチユウオウク","オオドオリニシ(1-19チヨウメ)","北海道","札幌市中央区","大通西（１～１９丁目）",1,0,1,0,0,0
-01101,"064  ","0640820","ホツカイドウ","サツポロシチユウオウク","オオドオリニシ(20-28チヨウメ)","北海道","札幌市中央区","大通西（２０～２８丁目）",1,0,1,0,0,0
+[postgres@localhost ~]$ head -5 utf_ken_all.csv
+01101,"060  ","0600000","ホッカイドウ","サッポロシチュウオウク","イカニケイサイガナイバアイ","北海道","札幌市中央区","以下に掲載がない場合",0,0,0,0,0,0
+01101,"064  ","0640941","ホッカイドウ","サッポロシチュウオウク","アサヒガオカ","北海道","札幌市中央区","旭ケ丘",0,0,1,0,0,0
+01101,"060  ","0600041","ホッカイドウ","サッポロシチュウオウク","オオドオリヒガシ","北海道","札幌市中央区","大通東",0,0,1,0,0,0
+01101,"060  ","0600042","ホッカイドウ","サッポロシチュウオウク","オオドオリニシ（１−１９チョウメ）","北海道","札幌市中央区","大通西（１〜１９丁目）",1,0,1,0,0,0
+01101,"064  ","0640820","ホッカイドウ","サッポロシチュウオウク","オオドオリニシ（２０−２８チョウメ）","北海道","札幌市中央区","大通西（２０〜２８丁目）",1,0,1,0,0,0
 ```
 
 ### データのロードと文字コードについて
@@ -207,8 +224,8 @@ CREATE TABLE
 以下の例は、\\encodingメタコマンドでpsqlが扱うデータの文字コードをシフトJISに変更しています。データベースはUTF-8で格納するので、シフトJISからUTF-8への文字コード変換が行われます。
 ```
 ossdb=# \\encoding SJIS
-ossdb=# \\copy zip from KEN_ALL.CSV with csv
-COPY 124165
+ossdb=# \\copy zip from utf_ken_all.csv with csv
+COPY 124370
 ossdb=# \\encoding UTF-8
 ```
 
@@ -234,10 +251,10 @@ ossdb=# \\copy zip from KEN_ALL_UTF8.CSV with csv
 
 ```
 ossdb=# SELECT * FROM zip WHERE newzip = '1500002';
- lgcode | oldzip | newzip  | prefkana | citykana | areakana |  pref  |  city  | area | largearea | koaza | choume | smallarea | change | reason
---------+--------+---------+----------+----------+----------+--------+--------+------+-----------+-------+--------+-----------+--------+--------
- 13113  | 150    | 1500002 | ﾄｳｷｮｳﾄ   | ｼﾌﾞﾔｸ    | ｼﾌﾞﾔ     | 東京都 | 渋谷区 | 渋谷 |         0 |     0 |      1 |         0 |      0 |      0
-(1 row)
+ lgcode | oldzip | newzip  |   prefkana   | citykana |           areakana           |  pref  |  city  |          area          | largearea | koaza | choume | smallarea | change | reason
+--------+--------+---------+--------------+----------+------------------------------+--------+--------+------------------------+-----------+-------+--------+-----------+--------+--------
+ 13113  | 150    | 1500002 | トウキョウト | シブヤク | シブヤ（ツギノビルヲノゾク） | 東京都 | 渋谷区 | 渋谷（次のビルを除く） |         0 |     0 |      1 |         0 |      0 |      0
+(1 行)
 ```
 
 \pagebreak
