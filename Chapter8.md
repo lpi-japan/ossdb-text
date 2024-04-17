@@ -7,40 +7,44 @@ PostgreSQLのユーザーを作成するには、CREATE USER文を使用しま�
 ユーザーを確認するには\\duメタコマンドを実行します。
 
 以下の例では、ユーザーsatoを作成しています。このユーザーでログインするときに必要なパスワードも指定しています。
+
 ```
-[postgres@localhost ~]$ psql ossdb
 ossdb=# CREATE USER sato PASSWORD 'sato';
 CREATE ROLE
 ossdb=# \du
-                                   List of roles
- Role name |                         Attributes                         | Member of
------------+------------------------------------------------------------+-----------
- postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
- sato      |                                                            | {}
+                                            ロール一覧
+ ロール名 |                                   属性                                   | 所属グループ
+----------+--------------------------------------------------------------------------+--------------
+ postgres | スーパユーザ, ロール作成可, DB作成可, レプリケーション可, RLS のバイパス | {}
+ sato     |                                                                          | {}
 ```
 
 以下の例では、Linuxのコマンドラインから、createuserコマンドを使用してユーザーsuzukiを作成しています。-Pオプションをつけると、このユーザーでログインするときに必要なパスワードを対話式で指定することができます。
+
 ```
-[postgres@localhost ~]$ createuser -P suzuki
+[postgres@host1 ~]$ createuser -P suzuki
 新しいロールのためのパスワード:
 もう一度入力してください：
-[postgres@localhost ~]$ psql ossdb
+[postgres@host1 ~]$ psql ossdb
 ossdb=# \du
-                                   List of roles
- Role name |                         Attributes                         | Member of
------------+------------------------------------------------------------+-----------
- postgres  | Superuser, Create role, Create DB, Replication, Bypass RLS | {}
- sato      |                                                            | {}
- suzuki    |                                                            | {}
+                                             ロール一覧
+ ロール名 |                                   属性                                   | 所属グループ
+----------+--------------------------------------------------------------------------+--------------
+ postgres | スーパユーザ, ロール作成可, DB作成可, レプリケーション可, RLS のバイパス | {}
+ sato     |                                                                          | {}
+ suzuki   |                                                                          | {}
 ```
 
 ### ユーザーとロール
 CREATE USER文やcreateuserコマンドの結果表示にはユーザーではなくロール(ROLE)と表示されています。PostgreSQLではログイン属性を持つロールをユーザーと呼びます。理想的なアクセス制御は、権限の集合としてのロール（グループロール）と、ログイン可能な属性を持つロール（ユーザーロール）を適切に使い分けることで実現します。
+
 例えば、あるサービスを運用するために必要な複数の表に対するアクセス権限（A表に対する更新可能、B表に対しては参照のみ可能のような細やかな設定）をまとめたグループロールを作成し、そのグループロールを特定の管理ユーザーに付与するようにします。ユーザーの棚卸やサービスの変更（テーブル構成の見直し）などがあった場合に柔軟に対処するためです。
+
 本書では、単にデータベースに接続しSQLの基礎を学習するという目的に沿って、ログイン時に使用するユーザーという概念を重視し、ユーザーの作成として解説しています。
 
 ### スーパーユーザー
 データベースには一番最初に初期化した際に、データベースに対するすべての権限を持ったユーザーが作成されます。これをスーパーユーザーと呼びます。Linuxにおけるrootユーザーや、WindowsにおけるAdministratorユーザーのようなものと考えればよいでしょう。
+
 PostgreSQLでは、Linux上でデータベースの初期化（initdbコマンドの実行）を行ったOSユーザーの名前でスーパーユーザーが作成されます。このユーザーのユーザ名は慣習的にpostgresとなっています。
 
 ## 接続と認証
@@ -48,124 +52,198 @@ PostgreSQLでは、Linux上でデータベースの初期化（initdbコマン�
 
 ### 接続認証の設定を確認
 PostgreSQLでの接続認証の設定は、設定ファイルの一つであるpg_hba.confに記述します。デフォルトでは、以下のように設定が記述されています。
+
 ```
-[postgres@localhost ~]$ cat $PGDATA/pg_hba.conf
-------
+[postgres@host1 ~]$ cat /var/lib/pgsql/data/pg_hba.conf
 （略）
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
 
 # "local" is for Unix domain socket connections only
-local   all             all                                     trust
+local   all             all                                     peer
 # IPv4 local connections:
-host    all             all             127.0.0.1/32            trust
+host    all             all             127.0.0.1/32            ident
 # IPv6 local connections:
-host    all             all             ::1/128                 trust
+host    all             all             ::1/128                 ident
 （略）
-------
 ```
 
 各項目の設定は、左から順に以下のようになっています。
 
-* 接続方法（TYPE）  
+- 接続方法（TYPE）
 クライアントがどのようにPostgreSQLに接続するかを指定します。
 
-#### 接続方法の設定
+| 接続タイプ | 説明
+|---|---
+| local | PostgreSQLが実行されているホストと同じホストからの接続
+| host | 外部からのTCP/IPを使った接続
+| hostssl | 外部からのSSLを使った接続
 
-接続タイプ | 説明
--------- | ----------------------
-local	   | PostgreSQLが実行されているホストと同じホストからの接続
-host     | 外部からのTCP/IPを使った接続
-hostssl  | 外部からのSSLを使った接続
-
-* データベース（DATABASE）  
+- データベース（DATABASE）
 接続認証の対象となるデータベースを指定します。allと記述するとすべてのデータベースが対象となります。
 
-* ユーザー（USER）  
+- ユーザー（USER）
 接続認証の対象となるユーザーを指定します。allと記述するとすべてのユーザーが対象となります。
 
-* 認証方法（METHOD）  
+^ 認証方法（METHOD）  
 認証方式を指定します。
 
-#### 認証方法の設定
-認証メソッド | 説明
---------- | ------
-trust     |	認証なしに接続
-reject    |	接続拒否
-md5	      | MD5パスワード認証
-password  |	平文パスワード認証
-scram-sha-256 | SCRAM認証
-gss       | GSSAPI認証
-sspi      | SSPI
-ident	    | IDENT認証
-peer      | peer認証
-pam       | PAM認証
-ldap      | LDAP認証
-radius    | RADIUS認証
-cert      | SSLクライアント証明書認証
+| 認証メソッド | 説明
+|---|---
+| trust | 認証なしに接続
+| reject | 接続拒否
+| scram-sha-256 | SCRAM認証
+| md5 | MD5パスワード認証
+| password | 平文パスワード認証
+| gss | GSSAPI認証
+| sspi | SSPI
+| ident | IDENT認証
+| peer | Peer認証
+| ldap | LDAP認証
+| radius | RADIUS認証
+| cert | SSLクライアント証明書認証
+| pam | PAM認証
+| bsd | BSD認証
 
-RPMからインストールした場合のデフォルトの設定では、ローカルホストでの接続で、すべてのデータベース、ユーザーに対してtrust認証を行うことが設定されています。
+実習環境の設定では、ローカルホストでの接続（local）で、すべてのデータベース、ユーザーに対してPeer認証を行うことが設定されています。Peer認証は、OSのユーザー名とデータベースのユーザー名が一致していることを確認する認証です。
 
 ### 接続ユーザーの指定
 psqlでデータベースに接続する際、本来はどのユーザーで接続するか指定する必要がありますが、明示的に指定されなかった場合にはpsqlを実行したLinuxのユーザー名が暗黙の内に指定されます。
+
 接続ユーザーは\\setメタコマンドを実行して変数USERの値で確認できます。
 
-以下の例では、idコマンドの結果でLinuxのユーザー名がpostgresであること、接続のユーザーもpostgresになっていることを確認しています。psqlにはデータベース名としてossdbのみ指定しているので、接続ユーザーは暗黙の内にpostgresが指定されているのが分かります。
+以下の例では、idコマンドの結果でLinuxのユーザー名がpostgresであること、接続のユーザーもpostgresになっていることを確認しています。psqlにはデータベース名としてossdbのみ指定しているので、接続ユーザーは暗黙の内にコマンドを実行したOSユーザーpostgresが指定されているのが分かります。
+
 ```
-[postgres@localhost ~]$ id
+[postgres@host1 ~]$ id
 uid=1001(postgres) gid=1001(postgres) groups=1001(postgres) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
-[postgres@localhost ~]$ psql ossdb
-psql (10.1)
-Type "help" for help.
+[postgres@ host1 ~]$ psql ossdb
+psql (13.14)
+"help"でヘルプを表示します。
 
-ossdb=# \\set
-AUTOCOMMIT = 'on'
-COMP_KEYWORD_CASE = 'preserve-upper'
+ossdb=# \set
+※不要な設定値は削除しています
 DBNAME = 'ossdb'
-ECHO = 'none'
-ECHO_HIDDEN = 'off'
-ENCODING = 'UTF8'
-FETCH_COUNT = '0'
-HISTCONTROL = 'none'
-HISTSIZE = '500'
-HOST = '/var/run/postgresql'
-IGNOREEOF = '0'
-ON_ERROR_ROLLBACK = 'off'
-ON_ERROR_STOP = 'off'
-PORT = '5432'
-PROMPT1 = '%/%R%# '
-PROMPT2 = '%/%R%# '
-PROMPT3 = '>> '
-QUIET = 'off'
-SERVER_VERSION_NAME = '10.1'
-SERVER_VERSION_NUM = '100001'
-SHOW_CONTEXT = 'errors'
-SINGLELINE = 'off'
-SINGLESTEP = 'off'
 USER = 'postgres'
-VERBOSITY = 'default'
-VERSION = 'PostgreSQL 10.1 on x86_64-pc-linux-gnu, compiled by gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-16), 64-bit'
-VERSION_NAME = '10.1'
-VERSION_NUM = '100001'
 ```
 
-次に、ユーザーsatoで接続した場合の例です。
-ログイン時にユーザー名を指定して、その通りになっていることがわかります。また、psqlのプロンプトが「=#」ではなく「=>」になっており、これはユーザーsatoが、スーパーユーザーでなく一般ユーザーであることを表します。
-```
-[postgres@localhost ~]$ psql ossdb sato
-psql (10.1)
-Type "help" for help.
+次に、ユーザーsatoで接続した場合の例です。接続で使用するユーザー名はpsqlの2番目の引数として指定します。Peer認証なので、接続に失敗します。
 
-ossdb=> \\set
-（該当箇所のみ抜粋）
-DBNAME = 'ossdb'
-USER = 'sato'
+```
+[postgres@host1 ~]$ psql ossdb sato
+psql: エラー: FATAL:  ユーザ"sato"で対向(peer)認証に失敗しました
+```
+
+## パスワード認証の設定
+ユーザー名を変えてデータベースに接続できるよう、パスワード認証の設定を行ってみましょう。
+
+### ユーザーのパスワードの設定
+パスワード認証が有効になると、パスワードが設定されていないユーザーはデータベースに接続できなくなるので、まず先にユーザーのパスワードを設定しておきます。
+
+既存のユーザーに対してはALTER USER文でパスワードを設定します。初期ユーザーであるpostgresユーザーにはパスワードが設定されていませんので、通常はインストール直後に必ず本操作を実施しましょう。
+
+ALTER USER文でパスワードを設定する構文は以下の通りです。
+
+```
+ALTER USER ユーザー名 PASSWORD 'パスワード'
+```
+
+以下の例では、ユーザーpostgresに対してパスワードをpostgresに設定しています。
+
+```
+ossdb=# ALTER USER postgres PASSWORD 'postgres';
+ALTER ROLE
 ```
 
 ### パスワード認証の設定
-データベースへの接続時にパスワード認証を行うように設定してみます。パスワード認証を設定するにはpg_hba.confに以下のような設定を行います。設定の変更はOSユーザーをpostgresにして行います。
+データベースへの接続時にパスワード認証を行うように設定してみます。パスワード認証を設定するにはpg_hba.confの設定でpeerをmd5に変更します。設定の変更はOSユーザーをpostgresにして行います。
+
 ```
-vi $PGDATA/pg_hba.conf
------
+[postgres@host1 ~]$ vi /var/lib/pgsql/data/pg_hba.conf
+（省略）
+# TYPE  DATABASE        USER            ADDRESS                 METHOD
+
+# "local" is for Unix domain socket connections only
+local   all             all                                     md5 ←peerから変更
+# IPv4 local connections:
+host    all             all             127.0.0.1/32            md5
+# IPv6 local connections:
+host    all             all             ::1/128                 md5
+```
+
+設定の変更はPostgreSQLを再起動（または設定の再読み込み）をするまでは有効になりません。パスワードの設定を行わないまま本設定を読み込むと、Peer認証が無効になってしまうためデータベースに接続できなくなりますので注意してください。
+
+### 設定値の再読み込み
+PostgreSQLの各設定には、その設定が反映されるタイミングが定められています。ほぼすべてのパラメーターが起動時に読み込まれるほか、pg_hba.confの設定やその他の一部のパラメーターは設定の再読み込みで反映されるようになっています。
+
+以下の例は、OSの管理ユーザーadminで、systemctlコマンドでPostgreSQLの設定を再読み込みしています。OSのユーザーがpostgresではない点に注意してください。
+
+```
+[admin@host1 ~]$ sudo systemctl reload postgresql
+```
+
+PostgreSQLの停止または再起動は、他のユーザーがデータベースを使用している場合、デフォルトでは実行中の処理を中断して停止処理が優先される動作になっています。重要な処理の実行に影響しないよう、メンテナンス時間帯を設けて作業を行うことが大切ですが、設定の再読み込みのように他の処理への影響を軽微にできる方法が用意されている場合もあります。
+
+### パスワード認証による接続
+パスワード認証が有効になったかどうかを確認します。
+
+以下の例では、ユーザーpostgresでの接続を確認しています。
+
+```
+[postgres@host1 ~]$ psql ossdb
+ユーザ postgres のパスワード: ※postgresと入力
+psql (13.14)
+"help"でヘルプを表示します。
+
+ossdb=#
+```
+
+### その他のユーザー
+その他のユーザーにもパスワードを設定して接続できるようにします。
+
+以下の例では、ユーザーsatoにパスワードを設定して、接続ユーザーをsatoに切り替えています。
+
+```
+ossdb=# ALTER USER sato PASSWORD 'postgres';
+ALTER ROLE
+ossdb=# \q
+[postgres@host1 ~]$ psql ossdb sato
+ユーザ sato のパスワード: ※postgresと入力
+psql (13.14)
+"help"でヘルプを表示します。
+
+ossdb=>
+```
+
+psqlのプロンプトが「=#」ではなく「=>」になっており、これはユーザーsatoが、スーパーユーザーでなく一般ユーザーであることを表します。
+
+## ネットワーク経由接続
+PostgreSQLは、TCP/IPを利用したネットワーク経由での接続も受け付けることができます。
+
+ネットワーク経由接続を受け付けるには、postgresql.confにlisten_addressesの設定を行って、PostgreSQLを再起動します。
+
+デフォルトではlisten_addresses = 'localhost'が設定されていて、PostgreSQLが実行されているホストでのローカルループバック接続のみが有効になっています。値を*（アスタリスク）に設定することで、ホストが用意しているすべてのインターフェースからの接続を受け付けるようになります。もし特定のインターフェースからのみ受け付けたい場合には、そのインターフェースに設定されたIPアドレスを記述します。
+
+接続受付のポート番号はデフォルトで5432に設定されています。ポート番号を変更したい場合には、portの設定値を変更します。
+
+以下の例では、すべてのインターフェースからの接続を受け付けるように設定しています。
+```
+[postgres@localhost ~]$ vi /var/lib/pgsql/data/postgresql.conf
+（略）
+#listen_addresses = 'localhost'         # what IP address(es) to listen on;
+listen_addresses = '*'          # what IP address(es) to listen on;
+                                        # comma-separated list of addresses;
+                                        # defaults to 'localhost'; use '*' for all
+                                        # (change requires restart)
+#port = 5432                            # (change requires restart)
+（略）
+```
+
+あわせて、接続認証の設定も行います。pg_hba.confのhostアクセス制御を設定します。
+
+以下の例では、ネットワーク経由接続で ossdb データベースに sato ユーザーがアクセスする際にパスワード認証するように設定しています。pg_hba.confの設定反映は再読み込みで良いですが、今回はpostgresql.confも変更していますので、PostgreSQLの再起動で設定を反映させる必要があります。
+```
+[postgres@localhost ~]$ vi /var/lib/pgsql/data/pg_hba.conf
+（略）
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
 
 # "local" is for Unix domain socket connections only
@@ -174,114 +252,19 @@ local   all             all                                     md5
 host    all             all             127.0.0.1/32            md5
 # IPv6 local connections:
 host    all             all             ::1/128                 md5
-```
-
-設定の変更はPostgreSQLを再起動（または設定の再読み込み）をするまでは有効になりません。ユーザーにパスワードの設定を行ってからpg_ctl reloadで設定を再読み込みします。パスワードの設定を行わないまま本設定を読み込むと、TRUST認証が無効になってしまうためデータベースに接続できなくなりますす。
-
-### パスワードの設定、変更
-パスワード認証が有効になると、パスワードが設定されていないユーザーはデータベースに接続できなくなるので、パスワードを設定しておきます。
-
-* 既存ユーザーにパスワード設定  
-既存のユーザーに対してALTER USER文でパスワードを設定します。初期ユーザーであるpostgresユーザーにはパスワードが設定されていませんので、インストール直後に必ず本操作を実施しましょう。
-#### ALTER USER文でパスワードを設定する構文
-```
-ALTER USER ユーザー名 PASSWORD 'パスワード'
-```
-以下の例では、ユーザーpostgresに対してパスワードをpostgresに設定しています。
-```
-[postgres@localhost ~]$ psql ossdb
-ossdb=# ALTER USER postgres PASSWORD 'postgres';
-ALTER ROLE
-```
-
-* 強度の高いパスワード格納方式  
-pg_hba.confで指定する認証方式には、password、md5、scram-sha-256という3つのパスワード格納方式が指定できます。このうち、デフォルトの格納方式はmd5ですが、近年では暗号化強度が弱いとされ、PostgreSQL 10 からはscram-sha-256が利用可能になっています。
-```
-[postgres@localhost ~]$ psql ossdb
-ossdb=# SET password_encryption = 'scram-sha-256';
-SET
-ossdb=# ALTER USER postgres PASSWORD 'postgres';
-ALTER ROLE
-```
-この場合、pg_hba.confの記述も上記のmd5の代わりにscram-sha-256とします。
-```
-vi $PGDATA/pg_hba.conf
-# TYPE  DATABASE        USER            ADDRESS                 METHOD
-# "local" is for Unix domain socket connections only
-local   all             all                                     scram-sha-256
-# IPv4 local connections:
-host    all             all             127.0.0.1/32            scram-sha-256
-# IPv6 local connections:
-host    all             all             ::1/128                 scram-sha-256
-```
-
-### 設定値の再読み込み
-PostgreSQLの各設定には、その設定が反映されるタイミングが定められています。ほぼすべてのパラメーターが起動時に読み込まれるほか、pg_hba.confの設定やその他の一部のパラメーターは設定の再読み込みで反映されるようになっています。
-
-以下の例は、ユーザーpostgresでpg_ctlコマンドでPostgreSQLの設定を再読み込みしています。
-```
-[postgres@localhost ~]$ pg_ctl reload
-サーバにシグナルを送信しました
-```
-
-PostgreSQLの停止または再起動は、他のユーザーがデータベースを使用している場合、デフォルトでは実行中の処理を中断して停止処理が優先される動作になっています。重要な処理の実行に影響しないよう、メンテナンス時間帯を設けて作業を行うことが大切ですが、このように他の処理への影響を軽微にできる方法が用意されている場合もあります。
-
-### パスワード認証による接続
-パスワード認証が有効になったかどうかを確認します。
-
-以下の例では、ユーザーpostgres、ユーザーsatoでの接続を確認しています。
-```
-[postgres@localhost ~]$ psql ossdb
-Password:
-psql (10.1)
-Type "help" for help.
-
-ossdb=# \\q
-[postgres@localhost ~]$ psql ossdb sato
-Password for user sato:
-psql (10.1)
-Type "help" for help.
-
-ossdb=> \\q
-```
-
-## ネットワーク経由接続
-PostgreSQLは、TCP/IPを利用したネットワーク経由での接続も受け付けることができます。
-
-### ネットワーク経由接続の設定
-ネットワーク経由接続を受け付けるには、postgresql.confにlisten_addressesの設定を行って、PostgreSQLを再起動します。
-デフォルトでは、listen_addresses = 'localhost'が設定されていて、PostgreSQLが実行されているホストでのローカルループバック接続のみが有効になっています。値を*（アスタリスク）に設定することで、ホストが用意しているすべてのインターフェースからの接続を受け付けるようになります。もし特定のインターフェースからのみ受け付けたい場合には、そのインターフェースに設定されたIPアドレスを記述します。
-接続受付のポート番号はデフォルトで5432に設定されています。ポート番号を変更したい場合には、portの設定値を変更します。
-
-以下の例では、すべてのインターフェースからの接続を受け付けるように設定しています。
-```
-[postgres@localhost ~]$ vi $PGDATA/postgresql.conf
------
-#listen_addresses = 'localhost'         # what IP address(es) to listen on;
-listen_addresses = '*'                  # what IP address(es) to listen on;
-                                        # comma-separated list of addresses;
-                                        # defaults to 'localhost', '*' for all
-                                        # (change requires restart)
-#port = 5432                            # (change requires restart)
-```
-
-あわせて、接続認証の設定も行います。pg_hba.confのhostアクセス制御を設定します。
-
-以下の例では、ネットワーク経由接続で ossdb データベースに sato ユーザーがアクセスする際にパスワード認証するように設定しています。pg_hba.confの設定反映は再読み込みで良いですが、今回はlisten_addressesも変更していますので、PostgreSQLの再起動で両方の設定を反映させます。
-```
-[postgres@localhost ~]$ vi $PGDATA/pg_hba.conf
-# TYPE  DATABASE        USER            ADDRESS                 METHOD
-# "local" is for Unix domain socket connections only
-local   all             all                                     scram-sha-256
-# IPv4 local connections:
-host    ossdb           sato            0.0.0.0/0               scram-sha-256
-host    all             all             127.0.0.1/32            scram-sha-256
-# IPv6 local connections:
-host    all             all             ::1/128                 scram-sha-256
+（略）
 ```
 
 ### PostgreSQLの再起動
-設定変更後に設定を反映させるためPostgreSQLを再起動します。ユーザーrootでsystemctl restart postgresql-10.serviceを実行するか、ユーザーpostgresでpg_ctl restartコマンドを実行します。
+設定変更後に設定を反映させるためPostgreSQLを再起動します。
+
+以下の例は、OSの管理ユーザーadminで、systemctlコマンドでPostgreSQLの設定を再起動しています。OSのユーザーがpostgresではない点に注意してください。
+
+```
+[admin@host1 ~]$ sudo systemctl restart postgresql
+```
+
+ユーザーrootでsystemctl restart postgresql-10.serviceを実行するか、ユーザーpostgresでpg_ctl restartコマンドを実行します。
 
 以下の例は、ユーザーrootでPostgreSQLを再起動しています。
 ```
@@ -306,7 +289,7 @@ psql -h ホスト名 -p ポート番号 -U ユーザー名 データベース名
 
 以下の例では、サーバーのIPアドレスに対してネットワーク経由接続を行っています。
 ```
-[postgres@localhost ~]$ psql -h 192.168.101.10 -p 5432 -U sato ossdb
+[postgres@localhost ~]$ psql -h localhost -p 5432 -U sato ossdb
 Password for user sato:
 psql (10.1)
 Type "help" for help.
