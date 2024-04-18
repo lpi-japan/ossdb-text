@@ -84,7 +84,10 @@ host    all             all             ::1/128                 ident
 - ユーザー（USER）
 接続認証の対象となるユーザーを指定します。allと記述するとすべてのユーザーが対象となります。
 
-^ 認証方法（METHOD）  
+- クライアントのアドレス（ADDRESS）
+接続を許可するクライアントのアドレスを指定します。指定しないとすべてのクライアントが対象となります。
+
+- 認証方法（METHOD）  
 認証方式を指定します。
 
 | 認証メソッド | 説明
@@ -155,7 +158,7 @@ ALTER ROLE
 ```
 
 ### パスワード認証の設定
-データベースへの接続時にパスワード認証を行うように設定してみます。パスワード認証を設定するにはpg_hba.confの設定でpeerをmd5に変更します。設定の変更はOSユーザーをpostgresにして行います。
+データベースへの接続時にパスワード認証を行うように設定してみます。パスワード認証を設定するにはpg_hba.confの設定で認証方式をpeerからmd5に変更します。設定の変更はOSユーザーをpostgresにして行います。
 
 ```
 [postgres@host1 ~]$ vi /var/lib/pgsql/data/pg_hba.conf
@@ -165,9 +168,9 @@ ALTER ROLE
 # "local" is for Unix domain socket connections only
 local   all             all                                     md5 ←peerから変更
 # IPv4 local connections:
-host    all             all             127.0.0.1/32            md5
+host    all             all             127.0.0.1/32            md5 ←peerから変更
 # IPv6 local connections:
-host    all             all             ::1/128                 md5
+host    all             all             ::1/128                 md5 ←peerから変更
 ```
 
 設定の変更はPostgreSQLを再起動（または設定の再読み込み）をするまでは有効になりません。パスワードの設定を行わないまま本設定を読み込むと、Peer認証が無効になってしまうためデータベースに接続できなくなりますので注意してください。
@@ -240,7 +243,7 @@ listen_addresses = '*'          # what IP address(es) to listen on;
 
 あわせて、接続認証の設定も行います。pg_hba.confのhostアクセス制御を設定します。
 
-以下の例では、ネットワーク経由接続で ossdb データベースに sato ユーザーがアクセスする際にパスワード認証するように設定しています。pg_hba.confの設定反映は再読み込みで良いですが、今回はpostgresql.confも変更していますので、PostgreSQLの再起動で設定を反映させる必要があります。
+以下の例では、ネットワーク経由接続でローカルループバックアドレス（127.0.0.1/32・::1/128）からのアクセスする際にパスワード認証するように設定しています。pg_hba.confの設定反映は再読み込みで良いですが、今回はpostgresql.confも変更していますので、PostgreSQLの再起動で設定を反映させる必要があります。
 ```
 [postgres@localhost ~]$ vi /var/lib/pgsql/data/pg_hba.conf
 （略）
@@ -264,42 +267,22 @@ host    all             all             ::1/128                 md5
 [admin@host1 ~]$ sudo systemctl restart postgresql
 ```
 
-ユーザーrootでsystemctl restart postgresql-10.serviceを実行するか、ユーザーpostgresでpg_ctl restartコマンドを実行します。
-
-以下の例は、ユーザーrootでPostgreSQLを再起動しています。
-```
-[root@localhost ~]# systemctl restart postgresql-10.service
-```
-
-以下の例は、ユーザーpostgresでpg_ctlコマンドでPostgreSQLを再起動しています。
-```
-[postgres@localhost ~]$ pg_ctl restart
-サーバ停止処理の完了を待っています....完了
-サーバは停止しました
-サーバの起動完了を待っています....
-```
-
 ### psqlを使ったネットワーク経由接続
 psqlを使ってPostgreSQLにネットワーク経由接続するにはオプション-hでホスト名、-pでポート番号を指定します。ユーザー、データベース、クライアント端末の組み合わせがpg_hba.confで許可されている必要があります。
 
-#### psqlでネットワーク経由接続
 ```
 psql -h ホスト名 -p ポート番号 -U ユーザー名 データベース名
 ```
 
-以下の例では、サーバーのIPアドレスに対してネットワーク経由接続を行っています。
-```
-[postgres@localhost ~]$ psql -h localhost -p 5432 -U sato ossdb
-Password for user sato:
-psql (10.1)
-Type "help" for help.
+以下の例では、サーバーのローカルループバックアドレス（127.0.0.1）に対してネットワーク経由接続を行っています。これまでのローカル接続（UNIXドメインソケット接続）と、ローカルループバックアドレス（TCP/IP接続）は接続経路が異なります。
 
-ossdb=>
 ```
-pg_hba.confに定義した組み合わせ（satoユーザー、ossdbデータベース）以外では、認証エラーが出ています。
-```
-[postgres@localhost ~]$ psql -h 192.168.101.10 -p 5432 -U sato postgres
-psql: FATAL:  no pg_hba.conf entry for host "192.168.101.10", user "sato", database "postgres", SSL off
+[postgres@host1 ~]$ psql -h localhost -p 5432 -U postgres ossdb
+ユーザ postgres のパスワード: ※postgresと入力
+psql (13.14)
+"help"でヘルプを表示します。
+
+ossdb=#
 ```
 
 ## アクセス権限
@@ -308,25 +291,23 @@ psql: FATAL:  no pg_hba.conf entry for host "192.168.101.10", user "sato", datab
 ### アクセス権限の付与
 アクセス権限を付与するには、GRANT文を使用します。
 
-#### GRANT文の構文
+GRANT文の構文は以下の通りです。
+
 ```
 GRANT {ALL | SELECT | INSERT | DELETE | UPDATE}
 	ON object TO {user | PUBLIC}
 ```
 
-以下の例は、ユーザーsatoに対してprod表に対するすべての権限を付与しています。prod表の所有者（owner）であるpostgresユーザーで操作してユーザーsatoに対して権限を与えます。
-```
-[postgres@localhost ~]$ psql -U postgres ossdb
-Password for user postgres:
-psql (10.1)
-Type "help" for help.
+以下の例は、ユーザーsatoに対してprod表に対するすべての権限を付与しています。prod表の所有者（owner）であるpostgresユーザーで操作して、ユーザーsatoに対して権限を与えます。
 
-ossdb=# \dt prod
-        List of relations
- Schema | Name | Type  |  Owner
---------+------+-------+----------
- public | prod | table | postgres
-(1 row)
+```
+[ossdb=# \dt prod
+           リレーション一覧
+ スキーマ | 名前 |  タイプ  |  所有者
+----------+------+----------+----------
+ public   | prod | テーブル | postgres
+(1 行)
+
 ossdb=# GRANT all ON prod TO sato;
 GRANT
 ```
@@ -335,18 +316,20 @@ GRANT
 アクセス権限を確認するには、\\dpメタコマンドを使用します。
 ```
 ossdb=# \dp prod
-                                Access privileges
- Schema | Name | Type  |     Access privileges     | Column privileges | Policies
---------+------+-------+---------------------------+-------------------+----------
- public | prod | table | postgres=arwdDxt/postgres+|                   |
-        |      |       | sato=arwdDxt/postgres     |                   |
-(1 row)
+                                 アクセス権限
+ スキーマ | 名前 |  タイプ  |       アクセス権限        | 列の権限 | ポリシー
+----------+------+----------+---------------------------+----------+----------
+ public   | prod | テーブル | postgres=arwdDxt/postgres+|          |
+          |      |          | sato=arwdDxt/postgres     |          |
+(1 行)
 ```
 
-#### アクセス権の表記
+アクセス権の表記は以下の通りです。
+
 ```
 権限を付与されたユーザー=権限種別/権限を付与したユーザー
 ```
+
 権限を付与されたユーザーが空白のときはpublic（全ユーザー）に対して許可されていることを表します。
 アクセス権限の後ろにある「/posgres」は、この権限を与えたユーザーを表しています。表のオーナーや、相当する操作が許可されたユーザーが当てはまります。
 
@@ -361,13 +344,14 @@ x	| REFERENCES
 t	| TRIGGER
 
 REFERENCES権限は、外部キー制約を作成する両方の表に権限を持っている必要があります。
-TRIGGER権限は、表に対する操作をトリガー（引き金）にして別の処理を行う「トリガー機能」を表に対して作成できる権限です。
 
+TRIGGER権限は、表に対する操作をトリガー（引き金）にして別の処理を行う「トリガー機能」を表に対して作成できる権限です。
 
 ### アクセス権限の取り消し
 与えたアクセス権限を取り消すには、REVOKE文を使用します。
 
-#### REVOKE文の構文
+REVOKE文の構文は以下の通りです。
+
 ```
 REVOKE {ALL | SELECT | INSERT | DELETE | UPDATE}
 	ON object FROM {user|PUBLIC}
@@ -375,19 +359,14 @@ REVOKE {ALL | SELECT | INSERT | DELETE | UPDATE}
 
 以下の例では、ユーザーsatoからprod表に対するすべての権限を取り消しています。
 ```
-[postgres@localhost ~]$ psql -U postgres ossdb
-Password for user postgres:
-psql (10.1)
-Type "help" for help.
-
 ossdb=# REVOKE all ON prod FROM sato;
 REVOKE
 ossdb=# \dp prod
-                                Access privileges
- Schema | Name | Type  |     Access privileges     | Column privileges | Policies
---------+------+-------+---------------------------+-------------------+----------
- public | prod | table | postgres=arwdDxt/postgres |                   |
-(1 row)
+                                 アクセス権限
+ スキーマ | 名前 |  タイプ  |       アクセス権限        | 列の権限 | ポリシー
+----------+------+----------+---------------------------+----------+----------
+ public   | prod | テーブル | postgres=arwdDxt/postgres |          |
+(1 行)
 ```
 
 ## トランザクション
@@ -396,6 +375,7 @@ ossdb=# \dp prod
 これまでPostgreSQLの操作に使用してきたSQL文は、自動コミット（AUTOCOMMIT）がデフォルトで有効になっていたため、すべての操作が成功すると自動的にCOMMITが発行されていました。自動コミットを無効にするには、psqlメタコマンドの\\set AUTOCOMMIT=offを実行するか、BEGINを実行して明示的にトランザクションを開始する必要があります。
 
 以下の例では、customer表に1行INSERTしますが、それをBEGINで開始することでトランザクションとして実行しています。最後にROLLBACKしてINSERTが取り消されている例と、最後にCOMMITして挿入した結果が確定されている例です。
+
 ```
 ossdb=# BEGIN;
 BEGIN
@@ -405,100 +385,110 @@ ossdb=# SELECT * FROM customer WHERE customer_id = 5;
  customer_id | customer_name
 -------------+---------------
            5 | 田中産業
-(1 row)
+(1 行)
 
 ossdb=# ROLLBACK;
 ROLLBACK
-
 ossdb=# SELECT * FROM customer WHERE customer_id = 5;
  customer_id | customer_name
 -------------+---------------
-(0 rows)
+(0 行)
+```
 
+トランザクションがROLLBACKされて、INSERTが取り消されているのが確認できました。
+
+以下の例ではトランザクションをCOMMITします。
+
+```
 ossdb=# BEGIN;
 BEGIN
 ossdb=# INSERT INTO customer VALUES (5,'田中産業');
 INSERT 0 1
-
 ossdb=# COMMIT;
 COMMIT
-
 ossdb=# SELECT * FROM customer WHERE customer_id = 5;
  customer_id | customer_name
 -------------+---------------
            5 | 田中産業
-(1 row)
+(1 行)
 ```
+
+トランザクションがCOMMITされて、INSERTが確定しました。
 
 ### 読み取り一貫性
 読み取り一貫性とは、あるトランザクション内で行われているデータ更新はコミットして確定されない限り、他の検索トランザクションに対して影響を及ぼさないことです。
 
-以下の例では、まず1つのデータベース接続でトランザクションを開始します。メロンの価格を120円にアップデートしました。まだCOMMITもROLLBACKもせず、トランザクションの途中で他のセッションからprod表を検索すると元の100円が得られます。更新トランザクションが確定されたあとは他のセッションでも更新後の120円を得ることができます。
+以下の例では、まず1つのデータベース接続でトランザクションを開始します。メロンの価格を120円にアップデートしました。まだCOMMITもROLLBACKもせず、トランザクションの途中で他のセッションからprod表を検索すると元の100円が得られます。更新トランザクションが確定された後は他のセッションでも更新後の120円を得ることができます。
 ```
-ossdb=# SELECT * FROM prod;
+ossdb=# SELECT * FROM prod WHERE prod_id = 3;
  prod_id | prod_name | price
 ---------+-----------+-------
-       1 | みかん    |    50
-       2 | りんご    |    70
        3 | メロン    |   100
-(3 rows)
+(1 行)
+
 ossdb=# BEGIN;
 BEGIN
 ossdb=# UPDATE prod SET price = 120 WHERE prod_id = 3;
 UPDATE 1
-ossdb=# SELECT * FROM prod;
+ossdb=# SELECT * FROM prod WHERE prod_id = 3;
  prod_id | prod_name | price
 ---------+-----------+-------
-       1 | みかん    |    50
-       2 | りんご    |    70
        3 | メロン    |   120
-(3 rows)
+(1 行)
+```
 
-/* 別のターミナルで検索した後にトランザクションを確定 */
+COMMITしていない状態で、別のターミナルを起動してデータベースに接続し、検索を行ってみます。
 
+```
+[postgres@host1 ~]$ psql ossdb
+ユーザ postgres のパスワード:
+psql (13.14)
+"help"でヘルプを表示します。
+
+ossdb=# SELECT * FROM prod WHERE prod_id = 3;
+ prod_id | prod_name | price
+---------+-----------+-------
+       3 | メロン    |   100
+(1 行)
+```
+
+COMMIT前の行データが検索されます。
+
+トランザクションを実行していたターミナルに戻り、トランザクションを確定させます。
+
+```
 ossdb=# COMMIT;
 COMMIT
 ```
 
-別のターミナルを立ち上げて、別のpsqlを実行します。
+再度、新しい方のターミナルに戻り、検索を行ってみます。
+
 ```
-[root@localhost ~]# su - postgres
-[postgres@localhost ~]$ psql ossdb
-Password:
-psql (10.1)
-Type "help" for help.
-
-/* 更新後、COMMITは実行していない状態 */
-
-ossdb=# SELECT * FROM prod;
+※以下は前の実行結果
+ossdb=# SELECT * FROM prod WHERE prod_id = 3;
  prod_id | prod_name | price
 ---------+-----------+-------
-       1 | みかん    |    50
-       2 | りんご    |    70
        3 | メロン    |   100
-(3 rows)
-
-/* 更新トランザクションをCOMMITした後 */
-
-ossdb=# SELECT * FROM prod;
+(1 行)
+※以下は別ターミナルでCOMMITされた後の実行結果
+ossdb=# SELECT * FROM prod WHERE prod_id = 3;
  prod_id | prod_name | price
 ---------+-----------+-------
-       1 | みかん    |    50
-       2 | りんご    |    70
        3 | メロン    |   120
-(3 rows)
+(1 行)
 ```
 
 ![読み取り一貫性](./Pict/tx-01.png)
 
-このように、最初のトランザクションが行データを追加していても、そのトランザクションがコミットされる前では、別のトランザクションからはその行データ追加は見えません。もし見えてしまうと、その後ロールバックされて追加が取り消された時、結局存在しないことになった行データを読んでしまうことになるからです。
-このようにコミットされる前の行データを読んでしまうことを「ダーティーリード」と呼びます。PostgreSQLはダーティーリードが発生しないよう、読み取り一貫性を維持しています。なお、本項では詳しく扱いませんが、図中にあるように、PostgreSQLでは更新が確定された後、古い行を読み飛ばす制御も行っています。
+このように、最初のトランザクションが行データを追加していても、そのトランザクションがコミットされる前では、別のトランザクションからはその行データ追加は見えません。もし見えてしまうと、その後ロールバックされて追加が取り消された時、結局存在しないことになった行データを読んでしまうことになるからです。このようにコミットされる前の行データを読んでしまうことを「ダーティーリード」と呼びます。
+
+PostgreSQLはダーティーリードが発生しないよう、読み取り一貫性を維持しています。なお、本項では詳しく扱いませんが、図中にあるように、PostgreSQLでは更新が確定された後、古い行を読み飛ばす制御も行っています。
 
 ### ロック機構と更新の競合
-データベースは、先に行われたトランザクションの対象をロックし、他のトランザクションが書き換えないように保護します。
-ロックされているデータ行を他のトランザクションが更新しようとすると更新の競合が発生し、コミットまたはロールバックでロックが解除されるまで処理が待たされます。
+データベースは、先に行われたトランザクションの対象をロックし、他のトランザクションが書き換えないように保護します。ロックされているデータ行を他のトランザクションが更新しようとすると更新の競合が発生し、コミットまたはロールバックでロックが解除されるまで処理が待たされます。
 
 以下の例では、まず一つのトランザクションがprod表の行データを更新します。
+
 ```
 ossdb=# BEGIN;
 BEGIN
@@ -508,27 +498,31 @@ ossdb=# SELECT * FROM prod WHERE prod_id =1;
  prod_id | prod_name | price
 ---------+-----------+-------
        1 | みかん    |    55
-(1 row)
+(1 行)
 ```
 
-別のターミナルを立ち上げて、別のpsqlを実行します。前のトランザクションが更新しているprod表の同じ行データを更新します。
+別のターミナルでprod表の同じ行データを更新します。
 
 ```
-[postgres@localhost ~]$ psql ossdb
-Password:
-psql (10.1)
-Type "help" for help.
+ossdb=# SELECT * FROM prod WHERE prod_id =1;
+ prod_id | prod_name | price
+---------+-----------+-------
+       1 | みかん    |    50
+(1 行)
 
 ossdb=# BEGIN;
 BEGIN
 ossdb=# UPDATE prod SET price = price * 1.2 WHERE prod_id = 1;
+※結果が返らず、制御も戻りません
 ```
 ![更新の競合](./Pict/tx-02.png)
 
 2つめのUPDATE文が実行されたところで更新の競合が発生し、前のトランザクションが完了するまで待たされます。
 
 以下のように、前のトランザクションをコミットかロールバックするとロックが解除され、後から実行されたUPDATE文の更新が完了します。
+
 ```
+※以下は前の実行結果
 ossdb=# BEGIN;
 BEGIN
 ossdb=# UPDATE prod SET price = price * 1.1 WHERE prod_id = 1;
@@ -538,28 +532,27 @@ ossdb=# SELECT * FROM prod WHERE prod_id =1;
 ---------+-----------+-------
        1 | みかん    |    55
 (1 row)
-
-/* この時点で競合が発生 */
-
+※以下でROLLBACKを実行
 ossdb=# ROLLBACK;
 ROLLBACK
 ```
 
 前のトランザクションがロールバックされると、後から実行されたUPDATE文の更新が完了することを確認します。
+
 ```
+※以下は前の実行結果
 ossdb=# BEGIN;
 BEGIN
 ossdb=# UPDATE prod SET price = price * 1.2 WHERE prod_id = 1;
-
-/* この時点で更新の競合が発生 */
-/* 前のトランザクションがロールバックされた直後にUPDATE文が実行される */
-
+※結果が返らず、制御も戻らない状態
+※別ターミナルでROLLBACKが実行されるとUPDATEが完了する
 UPDATE 1
-ossdb=# SELECT * FROM prod WHERE prod_id = 1;
+ossdb=*# SELECT * FROM prod WHERE prod_id =1;
  prod_id | prod_name | price
 ---------+-----------+-------
        1 | みかん    |    60
-(1 row)
+(1 行)
+
 ossdb=# COMMIT;
 COMMIT
 ```
@@ -571,7 +564,10 @@ COMMIT
 
 PostgreSQLではデッドロックが発生すると、どちらかのトランザクション全体を失敗させて強制的にロールバックさせます。片方のトランザクションが行っていたロックは解除されるので、もう一方のトランザクションは正常に終了することができます。
 
+以下の例では、2つのトランザクションでデッドロックを発生させています。
+
 まず、一方のトランザクションがprice表のprod_id列の値が1の行データを更新します。
+
 ```
 ossdb=# BEGIN;
 BEGIN
@@ -579,7 +575,7 @@ ossdb=# UPDATE prod SET price = price * 1.1 WHERE prod_id = 1;
 UPDATE 1
 ```
 
-次に、もう一方のトランザクションがprice表のprod_id列の値が2の行データを更新します。
+次に、別のターミナルで実行したトランザクションがprice表のprod_id列の値が2の行データを更新します。
 ```
 ossdb=# BEGIN;
 BEGIN
@@ -588,32 +584,54 @@ UPDATE 1
 ```
 
 さらに、前のトランザクションがprice表のprod_id列の値が2の行データを更新します。この更新はもう一方のトランザクションが更新してロックしている行データなので、更新の競合が発生します。
+
 ```
+※以下は前の実行結果
+ossdb=# BEGIN;
+BEGIN
+ossdb=# UPDATE prod SET price = price * 1.1 WHERE prod_id = 1;
+UPDATE 1
+※更新の競合が発生するUPDATEを実行
 ossdb=# UPDATE prod SET price = price * 1.2 WHERE prod_id = 2;
-/* 更新の競合が発生 */
+※結果が返らず、制御も戻りません
 ```
 
 もう一方のトランザクションが、前のトランザクションが更新しているprice表のprod_id列の値が1の行データを更新しようとすると、デッドロックが発生し、トランザクションはロールバックされます。この結果、前のトランザクションのロック待ちが解除され、更新が実行されます。
+
 ```
+※以下は前の実行結果
+ossdb=# BEGIN;
+BEGIN
+ossdb=# UPDATE prod SET price = price * 1.1 WHERE prod_id = 2;
+UPDATE 1
+※デッドロックが発生するUPDATEを実行
 ossdb=# UPDATE prod SET price = price * 1.2 WHERE prod_id = 1;
-ERROR:  deadlock detected
-DETAIL:  Process 3027 waits for ShareLock on transaction 728; blocked by process 2775.
-Process 2775 waits for ShareLock on transaction 729; blocked by process 3027.
-HINT:  See server log for query details.
-CONTEXT:  while updating tuple (0,6) in relation "prod"
-ossdb=#
+ERROR:  デッドロックを検出しました
+DETAIL:  プロセス 43233 は ShareLock を トランザクション 599 で待機していましたが、プロセス 43040 でブロックされました
+プロセス 43040 は ShareLock を トランザクション 600 で待機していましたが、プロセス 43233 でブロックされました
+HINT:  問い合わせの詳細はサーバログを参照してください
+CONTEXT:  リレーション"prod"のタプル(0,8)の更新中
+```
+
+デッドロックを検出し、トランザクションが強制的にロールバックされると、更新の競合が発生していたUPDATEは実行されます。
+
+```
+ossdb=# BEGIN;
+BEGIN
+ossdb=*# UPDATE prod SET price = price * 1.1 WHERE prod_id = 1;
+UPDATE 1
+ossdb=*# UPDATE prod SET price = price * 1.2 WHERE prod_id = 2;
+UPDATE 1
 ```
 
 ![デッドロック](./Pict/tx-03.png)
 
 デッドロックが発生しないようにする、または影響を軽微に抑えるいくつかの方法が論じられますが、完全に防ぐことは難しいとも言われる話題です。
+
 ひとつの有力な案としては、複数個所の更新が必要な場合に更新の順序を一定にすることです。例のように更新対象行を交差させてしまうとデッドロックが発生しやすくなります。上記では「prod_idが小さいほうから更新する」ようなルールを定めておけば、後からのトランザクションはひとつ目の更新を待機しますのでデッドロックは発生しません。
+
 そしてトランザクションがデータ行をロックしている時間を短くするために、できるだけ早くトランザクションを終了することです。トランザクションの時間を短くすればするほど、デッドロックが発生しにくくなります。
+
 ただし、アプリケーションによっては「prod_idが小さいほう」を決めることが容易でない場合や、大規模な開発では規約が守られないケースもあるでしょう。上記は同一テーブル内の複数行ですが、複数テーブル間で発生するデッドロックや、索引や制約に起因するユーザーが意図せず発生してしまうデッドロックもあります。
-
-参考： デッドロックの検知方法はデータベース製品によって異なり、それによる影響も異なります。PostgreSQLでは、パラメーターdeadlock_timeoutで定められた間隔（デフォルトでは1秒間隔）でその瞬間に実行されているトランザクションのロックの状態（獲得済み または 獲得待ち）を確認することで検知します。そのため、先に検知されたどちらか一方のトランザクションがキャンセルされるのです。他のデータベース製品では、後から処理を実行したトランザクションがキャンセルされるなど一定のルールがあります。
-
-データベースの最も重要な機能は、トランザクションを正しく実行し、深刻なデータ破壊を防ぐことです。データを守るために、誤った更新はデッドロックのような形をとり実行させないようにしているのです。データベースの利用者はこのような問題が発生しうることを知り、利用しているデータベース製品の機能や、アプリケーション側で考えられる代表的な対策を知っておくことで、いざ必要になったときにその場に最も適した対策を考えられるようにしておきましょう。
-<!-- kkida 201801 -->
 
 \pagebreak
