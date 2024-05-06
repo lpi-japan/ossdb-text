@@ -244,7 +244,7 @@ COPY 表名 TO ファイル (FORMAT 形式)
 ```
 ossdb=# COPY customer TO '/tmp/customer.csv' (FORMAT csv);
 COPY 3
-ossdb=# \\! cat /tmp/customer.csv
+ossdb=# \! cat /tmp/customer.csv
 1,佐藤商事
 2,鈴木物産
 3,高橋商店
