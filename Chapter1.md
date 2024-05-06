@@ -141,7 +141,7 @@ Password: ※adminユーザーのパスワードを入力
 lines 1-17/17 (END)
 ```
 
-### PostgreSQLサービスの自動起動の設定
+### PostgreSQLサービスの自動起動の設定 {.unlisted}
 PostgreSQLサービスはデフォルトでは手動起動になっているので、システムの起動毎に自動的に起動したい場合にはsystemctlでenableサブコマンドを指定します。自動起動を無効にする場合はdisableを指定します。
 
 ```
