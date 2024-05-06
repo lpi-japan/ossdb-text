@@ -121,7 +121,7 @@ Copyright©️ LPI-Japan. All Rights Reserved.
 ## 使用に関する権利 {.unnumbered}
 本教科書は、クリエイティブ・コモンズ・ライセンスの「表示 - 非営利 - 改変禁止 4.0 国際 (CC BY-NC-ND 4.0) 」によってライセンスされています。
 
-![CC BY-NC-ND 4.0](Pict/Ch0/by-nc-nd.png){width=200px}
+![CC BY-NC-ND 4.0](Pict/by-nc-nd.png){width=200px}
 
 
 ### 表示 {.unlisted .unnumbered}
@@ -143,10 +143,10 @@ Copyright©️ LPI-Japan. All Rights Reserved.
 フィードバックは誰でも参加できる Slack で受け付けていますので、積極的にご参加ください。Slack参加の詳細は以下の本教科書のWebページを参照してください。
 
 ```
-https://linuc.org/textbooks/server/
+https://oss-db.jp/ossdbtext
 ```
 
-![https://linuc.org/textbooks/server/](Pict/Ch0/QRserver.png){width=25%}
+![https://oss-db.jp/ossdbtext](Pict/QRossdb.png){width=25%}
 
 ## 本教科書の使用に関するお問合せ先 {.unnumbered}
 特定非営利活動法人エルピーアイジャパン（LPI-Japan）事務局  
@@ -155,19 +155,19 @@ TEL：03-6205-7025
 E-Mail：info@lpi.or.jp
 
 ## その他の情報源 {.unnumbered}
--オープンソースデータベース技術者認定試験
-  * [https://oss-db.jp/](https://oss-db.jp/)
+- オープンソースデータベース技術者認定試験
+[https://oss-db.jp/](https://oss-db.jp/)
 
--日本PostgreSQLユーザ会（JPUG）
-  * [https://www.postgresql.jp/](https://www.postgresql.jp/)
+- 日本PostgreSQLユーザ会（JPUG）
+[https://www.postgresql.jp/](https://www.postgresql.jp/)
 
--PostgreSQLのマニュアル(JPUGのサイトから「日本語ドキュメント」)
-  * [https://www.postgresql.jp/document/](https://www.postgresql.jp/document/)
+- PostgreSQLのマニュアル(JPUGのサイトから「日本語ドキュメント」)
+[https://www.postgresql.jp/document/](https://www.postgresql.jp/document/)
 
--メーリングリスト（pgsql-jp）
-  * [https://www.postgresql.jp/npo/mailinglist](https://www.postgresql.jp/npo/mailinglist)
+- メーリングリスト（pgsql-jp）
+[https://www.postgresql.jp/npo/mailinglist](https://www.postgresql.jp/npo/mailinglist)
 
--Let's PostgreSQL
-  * [http://lets.postgresql.jp/](http://lets.postgresql.jp/)
+- Let's PostgreSQL
+[http://lets.postgresql.jp/](http://lets.postgresql.jp/)
 
 \pagebreak
