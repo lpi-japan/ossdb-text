@@ -159,8 +159,8 @@ pg_restore: [アーカイバ(db)] could not execute query: ERROR:  database "oss
 警告: リストアにてエラーを無視しました: 1
 
 /* ここではデータベースossdbが存在しない旨のエラーが表示されますが、問題ありません。
- * pg_restoreではリストア対象（今回はossdbデータベース）と重複するデータを最初に削除する処理（今回はdropdb ossdb）を実行しており、
- * 直前のdropdbコマンドで削除対象のossdbデータベースがすでに存在しないため、内部で実行しようとしたdropdb処理のみが失敗しているのです。
+ * pg_restoreではリストア対象（今回はossdbデータベース）と重複するデータを 最初に削除する処理（今回はdropdb ossdb）を実行しており、
+ * 直前のdropdbコマンドで削除対象のossdbデータベースがすでに存在しないため、 内部で実行しようとしたdropdb処理のみが失敗しているのです。
  */
 
 [postgres@localhost ~]$ psql ossdb
