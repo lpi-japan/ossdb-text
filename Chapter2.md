@@ -628,6 +628,8 @@ customer_idをcustomer表から取得した顧客名、prod_idをprod表から�
 
 ![3つの表のJOIN](./Pict/join-02.png)
 
+\pagebreak
+
 ### 表別名の利用
 SQL文の中で何度も使用する表名は、FROM句、またはJOIN句で別名を指定できます。短い別名を指定すれば、SQL文を短くして見やすくすることができます。
 
