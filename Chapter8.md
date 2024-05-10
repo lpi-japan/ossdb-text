@@ -230,7 +230,7 @@ PostgreSQLは、TCP/IPを利用したネットワーク経由での接続も受�
 
 以下の例では、すべてのインターフェースからの接続を受け付けるように設定しています。
 ```
-[postgres@localhost ~]$ vi /var/lib/pgsql/data/postgresql.conf
+[postgres@host1 ~]$ vi /var/lib/pgsql/data/postgresql.conf
 （略）
 #listen_addresses = 'localhost'         # what IP address(es) to listen on;
 listen_addresses = '*'          # what IP address(es) to listen on;
@@ -245,7 +245,7 @@ listen_addresses = '*'          # what IP address(es) to listen on;
 
 以下の例では、ネットワーク経由接続でローカルループバックアドレス（127.0.0.1/32・::1/128）からのアクセスする際にパスワード認証するように設定しています。pg_hba.confの設定反映は再読み込みで良いですが、今回はpostgresql.confも変更していますので、PostgreSQLの再起動で設定を反映させる必要があります。
 ```
-[postgres@localhost ~]$ vi /var/lib/pgsql/data/pg_hba.conf
+[postgres@host1 ~]$ vi /var/lib/pgsql/data/pg_hba.conf
 （略）
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
 
@@ -301,7 +301,7 @@ GRANT {ALL | SELECT | INSERT | DELETE | UPDATE}
 以下の例は、ユーザーsatoに対してprod表に対するすべての権限を付与しています。prod表の所有者（owner）であるpostgresユーザーで操作して、ユーザーsatoに対して権限を与えます。
 
 ```
-[ossdb=# \dt prod
+ossdb=# \dt prod
            リレーション一覧
  スキーマ | 名前 |  タイプ  |  所有者
 ----------+------+----------+----------
@@ -331,7 +331,7 @@ ossdb=# \dp prod
 ```
 
 権限を付与されたユーザーが空白のときはpublic（全ユーザー）に対して許可されていることを表します。
-アクセス権限の後ろにある「/posgres」は、この権限を与えたユーザーを表しています。表のオーナーや、相当する操作が許可されたユーザーが当てはまります。
+アクセス権限の後ろにある「/postgres」は、この権限を与えたユーザーを表しています。表のオーナーや、相当する操作が許可されたユーザーが当てはまります。
 
 権限種別 | 説明
 ---- | -------

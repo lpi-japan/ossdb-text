@@ -740,7 +740,6 @@ DELETE FROM 表名
 ossdb=# DELETE FROM prod WHERE prod_id = 4;
 DELETE 1
 ossdb=# SELECT * FROM prod;
-ossdb=# SELECT * FROM prod;
  prod_id | prod_name | price
 ---------+-----------+-------
        1 | みかん    |    50

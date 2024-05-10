@@ -42,13 +42,12 @@ ossdb=# SELECT * FROM prod WHERE prod_id = 4;
 numeric(精度,位取り)
 ```
 
-たとえば「numeric(6,2)」と指定すると、全体の桁数は6桁、小数点以下は2桁、整数部は6-2で4桁なので最大9999.99までの値を格納することができます。
+たとえば「numeric(6,2)」と指定すると、全体の桁数は6桁、小数点以下は2桁、整数部は6-2で4桁なので-9999.99から9999.99までの値を格納することができます。
 
 以下の例では、numeric型のid列を持ったnumeric_test表を作成しています。整数部は4桁なので、5桁の値である19999を指定したINSERT文はエラーとなっています。
 
 ```
-ossdb=# CREATE TABLE numeric_test(
-id numeric(6,2));
+ossdb=# CREATE TABLE numeric_test(id numeric(6,2));
 CREATE TABLE
 ossdb=# \d numeric_test
                テーブル"public.numeric_test"

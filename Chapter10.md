@@ -19,7 +19,7 @@
 ## ファイルのコピー
 最も確実で簡単なバックアップは、ファイルレベルでのバックアップです。必要となるファイルをすべてコピーすることでバックアップができます。ただし、ファイルのコピーを行うにはPostgreSQLを完全に停止する必要があります。
 
-以下の例では、OSユーザーadminでPostgreSQLを停止した後、OSユーザーposgresでtarコマンドを使用してPostgreSQLの関連ファイルが格納されているデータディレクトリ以下をアーカイブしています。
+以下の例では、OSユーザーadminでPostgreSQLを停止した後、OSユーザーpostgresでtarコマンドを使用してPostgreSQLの関連ファイルが格納されているデータディレクトリ以下をアーカイブしています。
 
 ```
 [admin@host1 ~]$ sudo systemctl stop postgresql

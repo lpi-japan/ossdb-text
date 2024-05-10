@@ -168,6 +168,6 @@ E-Mail：info@lpi.or.jp
 [https://www.postgresql.jp/npo/mailinglist](https://www.postgresql.jp/npo/mailinglist)
 
 - Let's PostgreSQL
-[http://lets.postgresql.jp/](http://lets.postgresql.jp/)
+[https://lets.postgresql.jp/](https://lets.postgresql.jp/)
 
 \pagebreak
