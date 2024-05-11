@@ -449,7 +449,7 @@ ossdb=# SELECT nextval('order_id_seq');
 ```
 
 ### シーケンスをSQL文で使用する
-シーケンスは、たとえばINSERT文に組み込んで使用します。
+シーケンスは、INSERT文に組み込んで使用できます。
 
 以下の例では、orders表へ行データを入力するINSERT文で、order_id列の値をorder_id_seqシーケンスから取得しています。
 
@@ -469,6 +469,27 @@ ossdb=# SELECT * FROM orders;
  order_id |        order_date         | customer_id | prod_id | qty
 ----------+---------------------------+-------------+---------+-----
       101 | 2024-04-17 14:38:11.97433 |           2 |       1 |   7
+(1 行)
+```
+
+### シーケンスをテーブル定義で使用する
+シーケンスをテーブル定義で指定することで、INSERT時に自動的にシーケンスから取得した値を挿入することができます。
+
+方法としては、列のデータ型としてSERIALを指定する方法と、作成済みのシーケンスをデフォルトとして指定する方法があります。
+
+以下の例は、テーブル作成時にid列にSERIAL型を定義しています。INSERT時にmemo列の値だけ指定することで、自動的にid列にシーケンス値が挿入されます。
+
+```
+ossdb=# CREATE TABLE serial_test(
+	id	SERIAL,
+	memo	TEXT);
+CREATE TABLE
+ossdb=# insert into serial_test(memo) values('SERIALのテスト');
+INSERT 0 1
+ossdb=# SELECT * FROM serial_test;
+ id |      memo
+----+----------------
+  1 | SERIALのテスト
 (1 行)
 ```
 
