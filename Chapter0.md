@@ -160,6 +160,8 @@ https://oss-db.jp/ossdbtext
 
 ![https://oss-db.jp/ossdbtext](Pict/ossdbtext.svg){width=20%}
 
+\pagebreak
+
 ## 本教科書の使用に関するお問合せ先 {.unnumbered}
 特定非営利活動法人エルピーアイジャパン（LPI-Japan）事務局  
 〒100-0011 東京都千代田区内幸町2-1-1 飯野ビルディング9階  
@@ -169,14 +171,14 @@ TEL：03-6205-7025
 ![https://lpij.tayori.com/f/textbookinfo/](Pict/toiawase.svg){width=20%}
 
 
-## OSS-DB技術者認定のご紹介
+## OSS-DB技術者認定のご紹介 {.unnumbered}
 OSS-DB技術者認定とは、オープンソースデータベース（OSS-DB）に関する技術力と知識を、公正かつ厳正に中立的な立場で認定するIT技術者認定です。この認定ではOSS-DBの中でも特に商用データベースとの連携に優れ、エンタープライズシステムでも多く活用されている「PostgreSQL」を基準のRDBMSとして採用しています。
 
 ![](Pict/ossdblogo.png){width=25%}
 
 OSS-DB技術者認定は、２つのレベルから構成されています。
 
-### OSS-DB Silver
+### OSS-DB Silver {.unlisted .unnumbered}
 データベースシステムの設計・開発・導入・運用ができる技術者であることを証明します。特に、以下の項目についてのスキルを備えていることの証明となります。
 
 - オープンソースデータベースに関する基礎的な知識を有する。
@@ -184,7 +186,7 @@ OSS-DB技術者認定は、２つのレベルから構成されています。
 - PostgreSQLなどのOSS-DBを使ったデータベースシステムの運用管理ができる
 - PostgreSQLなどのOSS-DBを利用した開発でデータベース部分を担当することができる。
 
-### OSS-DB Gold
+### OSS-DB Gold {.unlisted .unnumbered}
 大規模データベースシステムの改善・運用管理・コンサルティングができる技術者であることを証明します。特に、以下の項目についてのスキルを備えていることの証明となります。
 
 - オープンソースデータベースに関する深い知識を有する。
@@ -192,6 +194,8 @@ OSS-DB技術者認定は、２つのレベルから構成されています。
 - PostgreSQLなどのOSS-DBの内部構造を熟知している。
 - PostgreSQLなどのOSS-DBの利用方法やデータベースの状態を検証してパフォーマンスチューニングをすることができる。
 - PostgreSQLなどのOSS-DBの利用方法やデータベースの状態を検証してトラブルシューティングをすることができる。
+
+\pagebreak
 
 OSS-DB技術者認定の詳細については、以下のWebサイトを参照してください。
 
