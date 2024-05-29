@@ -27,3 +27,4 @@ number-sections: true
 listings: true
 
 pdf-engine: lualatex
+pdf-engine-opt: -shell-escape
