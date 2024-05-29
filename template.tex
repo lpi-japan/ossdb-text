@@ -558,17 +558,12 @@ $abstract$
 $endif$
 $endif$
 
-%% \includepdf[pages=-, noautoscale=true, scale=1.0]{PDF用表紙.pdf}
-%% \thispagestyle{empty}
-%% \includepdf[pages=-, noautoscale=true, scale=1.0]{中表紙前.pdf}
-%% \thispagestyle{empty}
-
 \pagenumbering{roman}
-%% \markdownInput{Chapter0.md}
 $for(include-before)$
 $include-before$
 
 $endfor$
+\input{preface}
 \newpage
 $if(toc)$
 $if(toc-title)$
@@ -645,5 +640,4 @@ $for(include-after)$
 $include-after$
 
 $endfor$
-%% \includepdf[pages=-, noautoscale=true, scale=1.0]{中表紙後.pdf}
 \end{document}
