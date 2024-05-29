@@ -95,7 +95,7 @@ PostgreSQLのインストールや、実習で使用するデータベースの�
 ### 10章 バックアップとリストア {.unlisted .unnumbered}
 データのバックアップとリストアの方法について学びます。
 
-## 執筆者・制作担当者紹介 {-}
+## 執筆者・制作担当者紹介 {.unlisted .unnumbered}
 本教科書は、オープンなプロジェクト形式で開発を行っています。企画段階から意見交換を行い、事前の技術的な調査、執筆、レビューなどをプロジェクトのメンバーで分担して行っています。
 
 ### 宮原 徹（バージョン3執筆担当／株式会社びぎねっと） {.unlisted .unnumbered}
@@ -207,6 +207,3 @@ OSS-DB技術者認定の詳細については、以下のWebサイトを参照�
 
 - Let's PostgreSQL
 [https://lets.postgresql.jp/](https://lets.postgresql.jp/)
-
-\pagebreak
----
