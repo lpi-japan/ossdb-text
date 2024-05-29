@@ -16,7 +16,8 @@ RUN fc-cache -f
 
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install -y fonts-takao fonts-ipafont \
-    && rm -rf /var/lib/apt/lists/* \
-    && tlmgr update --self --all \
+    && apt-get install -y fonts-takao fonts-ipafont inkscape \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN tlmgr update --self --all \
     && tlmgr install collection-langjapanese tocloft svg
