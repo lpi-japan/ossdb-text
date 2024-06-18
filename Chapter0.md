@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿\clearpage{\thispagestyle{empty}\cleardoublepage}
 
 \begin{spacing}{0.4}
@@ -8,6 +9,10 @@
 \end{spacing}
 
 # まえがき {.unnumbered}
+=======
+﻿include-before: |
+# まえがき {.unlisted .unnumbered}
+>>>>>>> cb14acc (目次に載らないように修正)
 このたび、特定非営利活動法人エルピーアイジャパンは、オープンソースデータベース技術者教育に利用していただくことを目的とした教材、「オープンソースデータベース標準教科書」（以下、本教科書）を開発し、インターネット上にて公開し、提供することとなりました。
 
 本教科書は、データベース技術習得のニーズの高まりに応えるべく、まったく初めてデータベースについて学習する人のために開発されました。既にリリースされ好評を得ている「Linux 標準教科書」「Linux サーバー構築標準教科書」「Linux システム管理標準教科書」「高信頼システム構築標準教科書」「Linuxセキュリティ標準教科書」といった標準教科書シリーズの１つとなります。
@@ -23,12 +28,20 @@
 https://oss-db.jp/ossdbtext
 ```
 
+<<<<<<< HEAD
 ## 本教科書の目的 {.unnumbered}
+=======
+## 本教科書の目的 {.unlisted .unnumbered}
+>>>>>>> cb14acc (目次に載らないように修正)
 本教科書の目的は、データベースの経験の無い技術者を対象に、基本的なデータベースの操作方法について実習を通して学習することにあります。SQL文を使ったデータベースの操作や、データベースの作成や管理についての基礎を学習します。
 
 PostgreSQLを扱うデータベース エンジニアとしてのスキルを証明する認定「OSS-DB Silver」の取得のための教育および学習にも役立てていただけます。
 
+<<<<<<< HEAD
 ## 想定している実習環境 {.unnumbered}
+=======
+## 想定している実習環境 {.unlisted .unnumbered}
+>>>>>>> cb14acc (目次に載らないように修正)
 本教科書での実習環境として、以下の環境を構築しています。
 
 ### データベース {.unlisted .unnumbered}
@@ -71,7 +84,11 @@ https://www.postgresql.jp/download
 ### クラウド環境  {.unlisted .unnumbered}
 クラウド上に用意した環境を使う方法もあります。AlmaLinux、またはその他のLinuxが動作する環境にPostgreSQLがインストールしてあれば、本書の内容を学習できます。
 
+<<<<<<< HEAD
 ## 全体の流れ {.unnumbered}
+=======
+## 全体の流れ {.unlisted .unnumbered}
+>>>>>>> cb14acc (目次に載らないように修正)
 本教科書では、以下の通りに実習を進めます。
 
 ### 1章 実習環境の構築方法 {.unlisted .unnumbered}
@@ -128,12 +145,20 @@ SQL文などはコピー＆ペーストでそのまま使えるようにして�
 
 また、これまでバージョン1からバージョン2まで、多くの執筆者、レビュアー、そして利用者の皆様からフィードバックをいただきました。厚く御礼申し上げます。
 
+<<<<<<< HEAD
 ## 著作権 {.unnumbered}
+=======
+## 著作権 {.unlisted .unnumbered}
+>>>>>>> cb14acc (目次に載らないように修正)
 本教科書の著作権は特定非営利活動法人エルピーアイジャパンに帰属します。
 
 Copyright©️ LPI-Japan. All Rights Reserved.
 
+<<<<<<< HEAD
 ## 使用に関する権利 {.unnumbered}
+=======
+## 使用に関する権利 {.unlisted .unnumbered}
+>>>>>>> cb14acc (目次に載らないように修正)
 本教科書は、クリエイティブ・コモンズ・ライセンスの「表示 - 非営利 - 改変禁止 4.0 国際 (CC BY-NC-ND 4.0) 」によってライセンスされています。
 
 ![CC BY-NC-ND 4.0](Pict/by-nc-nd.png){width=200px}
@@ -165,7 +190,11 @@ https://oss-db.jp/ossdbtext
 
 \pagebreak
 
+<<<<<<< HEAD
 ## 本教科書の使用に関するお問合せ先 {.unnumbered}
+=======
+## 本教科書の使用に関するお問合せ先 {.unlisted .unnumbered}
+>>>>>>> cb14acc (目次に載らないように修正)
 特定非営利活動法人エルピーアイジャパン（LPI-Japan）事務局  
 〒100-0011 東京都千代田区内幸町2-1-1 飯野ビルディング9階  
 TEL：03-6205-7025  
@@ -174,7 +203,11 @@ TEL：03-6205-7025
 ![https://lpij.tayori.com/f/textbookinfo/](Pict/toiawase.svg){width=20%}
 
 
+<<<<<<< HEAD
 ## OSS-DB技術者認定のご紹介 {.unnumbered}
+=======
+## OSS-DB技術者認定のご紹介 {.unlisted .unnumbered}
+>>>>>>> cb14acc (目次に載らないように修正)
 OSS-DB技術者認定とは、オープンソースデータベース（OSS-DB）に関する技術力と知識を、公正かつ厳正に中立的な立場で認定するIT技術者認定です。この認定ではOSS-DBの中でも特に商用データベースとの連携に優れ、エンタープライズシステムでも多く活用されている「PostgreSQL」を基準のRDBMSとして採用しています。
 
 ![](Pict/ossdblogo.png){width=25%}
@@ -184,7 +217,11 @@ OSS-DB技術者認定は、２つのレベルから構成されています。
 ### OSS-DB Silver {.unlisted .unnumbered}
 データベースシステムの設計・開発・導入・運用ができる技術者であることを証明します。特に、以下の項目についてのスキルを備えていることの証明となります。
 
+<<<<<<< HEAD
 - オープンソースデータベースに関する基礎的な知識を有する。
+=======
+- OSS-DBに関する基礎的な知識を有する。
+>>>>>>> cb14acc (目次に載らないように修正)
 - オープンソースを利用して小規模なデータベースの開発と運用管理ができる
 - PostgreSQLなどのOSS-DBを使ったデータベースシステムの運用管理ができる
 - PostgreSQLなどのOSS-DBを利用した開発でデータベース部分を担当することができる。
@@ -192,7 +229,11 @@ OSS-DB技術者認定は、２つのレベルから構成されています。
 ### OSS-DB Gold {.unlisted .unnumbered}
 大規模データベースシステムの改善・運用管理・コンサルティングができる技術者であることを証明します。特に、以下の項目についてのスキルを備えていることの証明となります。
 
+<<<<<<< HEAD
 - オープンソースデータベースに関する深い知識を有する。
+=======
+- OSS-DBに関する深い知識を有する。
+>>>>>>> cb14acc (目次に載らないように修正)
 - オープンソースを利用して大規模なデータベースの開発と運用管理ができる。
 - PostgreSQLなどのOSS-DBの内部構造を熟知している。
 - PostgreSQLなどのOSS-DBの利用方法やデータベースの状態を検証してパフォーマンスチューニングをすることができる。
@@ -204,7 +245,11 @@ OSS-DB技術者認定の詳細については、以下のWebサイトを参照�
 
 ![https://oss-db.jp/outline](Pict/outline.svg){width=20%}
 
+<<<<<<< HEAD
 ## その他の情報源 {.unnumbered}
+=======
+## その他の情報源 {.unlisted .unnumbered}
+>>>>>>> cb14acc (目次に載らないように修正)
 - 日本PostgreSQLユーザ会（JPUG）
 [https://www.postgresql.jp/](https://www.postgresql.jp/)
 
@@ -216,6 +261,7 @@ OSS-DB技術者認定の詳細については、以下のWebサイトを参照�
 
 - Let's PostgreSQL
 [https://lets.postgresql.jp/](https://lets.postgresql.jp/)
+<<<<<<< HEAD
 =======
 ﻿---
 title: OSS-DB構築標準教科書（Ver3.0.0）
@@ -433,3 +479,8 @@ include-before: |
   [https://lets.postgresql.jp/](https://lets.postgresql.jp/)
   
   \pagebreak
+=======
+
+\pagebreak
+---
+>>>>>>> cb14acc (目次に載らないように修正)
