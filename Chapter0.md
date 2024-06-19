@@ -7,6 +7,7 @@
 \hrulefill
 \end{spacing}
 
+---
 include-before: |
 # まえがき {.unlisted .unnumbered}
 このたび、特定非営利活動法人エルピーアイジャパンは、オープンソースデータベース技術者教育に利用していただくことを目的とした教材、「オープンソースデータベース標準教科書」（以下、本教科書）を開発し、インターネット上にて公開し、提供することとなりました。
@@ -220,3 +221,4 @@ OSS-DB技術者認定の詳細については、以下のWebサイトを参照�
 [https://lets.postgresql.jp/](https://lets.postgresql.jp/)
 
 \pagebreak
+---
