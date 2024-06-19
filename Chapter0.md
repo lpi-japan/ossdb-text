@@ -218,5 +218,7 @@ OSS-DB技術者認定の詳細については、以下のWebサイトを参照�
 - Let's PostgreSQL
 [https://lets.postgresql.jp/](https://lets.postgresql.jp/)
 
+その他、書籍なども多数出版されているので、それらも参考にしてみてください。
+
 \pagebreak
 
