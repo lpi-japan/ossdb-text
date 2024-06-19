@@ -166,11 +166,11 @@ ALTER ROLE
 # TYPE  DATABASE        USER            ADDRESS                 METHOD
 
 # "local" is for Unix domain socket connections only
-local   all             all                                     md5 ←peerから変更
+local   all             all                                     md5←peerから変更
 # IPv4 local connections:
-host    all             all             127.0.0.1/32            md5 ←peerから変更
+host    all             all             127.0.0.1/32            md5←peerから変更
 # IPv6 local connections:
-host    all             all             ::1/128                 md5 ←peerから変更
+host    all             all             ::1/128                 md5←peerから変更
 ```
 
 設定の変更はPostgreSQLを再起動（または設定の再読み込み）をするまでは有効になりません。パスワードの設定を行わないまま本設定を読み込むと、Peer認証が無効になってしまうためデータベースに接続できなくなりますので注意してください。

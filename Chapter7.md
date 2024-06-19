@@ -131,7 +131,7 @@ ALTER TABLE
 ossdb=# \d orders
                               テーブル"public.orders"
      列      |           タイプ            | 照合順序 | Null 値を許容 | デフォルト
--------------+-----------------------------+----------+---------------+------------
+-------------+-----------------------------+----------+---------------+----------
  order_id    | integer                     |          | not null      |
  order_date  | timestamp without time zone |          |               |
  customer_id | integer                     |          |               |
@@ -160,12 +160,14 @@ ossdb=# \d customer
 ```
 ossdb=# INSERT INTO orders(order_id,order_date,customer_id,prod_id,qty)
 VALUES (6,CURRENT_TIMESTAMP,4,6,6);
-ERROR:  テーブル"orders"への挿入、更新は外部キー制約"orders_prod_id_fkey"に違反しています
+ERROR:  テーブル"orders"への挿入、更新は外部キー制約"orders_prod_id_fkey"に違反して
+います
 DETAIL:  テーブル"prod"にキー(prod_id)=(6)がありません
 
 ossdb=# INSERT INTO orders(order_id,order_date,customer_id,prod_id,qty)
 VALUES (6,CURRENT_TIMESTAMP,3,6,6);
-ERROR:  テーブル"orders"への挿入、更新は外部キー制約"orders_prod_id_fkey"に違反しています
+ERROR:  テーブル"orders"への挿入、更新は外部キー制約"orders_prod_id_fkey"に違反して
+います
 DETAIL:  テーブル"prod"にキー(prod_id)=(6)がありません
 ``` 
 
@@ -508,7 +510,8 @@ ossdb=# SELECT currval('order_id_seq');
 
 ossdb=# INSERT INTO orders(order_id,order_date,customer_id,prod_id,qty)
 VALUES (nextval('order_id_seq'),now(),10,4,7);
-ERROR:  テーブル"orders"への挿入、更新は外部キー制約"orders_customer_id_fkey"に違反しています
+ERROR:  テーブル"orders"への挿入、更新は外部キー制約"orders_customer_id_fkey"に違反
+しています
 DETAIL:  テーブル"customer"にキー(customer_id)=(10)がありません
 ossdb=# SELECT currval('order_id_seq');
  currval

@@ -45,7 +45,7 @@ CREATE INDEX
 ossdb=# \d orders
                               テーブル"public.orders"
      列      |           タイプ            | 照合順序 | Null 値を許容 | デフォルト
--------------+-----------------------------+----------+---------------+------------
+-------------+-----------------------------+----------+---------------+----------
  order_id    | integer                     |          | not null      |
  order_date  | timestamp without time zone |          |               |
  customer_id | integer                     |          |               |
@@ -76,7 +76,7 @@ DROP INDEX
 ossdb=# \d orders
                               テーブル"public.orders"
      列      |           タイプ            | 照合順序 | Null 値を許容 | デフォルト
--------------+-----------------------------+----------+---------------+------------
+-------------+-----------------------------+----------+---------------+----------
  order_id    | integer                     |          | not null      |
  order_date  | timestamp without time zone |          |               |
  customer_id | integer                     |          |               |
@@ -214,7 +214,7 @@ CLUSTER
 ossdb=# \d orders
                               テーブル"public.orders"
      列      |           タイプ            | 照合順序 | Null 値を許容 | デフォルト
--------------+-----------------------------+----------+---------------+------------
+-------------+-----------------------------+----------+---------------+----------
  order_id    | integer                     |          | not null      |
  order_date  | timestamp without time zone |          |               |
  customer_id | integer                     |          |               |
