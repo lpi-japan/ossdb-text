@@ -1,13 +1,4 @@
-﻿\clearpage{\thispagestyle{empty}\cleardoublepage}
-
-\begin{spacing}{0.4}
-\begin{flushright}
-{\Large OSS-DB構築標準教科書（Ver3.0.0）}
-\end{flushright}
-\hrulefill
-\end{spacing}
-
-# まえがき {.unlisted .unnumbered}
+﻿# まえがき {.unlisted .unnumbered}
 このたび、特定非営利活動法人エルピーアイジャパンは、オープンソースデータベース技術者教育に利用していただくことを目的とした教材、「オープンソースデータベース標準教科書」（以下、本教科書）を開発し、インターネット上にて公開し、提供することとなりました。
 
 本教科書は、データベース技術習得のニーズの高まりに応えるべく、まったく初めてデータベースについて学習する人のために開発されました。既にリリースされ好評を得ている「Linux 標準教科書」「Linux サーバー構築標準教科書」「Linux システム管理標準教科書」「高信頼システム構築標準教科書」「Linuxセキュリティ標準教科書」といった標準教科書シリーズの１つとなります。
@@ -104,7 +95,7 @@ PostgreSQLのインストールや、実習で使用するデータベースの�
 ### 10章 バックアップとリストア {.unlisted .unnumbered}
 データのバックアップとリストアの方法について学びます。
 
-## 執筆者・制作担当者紹介 {-}
+## 執筆者・制作担当者紹介 {.unlisted .unnumbered}
 本教科書は、オープンなプロジェクト形式で開発を行っています。企画段階から意見交換を行い、事前の技術的な調査、執筆、レビューなどをプロジェクトのメンバーで分担して行っています。
 
 ### 宮原 徹（バージョン3執筆担当／株式会社びぎねっと） {.unlisted .unnumbered}
@@ -176,7 +167,15 @@ TEL：03-6205-7025
 ## OSS-DB技術者認定のご紹介 {.unlisted .unnumbered}
 OSS-DB技術者認定とは、オープンソースデータベース（OSS-DB）に関する技術力と知識を、公正かつ厳正に中立的な立場で認定するIT技術者認定です。この認定ではOSS-DBの中でも特に商用データベースとの連携に優れ、エンタープライズシステムでも多く活用されている「PostgreSQL」を基準のRDBMSとして採用しています。
 
+```{=latex}
+\begin{center}
+```
+
 ![](Pict/ossdblogo.png){width=25%}
+
+```{=latex}
+\end{center}
+```
 
 OSS-DB技術者認定は、２つのレベルから構成されています。
 
@@ -217,5 +216,3 @@ OSS-DB技術者認定の詳細については、以下のWebサイトを参照�
 
 - Let's PostgreSQL
 [https://lets.postgresql.jp/](https://lets.postgresql.jp/)
-
-\pagebreak
