@@ -38,7 +38,8 @@ psqlに-lオプションを付けて実行します。psqlはPostgreSQLに接続
 [postgres@host1 ~]$ psql -l
                                          データベース一覧
    名前    |  所有者  | エンコーディング |  照合順序   | Ctype(変換演算子) |     アクセス権限
------------+----------+------------------+-------------+-------------------+-----------------------
+-----------+----------+------------------+-------------+-------------------+-----
+------------------
  ossdb     | postgres | UTF8             | ja_JP.UTF-8 | ja_JP.UTF-8       |
  postgres  | postgres | UTF8             | ja_JP.UTF-8 | ja_JP.UTF-8       |
  template0 | postgres | UTF8             | ja_JP.UTF-8 | ja_JP.UTF-8       | =c/postgres          +
@@ -156,7 +157,7 @@ ossdb=# \d customer
 ossdb=# \d orders
                               テーブル"public.orders"
      列      |           タイプ            | 照合順序 | Null 値を許容 | デフォルト
--------------+-----------------------------+----------+---------------+------------
+-------------+-----------------------------+----------+---------------+----------
  order_id    | integer                     |          |               |
  order_date  | timestamp without time zone |          |               |
  customer_id | integer                     |          |               |
