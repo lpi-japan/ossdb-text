@@ -231,7 +231,7 @@ psqlを使って、CSVファイルをロードします。
 以下の例では、\\copyメタコマンドを使ってCSVファイルからデータをロードしています。
 
 ```
-ossdb=# \copy zip from utf_ken_all.csv with csv
+ossdb=# \copy zip from utf_ken_all.csv (format csv)
 COPY 124370
 ```
 
