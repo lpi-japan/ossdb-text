@@ -35,7 +35,7 @@ Linuxサーバー構築標準教科書
 https://linuc.org/textbooks/server/
 ```
 
-![https://linuc.org/textbooks/server/](Pict/linuxserver.svg){width=20%}
+![https://linuc.org/textbooks/server/](Pict/linuxserver.png){width=20%}
 
 ### 仮想マシンを利用 {.unlisted .unnumbered}
 仮想マシンを利用して学習環境を構築します。仮想マシンを利用すると、WindowsやLinux、macOS上の仮想マシンにLinuxをインストールし、動作させることができます。
@@ -153,7 +153,7 @@ Copyright©️ LPI-Japan. All Rights Reserved.
 https://oss-db.jp/ossdbtext
 ```
 
-![https://oss-db.jp/ossdbtext](Pict/ossdbtext.svg){width=20%}
+![https://oss-db.jp/ossdbtext](Pict/ossdbtext.png){width=20%}
 
 \pagebreak
 
@@ -163,7 +163,7 @@ https://oss-db.jp/ossdbtext
 TEL：03-6205-7025  
 お問い合わせ：https://lpij.tayori.com/f/textbookinfo/
 
-![https://lpij.tayori.com/f/textbookinfo/](Pict/toiawase.svg){width=20%}
+![https://lpij.tayori.com/f/textbookinfo/](Pict/toiawase.png){width=20%}
 
 ## OSS-DB技術者認定のご紹介 {.unlisted .unnumbered}
 OSS-DB技術者認定とは、オープンソースデータベース（OSS-DB）に関する技術力と知識を、公正かつ厳正に中立的な立場で認定するIT技術者認定です。この認定ではOSS-DBの中でも特に商用データベースとの連携に優れ、エンタープライズシステムでも多く活用されている「PostgreSQL」を基準のRDBMSとして採用しています。
@@ -203,7 +203,7 @@ OSS-DB技術者認定は、２つのレベルから構成されています。
 
 OSS-DB技術者認定の詳細については、以下のWebサイトを参照してください。
 
-![https://oss-db.jp/outline](Pict/outline.svg){width=20%}
+![https://oss-db.jp/outline](Pict/outline.png){width=20%}
 
 ## その他の情報源 {.unlisted .unnumbered}
 - 日本PostgreSQLユーザ会（JPUG）
