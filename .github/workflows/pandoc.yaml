@@ -28,10 +28,6 @@ jobs:
         password: ${{ secrets.github_token }}
     steps:
       - uses: actions/checkout@v4
-#       - id: list-files
-#         run: echo "chapter=$(ls -1 Chapter*.md | grep -v 'Chapter0.md' | sort -V | tr '\n' ' ' | sed 's/ $//')" >> "$GITHUB_OUTPUT"
-#       - run: pandoc Chapter0.md -o preface.tex
-#       - run: pandoc -d config.yaml --template template.tex -B preface.tex ${{ steps.list-files.outputs.chapter }} -o guide.pdf
       - run: |
           chapter=$(ls -1 Chapter*.md | grep -v 'Chapter0.md' | sort -V | tr '\n' ' ' | sed 's/ $//')
           pandoc Chapter0.md -o preface.tex
