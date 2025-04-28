@@ -20,4 +20,4 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN tlmgr update --self --all \
-    && tlmgr install collection-langjapanese tocloft svg
+    && tlmgr install collection-langjapanese tocloft svg wallpaper eso-pic
