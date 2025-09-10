@@ -10,7 +10,7 @@ variables:
   documentClass: ltjarticle
   mainfont: Harano Aji Gothic
   bookTitle: オープンソースデータベース標準教科書
-  bookVersion: 2025年5月1日 \, \, Ver.3.0.1
+  bookVersion: 2025年9月10日 \, \, Ver.3.0.2
 
 toc: true
 
