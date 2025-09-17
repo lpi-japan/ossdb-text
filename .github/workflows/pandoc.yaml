@@ -29,9 +29,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: |
-          chapter=$(ls -1 Chapter*.md | grep -v 'Chapter0.md' | sort -V | tr '\n' ' ' | sed 's/ $//')
-          pandoc Chapter0.md -o preface.tex
-          pandoc -d config.yaml --template template.tex -B preface.tex $chapter -o guide.pdf
+          chapters=$(ls -1 Chapter*.md | grep -v 'Chapter0.md' | sort -V | tr '\n' ' ' | sed 's/ $//')
+          pandoc Chapter0.md -o preface.tex # 前書きだけ目次の前に出すために先にtex化しておく
+          pandoc -d config.yaml --template template.tex -B preface.tex ${chapters} -o guide.pdf --verbose 2>&1 | grep -E "^\[(INFO|WARNING|ERROR)\]"
       - uses: actions/upload-artifact@v4
         with:
           name: guide.pdf
@@ -45,7 +45,7 @@ jobs:
       - id: list-items
         run: cat $(ls -1 Chapter*.md | sort -V | tr '\n' ' ' | sed 's/ $//') | sed 's/^####.*/#& {-}/' > guide.md
         shell: sh
-      - run: /usr/bin/awk 'BEGIN{go=0;}{ if (go==1){print;} else {if($$0 ~ /^#/) { go=1;print;}}}' guide.md | pandoc -t epub3 -F pandoc-crossref -o guide.epub -N -M "crossrefYaml=crossref.yaml" --metadata-file=metadata.yaml --epub-cover-image=image/Cover/cover.png --css=epub.css
+      - run: /usr/bin/awk 'BEGIN{go=0;}{ if (go==1){print;} else {if($$0 ~ /^#/) { go=1;print;}}}' guide.md | pandoc -t epub3 -F pandoc-crossref -o guide.epub -N -M "crossrefYaml=crossref.yaml" --metadata-file=metadata.yaml --epub-cover-image=image/Cover/電子版表紙_300dpi_2480x3508.png --css=epub.css
       - uses: actions/upload-artifact@v4
         with:
           name: guide.epub
