@@ -31,7 +31,7 @@ jobs:
       - run: |
           chapters=$(ls -1 Chapter*.md | grep -v 'Chapter0.md' | sort -V | tr '\n' ' ' | sed 's/ $//')
           pandoc Chapter0.md -o preface.tex # 前書きだけ目次の前に出すために先にtex化しておく
-          pandoc -d config.yaml --template template.tex -B preface.tex ${chapters} -o guide.pdf --verbose 2>&1 | grep -E "^\[(INFO|WARNING|ERROR)\]"
+          pandoc -d config.yaml --template template.tex -B preface.tex ${chapters} -o guide.pdf --verbose 2>&1 | grep -v '^  '
       - uses: actions/upload-artifact@v4
         with:
           name: guide.pdf
