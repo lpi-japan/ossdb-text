@@ -159,9 +159,10 @@ https://oss-db.jp/ossdbtext
 
 ## 本教科書の使用に関するお問合せ先 {.unlisted .unnumbered}
 特定非営利活動法人エルピーアイジャパン（LPI-Japan）事務局  
-〒100-0011 東京都千代田区内幸町2-1-1 飯野ビルディング9階  
-TEL：03-6205-7025  
+
+```
 お問い合わせ：https://lpij.tayori.com/f/textbookinfo/
+```
 
 ![https://lpij.tayori.com/f/textbookinfo/](Pict/toiawase.png){width=20%}
 
