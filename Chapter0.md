@@ -66,34 +66,34 @@ https://www.postgresql.jp/download
 ## 全体の流れ {.unlisted .unnumbered}
 本教科書では、以下の通りに実習を進めます。
 
-### 1章 実習環境の構築方法 {.unlisted .unnumbered}
+### 1章&nbsp;実習環境の構築方法 {.unlisted .unnumbered}
 PostgreSQLのインストールや、実習で使用するデータベースの作成を行います。
 
-### 2章 SQLによるデータベースの操作 基礎編 {.unlisted .unnumbered}
+### 2章&nbsp;SQLによるデータベースの操作 基礎編 {.unlisted .unnumbered}
 データベースの基本的な操作を実習を通して学びます。
 
-### 3章 データ型 {.unlisted .unnumbered}
+### 3章&nbsp;データ型 {.unlisted .unnumbered}
 データベースで取り扱う様々なデータ型について学びます。
 
-### 4章 表 {.unlisted .unnumbered}
+### 4章&nbsp;表 {.unlisted .unnumbered}
 データベースでデータを格納する表について学びます。
 
-### 5章 基礎編 演習 {.unlisted .unnumbered}
+### 5章&nbsp;基礎編 演習 {.unlisted .unnumbered}
 前半で学んだ内容について演習形式で復習します。
 
-### 6章 SQLによるデータベースの操作 応用編 {.unlisted .unnumbered}
+### 6章&nbsp;SQLによるデータベースの操作 応用編 {.unlisted .unnumbered}
 より詳細なデータベースの操作について学びます。
 
-### 7章 データベース定義の応用 {.unlisted .unnumbered}
+### 7章&nbsp;データベース定義の応用 {.unlisted .unnumbered}
 表の作成などに付随する詳細な機能について学びます。
 
-### 8章 マルチユーザーでの利用 {.unlisted .unnumbered}
+### 8章&nbsp;マルチユーザーでの利用 {.unlisted .unnumbered}
 複数のユーザーでデータベースを扱う際に必要となるユーザーの作成や認証について学びます。
 
-### 9章 パフォーマンスチューニング {.unlisted .unnumbered}
+### 9章&nbsp;パフォーマンスチューニング {.unlisted .unnumbered}
 データベースの性能について学びます。
 
-### 10章 バックアップとリストア {.unlisted .unnumbered}
+### 10章&nbsp;バックアップとリストア {.unlisted .unnumbered}
 データのバックアップとリストアの方法について学びます。
 
 ## 執筆者・制作担当者紹介 {.unlisted .unnumbered}
