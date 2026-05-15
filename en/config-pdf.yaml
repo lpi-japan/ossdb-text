@@ -1,0 +1,31 @@
+# https://pandoc-doc-ja.readthedocs.io/ja/latest/users-guide.html#reader-options-1
+
+filters:
+  - pandoc-crossref
+
+
+# https://pandoc-doc-ja.readthedocs.io/ja/latest/users-guide.html#general-writer-options-1
+
+variables:
+  documentClass: article
+  bookTitle: Open Source Database Standard Textbook
+  bookVersion: September 10, 2025 \, \, Ver.3.0.2
+
+toc: true
+
+toc-depth: 3
+
+highlight-style: tango
+
+include-in-header:
+  - listing-en.tex
+
+
+# https://pandoc-doc-ja.readthedocs.io/ja/latest/users-guide.html#options-affecting-specific-writers-1
+
+number-sections: true
+
+listings: true
+
+pdf-engine: lualatex
+pdf-engine-opt: -shell-escape

@@ -1,0 +1,46 @@
+/* Styles for Open Source Database Standard Textbook (English) */
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 1em;
+    line-height: 1.6;
+    font-family: Georgia, "Times New Roman", serif;
+}
+pre {
+    font-family: monospace;
+    font-size: 0.8em;
+    margin: 0;
+    padding: 5px;
+    border: 1px #aaa solid;
+    color: #000;
+    background-color: #ccc;
+}
+p, ul, ol, dl, pre, table {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.875em;
+}
+table {
+    margin: 0 auto 2em auto;
+    border-collapse: collapse;
+}
+table tr th {
+    background-color: #ccc;
+    border: 1px solid #888;
+    padding: 2px 6px;
+}
+table tr td {
+    border: 1px solid #888;
+    padding: 2px 6px;
+}
+h1, h2, h3, h4 {
+    font-family: Arial, Helvetica, sans-serif;
+}
+h1 {
+    font-size: 1.5em;
+    border-bottom: 2px solid #333;
+    padding-bottom: 4px;
+}
+h2 {
+    font-size: 1.2em;
+    border-bottom: 1px solid #666;
+}

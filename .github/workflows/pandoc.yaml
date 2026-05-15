@@ -16,6 +16,14 @@ on:
       - epub.css
       - listing.tex
       - config-epub.yaml
+      - template.tex
+      - en/Chapter*.md
+      - en/config-pdf.yaml
+      - en/config-epub.yaml
+      - en/crossref.yaml
+      - en/epub.css
+      - en/listing-en.tex
+      - scripts/validate-translation.sh
       - .github/workflows/pandoc.yaml
 
 jobs:
@@ -78,3 +86,73 @@ jobs:
         with:
           name: guide.epub
           path: guide.epub
+
+  check-translation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check JP/EN structural consistency
+        run: |
+          cd ossdb-text 2>/dev/null || true
+          bash scripts/validate-translation.sh
+
+  check-consistency-en:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check EN version/date consistency
+        run: |
+          PDF_VER=$(grep -oP 'Ver\.\d+\.\d+\.\d+' en/config-pdf.yaml)
+          EPUB_VER=$(grep -oP 'Ver\.\d+\.\d+\.\d+' en/config-epub.yaml)
+          PDF_DATE=$(grep bookVersion en/config-pdf.yaml | grep -oP '[A-Z][a-z]+ \d+, \d{4}' | python3 -c "import sys,datetime; d=datetime.datetime.strptime(sys.stdin.read().strip(),'%B %d, %Y'); print(d.strftime('%Y-%m-%d'))")
+          EPUB_DATE=$(grep -oP '(?<=date: )\d{4}-\d{2}-\d{2}' en/config-epub.yaml)
+          ERROR=0
+          if [ "$PDF_VER" != "$EPUB_VER" ]; then
+            echo "::error::EN Version mismatch! config-pdf.yaml=$PDF_VER, config-epub.yaml=$EPUB_VER"
+            ERROR=1
+          fi
+          if [ "$PDF_DATE" != "$EPUB_DATE" ]; then
+            echo "::error::EN Date mismatch! config-pdf.yaml=$PDF_DATE, config-epub.yaml=$EPUB_DATE"
+            ERROR=1
+          fi
+          if [ $ERROR -eq 0 ]; then echo "EN Version/Date OK: $PDF_VER / $EPUB_DATE"; fi
+          exit $ERROR
+
+  build-pdf-en:
+    needs: [check-translation, check-consistency-en]
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/lpi-japan/ossdb-text:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.github_token }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          cd en
+          chapters=$(ls -1 Chapter*.md | grep -v 'Chapter00.md' | sort -V | tr '\n' ' ' | sed 's/ $//')
+          pandoc Chapter00.md -o preface.tex
+          pandoc -d config-pdf.yaml --template ../template.tex -B preface.tex ${chapters} -o guide-en.pdf --verbose 2>&1 | grep -v '^  '
+          pandoc -d config-pdf.yaml --template ../template.tex -B preface.tex ${chapters} -M no-cover=true -o guide-en_no_cover.pdf --verbose 2>&1 | grep -v '^  '
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pdf-en-outputs
+          path: |
+            en/guide-en.pdf
+            en/guide-en_no_cover.pdf
+
+  build-epub-en:
+    needs: check-translation
+    runs-on: ubuntu-latest
+    container:
+      image: pandoc/core:3.1.1.0
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          cd en
+          cat $(ls -1 Chapter*.md | sort -V | tr '\n' ' ' | sed 's/ $//') | sed 's/^####.*/#& {-}/' > guide-en.md
+          /usr/bin/awk 'BEGIN{go=0;}{ if (go==1){print;} else {if($$0 ~ /^#/) { go=1;print;}}}' guide-en.md | pandoc -t epub3 -F pandoc-crossref -o guide-en.epub -N -M "crossrefYaml=crossref.yaml" --metadata-file=config-epub.yaml --css=epub.css
+      - uses: actions/upload-artifact@v4
+        with:
+          name: guide-en.epub
+          path: en/guide-en.epub
