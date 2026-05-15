@@ -79,7 +79,7 @@ Type:  \copyright for distribution terms
 In addition to accepting SQL, psql accepts meta-commands that begin with `\` (backslash).
 Meta-commands serve various purposes, such as displaying help or performing operations on the database.
 
-### Checking Help (\h)
+### Checking Help (`\h`)
 You can check the help for available SQL commands.
 
 ```
@@ -91,7 +91,7 @@ Available help:
 (output omitted)
 ```
 
-### Checking Help for a Specific SQL Command (\h SQL command)
+### Checking Help for a Specific SQL Command (`\h` SQL command)
 By specifying a SQL command as an argument to the psql meta-command `\h`, you can view the help for that SQL command. The command name can be specified in uppercase or lowercase.
 
 ```
@@ -110,7 +110,7 @@ URL: https://www.postgresql.org/docs/13/sql-delete.html
 
 If pagination is active and `-- More --` is displayed at the bottom left, you can scroll through the output using the cursor keys or the space bar. When you reach the end, pagination stops. To stop pagination partway through, press the `q` key.
 
-### Checking psql Meta-Command Help (\?)
+### Checking psql Meta-Command Help (`\?`)
 The psql meta-command `\?` displays help for all available psql meta-commands.
 
 ```
@@ -122,7 +122,7 @@ General
 (output omitted)
 ```
 
-### Quitting psql (\q)
+### Quitting psql (`\q`)
 To quit psql, enter the psql meta-command `\q`.
 
 ```

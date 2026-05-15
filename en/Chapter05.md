@@ -228,7 +228,7 @@ The data looks like the following.
 ### Exercise 2-4: Loading the Data {.unnumbered}
 Use psql to load the CSV file.
 
-In the following example, the CSV file is loaded using the \copy meta-command.
+In the following example, the CSV file is loaded using the `\copy` meta-command.
 
 ```
 ossdb=# \copy zip from utf_ken_all.csv (format csv)

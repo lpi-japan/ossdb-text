@@ -75,7 +75,7 @@ To modify a table definition after creating a table, use the ALTER TABLE stateme
 
 With the ALTER TABLE statement, in addition to modifying the definition and behavior of the table itself, you can also modify column definitions within the table, so the way you specify it is correspondingly more complex.
 
-Let's check the syntax help with the meta-command \\h. You do not need to memorize the details here, but try to understand from the help that you specify the table to be changed and then specify an action such as "add a new column (= ADD COLUMN)."
+Let's check the syntax help with the meta-command `\h`. You do not need to memorize the details here, but try to understand from the help that you specify the table to be changed and then specify an action such as "add a new column (= ADD COLUMN)."
 ```
 ossdb=# \h ALTER TABLE
 Command:     ALTER TABLE
@@ -221,7 +221,7 @@ ossdb=# SELECT * FROM char_test;
 ## Saving and Loading Data
 Using psql, you can save data to a file or load data from a file.
 
-There are two methods: using the COPY statement, which is SQL, and using \\copy, which is a psql meta-command. They are similar, but the mechanism differs slightly. We will explain each of them.
+There are two methods: using the COPY statement, which is SQL, and using `\copy`, which is a psql meta-command. They are similar, but the mechanism differs slightly. We will explain each of them.
 
 ### COPY Statements Are Executed as SQL
 The COPY statement is executed as SQL, and PostgreSQL writes data directly to a file on the OS where it is running. Therefore, the following restrictions apply.
@@ -281,10 +281,10 @@ ossdb=# SELECT * FROM customer;
 (3 rows)
 ```
 
-### \\copy Meta-Command Is Processed by psql
-psql can use the \\copy meta-command, which behaves similarly to the COPY statement. The differences are as follows.
+### `\copy` Meta-Command Is Processed by psql
+psql can use the `\copy` meta-command, which behaves similarly to the COPY statement. The differences are as follows.
 
-- The COPY statement is SQL and is executed by the database server. The output file is created on the database server. In contrast, the \\copy meta-command is a client-side data retrieval operation, and the output file is created on the client terminal.
+- The COPY statement is SQL and is executed by the database server. The output file is created on the database server. In contrast, the `\copy` meta-command is a client-side data retrieval operation, and the output file is created on the client terminal.
 - In addition to absolute paths, files can also be specified relative to the current directory of the client terminal when psql is executed.
 
 Specific usage examples are explained in the exercises that follow.

@@ -5,6 +5,9 @@
 \usepackage{svg}
 \usepackage{setspace}
 
+% passthrough is used by pandoc for inline code spans when listings is enabled
+\providecommand{\passthrough}[1]{#1}
+
 \lstset{
     basicstyle=\ttfamily,
     keywordstyle=\color[RGB]{33,74,135}\bfseries,
