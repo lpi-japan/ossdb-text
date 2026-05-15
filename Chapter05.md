@@ -137,14 +137,14 @@ https://www.post.japanpost.jp/zipcode/download.html
 「データのダウンロード」にある「最新データのダウンロード」のリンクから、ZIP形式でアーカイブされたCSVファイルがダウンロードできます。ダウンロードはサーバーで行うか、ダウンロードしたファイルをサーバーにコピーする必要があります。
 
 ```
-https://www.post.japanpost.jp/zipcode/dl/utf/zip/utf_ken_all.zip
+https://www.post.japanpost.jp/service/search/zipcode/download/utf/zip/utf_ken_all.zip
 ```
 
 以下の例は、サーバーでwgetコマンドを使って郵便番号CSVデータをダウンロードして、unzipコマンドで解凍しています。
 
 ```
-[postgres@host1 ~]$ wget https://www.post.japanpost.jp/zipcode/dl/utf/zip/utf_ken_all.zip
---2024-04-10 15:23:02--  https://www.post.japanpost.jp/zipcode/dl/utf/zip/utf_ken_all.zip
+[postgres@host1 ~]$ wget https://www.post.japanpost.jp/service/search/zipcode/download/utf/zip/utf_ken_all.zip
+--2026-05-15 16:47:23--  https://www.post.japanpost.jp/service/search/zipcode/download/utf/zip/utf_ken_all.zip
 www.post.japanpost.jp (www.post.japanpost.jp) をDNSに問いあわせています... 43.253.212.144
 www.post.japanpost.jp (www.post.japanpost.jp)|43.253.212.144|:443 に接続しています... 接続しました。
 HTTP による接続要求を送信しました、応答を待っています... 200 OK
