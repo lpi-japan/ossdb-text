@@ -4,12 +4,13 @@ on:
   push:
     branches:
       - main
+      - english_draft
       - fix-*
       - fix/*
       - feat/*
       - feature/*
     paths:
-      - image/*
+      - image/**
       - Chapter*.md
       - config-pdf.yaml
       - crossref.yaml
@@ -28,6 +29,7 @@ on:
 
 jobs:
   check-consistency:
+    if: github.ref != 'refs/heads/english_draft'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -51,12 +53,13 @@ jobs:
           exit $ERROR
 
   build-pdf:
+    if: github.ref != 'refs/heads/english_draft'
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/lpi-japan/ossdb-text:latest
       credentials:
         username: ${{ github.actor }}
-        password: ${{ secrets.github_token }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v5
       - run: |
@@ -73,6 +76,7 @@ jobs:
             guide.pdf
             guide_no_cover.pdf
   build-epub:
+    if: github.ref != 'refs/heads/english_draft'
     runs-on: ubuntu-latest
     container:
       image: pandoc/core:3.1.1.0
@@ -88,15 +92,15 @@ jobs:
           path: guide.epub
 
   check-translation:
+    if: github.ref == 'refs/heads/english_draft'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - name: Check JP/EN structural consistency
-        run: |
-          cd ossdb-text 2>/dev/null || true
-          bash scripts/validate-translation.sh
+        run: bash scripts/validate-translation.sh
 
   check-consistency-en:
+    if: github.ref == 'refs/heads/english_draft'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -119,13 +123,14 @@ jobs:
           exit $ERROR
 
   build-pdf-en:
+    if: github.ref == 'refs/heads/english_draft'
     needs: [check-translation, check-consistency-en]
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/lpi-japan/ossdb-text:latest
       credentials:
         username: ${{ github.actor }}
-        password: ${{ secrets.github_token }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v5
       - run: |
@@ -142,6 +147,7 @@ jobs:
             en/guide-en_no_cover.pdf
 
   build-epub-en:
+    if: github.ref == 'refs/heads/english_draft'
     needs: check-translation
     runs-on: ubuntu-latest
     container:
