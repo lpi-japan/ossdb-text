@@ -9,13 +9,14 @@ on:
       - feat/*
       - feature/*
     paths:
-      - image/*
+      - image/**
       - Chapter*.md
       - config-pdf.yaml
       - crossref.yaml
       - epub.css
       - listing.tex
       - config-epub.yaml
+      - template.tex
       - .github/workflows/pandoc.yaml
 
 jobs:
