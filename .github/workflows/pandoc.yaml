@@ -80,6 +80,7 @@ jobs:
     env:
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
+      GIT_METADATA: git=${{ github.sha }}
     container:
       image: ${{ needs.build-container.outputs.image_ref }}
       credentials:
@@ -113,6 +114,7 @@ jobs:
     env:
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
+      GIT_METADATA: git=${{ github.sha }}
     container:
       image: ${{ needs.build-container.outputs.image_ref }}
       credentials:
@@ -145,6 +147,7 @@ jobs:
     env:
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
+      GIT_METADATA: git=${{ github.sha }}
     container:
       image: ${{ needs.build-container.outputs.image_ref }}
       credentials:
@@ -208,6 +211,7 @@ jobs:
     env:
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
+      GIT_METADATA: git=${{ github.sha }}
     container:
       image: ${{ needs.build-container.outputs.image_ref }}
       credentials:
@@ -240,6 +244,7 @@ jobs:
     env:
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
+      GIT_METADATA: git=${{ github.sha }}
     container:
       image: ${{ needs.build-container.outputs.image_ref }}
       credentials:
@@ -270,6 +275,7 @@ jobs:
     env:
       LANG: C.UTF-8
       LC_ALL: C.UTF-8
+      GIT_METADATA: git=${{ github.sha }}
     container:
       image: ${{ needs.build-container.outputs.image_ref }}
       credentials:
