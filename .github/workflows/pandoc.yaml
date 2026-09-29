@@ -1,9 +1,14 @@
 name: pandoc
 
+# JP は main 系、EN は english_draft（ブランチで edition を分ける）。
+# 同一ブランチに複数 edition がある場合は server-text の root.yaml を参照。
+
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
+      - english_draft
       - fix-*
       - fix/*
       - feat/*
@@ -17,10 +22,30 @@ on:
       - listing.tex
       - config-epub.yaml
       - template.tex
+      - en/Chapter*.md
+      - en/config-pdf.yaml
+      - en/config-epub.yaml
+      - en/crossref.yaml
+      - en/epub.css
+      - en/listing-en.tex
+      - scripts/validate-translation.sh
+      - build/**
       - .github/workflows/pandoc.yaml
+      - .github/workflows/build-container.yaml
+
+permissions:
+  contents: read
 
 jobs:
+  build-container:
+    permissions:
+      contents: read
+      packages: write
+    secrets: inherit
+    uses: ./.github/workflows/build-container.yaml
+
   check-consistency:
+    if: github.ref != 'refs/heads/english_draft'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -43,39 +68,224 @@ jobs:
           if [ $ERROR -eq 0 ]; then echo "Version/Date OK: $PDF_VER / $EPUB_DATE"; fi
           exit $ERROR
 
+  # 通常PDF / 表紙なしPDF / EPUB を並列。upload-artifact@v7 の archive:false は1ファイル制限。
+  # 表紙パスに日本語があるため、コンテナ内は UTF-8 ロケール必須。
   build-pdf:
+    if: github.ref != 'refs/heads/english_draft'
+    needs: build-container
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    env:
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
     container:
-      image: ghcr.io/lpi-japan/ossdb-text:latest
+      image: ${{ needs.build-container.outputs.image_ref }}
       credentials:
         username: ${{ github.actor }}
-        password: ${{ secrets.github_token }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v5
-      - run: |
-          chapters=$(ls -1 Chapter*.md | grep -v 'Chapter00.md' | sort -V | tr '\n' ' ' | sed 's/ $//')
-          pandoc Chapter00.md -o preface.tex # 前書きだけ目次の前に出すために先にtex化しておく
-          # 電子版 = 表紙あり、製本・kindleペーパーバック用 = 表紙なし (表紙は別納)
-          # まずmd → texまで変換しtex → pdfだけ表紙有無分岐するとより高速だが、toc解決の複雑さを回避するため全行程を2周する
-          pandoc -d config-pdf.yaml --template template.tex -B preface.tex ${chapters} -o guide.pdf --verbose 2>&1 | grep -v '^  '
-          pandoc -d config-pdf.yaml --template template.tex -B preface.tex ${chapters} -M no-cover=true -o guide_no_cover.pdf --verbose 2>&1 | grep -v '^  '
-      - uses: actions/upload-artifact@v6
+      - name: Build PDF
+        run: |
+          echo "Using image: ${{ needs.build-container.outputs.image_ref }}"
+          chmod +x ./build/build-pdf.sh
+          ./build/build-pdf.sh cover
+      - name: Upload PDF artifact
+        if: always()
+        uses: actions/upload-artifact@v7
         with:
-          name: pdf-outputs
           path: |
-            guide.pdf
-            guide_no_cover.pdf
-  build-epub:
+            tmp/ossdbtext_*.pdf
+            !tmp/ossdbtext_*_no_cover.pdf
+            !tmp/ossdbtext_en_*
+          archive: false
+          if-no-files-found: error
+
+  build-pdf-no-cover:
+    if: github.ref != 'refs/heads/english_draft'
+    needs: build-container
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    env:
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
     container:
-      image: pandoc/core:3.1.1.0
+      image: ${{ needs.build-container.outputs.image_ref }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v5
-      - id: list-items
-        run: cat $(ls -1 Chapter*.md | sort -V | tr '\n' ' ' | sed 's/ $//') | sed 's/^####.*/#& {-}/' > guide.md
-        shell: sh
-      - run: /usr/bin/awk 'BEGIN{go=0;}{ if (go==1){print;} else {if($$0 ~ /^#/) { go=1;print;}}}' guide.md | pandoc -t epub3 -F pandoc-crossref -o guide.epub -N -M "crossrefYaml=crossref.yaml" --metadata-file=config-epub.yaml --epub-cover-image=image/Cover/電子版表紙_300dpi_2480x3508.png --css=epub.css
-      - uses: actions/upload-artifact@v6
+      - name: Build PDF (no cover)
+        run: |
+          echo "Using image: ${{ needs.build-container.outputs.image_ref }}"
+          chmod +x ./build/build-pdf.sh
+          ./build/build-pdf.sh no-cover
+      - name: Upload PDF no-cover artifact
+        if: always()
+        uses: actions/upload-artifact@v7
         with:
-          name: guide.epub
-          path: guide.epub
+          path: |
+            tmp/ossdbtext_*_no_cover.pdf
+            !tmp/ossdbtext_en_*
+          archive: false
+          if-no-files-found: error
+
+  build-epub:
+    if: github.ref != 'refs/heads/english_draft'
+    needs: build-container
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    env:
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+    container:
+      image: ${{ needs.build-container.outputs.image_ref }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build EPUB
+        run: |
+          echo "Using image: ${{ needs.build-container.outputs.image_ref }}"
+          chmod +x ./build/build-epub.sh ./build/with-build-image.sh
+          ./build/build-epub.sh
+      - name: Upload EPUB artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          path: |
+            tmp/ossdbtext_*.epub
+            !tmp/ossdbtext_en_*
+          archive: false
+          if-no-files-found: error
+
+  check-translation:
+    if: github.ref == 'refs/heads/english_draft'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check JP/EN structural consistency
+        run: bash scripts/validate-translation.sh
+
+  check-consistency-en:
+    if: github.ref == 'refs/heads/english_draft'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check EN version/date consistency
+        run: |
+          PDF_VER=$(grep -oP 'Ver\.\d+\.\d+\.\d+' en/config-pdf.yaml)
+          EPUB_VER=$(grep -oP 'Ver\.\d+\.\d+\.\d+' en/config-epub.yaml)
+          PDF_DATE=$(grep bookVersion en/config-pdf.yaml | grep -oP '[A-Z][a-z]+ \d+, \d{4}' | python3 -c "import sys,datetime; d=datetime.datetime.strptime(sys.stdin.read().strip(),'%B %d, %Y'); print(d.strftime('%Y-%m-%d'))")
+          EPUB_DATE=$(grep -oP '(?<=date: )\d{4}-\d{2}-\d{2}' en/config-epub.yaml)
+          ERROR=0
+          if [ "$PDF_VER" != "$EPUB_VER" ]; then
+            echo "::error::EN Version mismatch! config-pdf.yaml=$PDF_VER, config-epub.yaml=$EPUB_VER"
+            ERROR=1
+          fi
+          if [ "$PDF_DATE" != "$EPUB_DATE" ]; then
+            echo "::error::EN Date mismatch! config-pdf.yaml=$PDF_DATE, config-epub.yaml=$EPUB_DATE"
+            ERROR=1
+          fi
+          if [ $ERROR -eq 0 ]; then echo "EN Version/Date OK: $PDF_VER / $EPUB_DATE"; fi
+          exit $ERROR
+
+  build-pdf-en:
+    if: github.ref == 'refs/heads/english_draft'
+    needs: [build-container, check-translation, check-consistency-en]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    env:
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+    container:
+      image: ${{ needs.build-container.outputs.image_ref }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build EN PDF
+        run: |
+          echo "Using image: ${{ needs.build-container.outputs.image_ref }}"
+          chmod +x ./build/build-pdf.sh
+          ./build/build-pdf.sh cover en
+      - name: Upload EN PDF artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          path: |
+            tmp/ossdbtext_en_*.pdf
+            !tmp/ossdbtext_en_*_no_cover.pdf
+          archive: false
+          if-no-files-found: error
+
+  build-pdf-en-no-cover:
+    if: github.ref == 'refs/heads/english_draft'
+    needs: [build-container, check-translation, check-consistency-en]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    env:
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+    container:
+      image: ${{ needs.build-container.outputs.image_ref }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build EN PDF (no cover)
+        run: |
+          echo "Using image: ${{ needs.build-container.outputs.image_ref }}"
+          chmod +x ./build/build-pdf.sh
+          ./build/build-pdf.sh no-cover en
+      - name: Upload EN PDF no-cover artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          path: tmp/ossdbtext_en_*_no_cover.pdf
+          archive: false
+          if-no-files-found: error
+
+  build-epub-en:
+    if: github.ref == 'refs/heads/english_draft'
+    needs: [build-container, check-translation]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    env:
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+    container:
+      image: ${{ needs.build-container.outputs.image_ref }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build EN EPUB
+        run: |
+          echo "Using image: ${{ needs.build-container.outputs.image_ref }}"
+          chmod +x ./build/build-epub.sh ./build/with-build-image.sh
+          ./build/build-epub.sh en
+      - name: Upload EN EPUB artifact
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          path: tmp/ossdbtext_en_*.epub
+          archive: false
+          if-no-files-found: error

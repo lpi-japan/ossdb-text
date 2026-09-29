@@ -1,1 +1,15 @@
+# Build intermediates (CI / local)
+.epub-build/
+guide.md
+guide.epub
+guide.pdf
+guide_no_cover.pdf
+guide-en.md
+guide-en.epub
+guide-en.pdf
+guide-en_no_cover.pdf
+preface.tex
+tmp/
+ossdbtext_*.pdf
+ossdbtext_*.epub
 .DS_Store
